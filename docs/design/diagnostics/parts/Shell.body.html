@@ -1,0 +1,182 @@
+<main class="sheet" style="padding-top:30px">
+  <div class="dochead">
+    <div>
+      <p class="eyebrow">Decision sheet</p>
+      <h1 class="doc">One app, two departments</h1>
+      <p class="sub">The diagnostic generator lives inside the existing site rather than beside it: one
+        login, one server, one launcher, one stylesheet. The masthead carries the two departments; the rule
+        under it carries the pages inside whichever department you are in.</p>
+    </div>
+    <div class="ref">
+      <b>Changes to shared code</b>
+      <span>base.html &mdash; nav row</span>
+      <span>paper.css &mdash; .subbar</span>
+      <span>config/urls.py</span>
+    </div>
+  </div>
+
+  <div class="sec">
+    <span class="idx">01</span>
+    <h2>Masthead, item bank</h2>
+    <span class="line"></span>
+    <span class="note">EXISTING SCREENS, UNCHANGED PAGES</span>
+  </div>
+
+  <div style="border:1px solid var(--rule)">
+    <div class="mast">
+      <div class="mast-in" style="max-width:none">
+        <svg class="mark" width="30" height="34" viewBox="0 0 30 34" fill="none" style="color: var(--ink)" aria-hidden="true">
+          <rect x="1" y="1" width="28" height="32" stroke="currentColor" stroke-width="1.5"></rect>
+          <path d="M7 9h9M7 15h9M7 21h9M7 27h9" stroke="currentColor" stroke-width="1.5"></path>
+          <circle cx="23" cy="9" r="2.6" fill="currentColor"></circle>
+          <circle cx="23" cy="15" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+          <circle cx="23" cy="21" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+          <circle cx="23" cy="27" r="2.6" fill="currentColor"></circle>
+        </svg>
+        <span class="wordmark">English Test Generator<span class="sm">ITEM BANK &middot; DIAGNOSTICS</span></span>
+        <nav>
+          <a href="#" class="on">Item bank</a>
+          <a href="#">Diagnostics</a>
+          <span class="who">TEACHER01</span>
+          <button class="btn ghost sm" style="border-color:var(--rule)">Log out</button>
+        </nav>
+      </div>
+    </div>
+    <div class="hair"></div>
+    <div class="subbar">
+      <div class="subbar-in" style="max-width:none">
+        <a href="#" class="on">Test builder</a>
+        <a href="#">Bank coverage</a>
+        <a href="#">Admin</a>
+        <span class="note">736 APPROVED ITEMS</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <span class="idx">02</span>
+    <h2>Masthead, diagnostics</h2>
+    <span class="line"></span>
+    <span class="note">SAME CHROME, DIFFERENT PAGES</span>
+  </div>
+
+  <div style="border:1px solid var(--rule)">
+    <div class="mast">
+      <div class="mast-in" style="max-width:none">
+        <svg class="mark" width="30" height="34" viewBox="0 0 30 34" fill="none" style="color: var(--ink)" aria-hidden="true">
+          <rect x="1" y="1" width="28" height="32" stroke="currentColor" stroke-width="1.5"></rect>
+          <path d="M7 9h9M7 15h9M7 21h9M7 27h9" stroke="currentColor" stroke-width="1.5"></path>
+          <circle cx="23" cy="9" r="2.6" fill="currentColor"></circle>
+          <circle cx="23" cy="15" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+          <circle cx="23" cy="21" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+          <circle cx="23" cy="27" r="2.6" fill="currentColor"></circle>
+        </svg>
+        <span class="wordmark">English Test Generator<span class="sm">ITEM BANK &middot; DIAGNOSTICS</span></span>
+        <nav>
+          <a href="#">Item bank</a>
+          <a href="#" class="on">Diagnostics</a>
+          <span class="who">TEACHER01</span>
+          <button class="btn ghost sm" style="border-color:var(--rule)">Log out</button>
+        </nav>
+      </div>
+    </div>
+    <div class="hair"></div>
+    <div class="subbar">
+      <div class="subbar-in" style="max-width:none">
+        <a href="#" class="on">Papers</a>
+        <a href="#">Issue register</a>
+        <a href="#">Admin</a>
+        <span class="note">GENERATION OPEN</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <span class="idx">03</span>
+    <h2>States a paper row can be in</h2>
+    <span class="line"></span>
+  </div>
+
+  <table class="reg">
+    <tbody>
+      <tr>
+        <td class="u" style="width:78px">G9-A</td>
+        <td style="width:186px" class="clips">01 &middot; 02<em>pictures, three-option</em></td>
+        <td class="ttl">Issued once already<em>The teacher downloaded it on 25 Aug</em></td>
+        <td style="width:150px"><span class="stamp ok">Issued 25 Aug</span></td>
+        <td class="act" style="width:214px">
+          <button class="btn ghost sm">View</button>
+          <button class="btn sm">Download again</button>
+        </td>
+      </tr>
+      <tr>
+        <td class="u" style="width:78px">G9-B</td>
+        <td style="width:186px" class="clips">03 &middot; 04<em>gap-fill, true / false</em></td>
+        <td class="ttl">Never issued<em>The ordinary state at the start of term</em></td>
+        <td style="width:150px"><span class="stamp mute">Not issued</span></td>
+        <td class="act" style="width:214px">
+          <button class="btn ghost sm">View</button>
+          <button class="btn sm">Download pack</button>
+        </td>
+      </tr>
+      <tr>
+        <td class="u" style="width:78px">G9-C</td>
+        <td style="width:186px" class="clips">05 &middot; 06<em>pictures, three-option</em></td>
+        <td class="ttl">Generation closed<em>Readable on screen, not downloadable</em></td>
+        <td style="width:150px"><span class="stamp mute">Not issued</span></td>
+        <td class="act" style="width:214px">
+          <button class="btn ghost sm">View</button>
+          <button class="btn sm" style="background:transparent;color:var(--ink-3);border-color:var(--rule);cursor:not-allowed">Closed</button>
+        </td>
+      </tr>
+      <tr class="off">
+        <td class="u" style="width:78px">G9-D</td>
+        <td style="width:186px" class="clips">07 &middot; 08<em>gap-fill, true / false</em></td>
+        <td class="ttl">Unpublished<em>Staff can see it; teachers cannot</em></td>
+        <td style="width:150px"><span class="stamp mute">Draft</span></td>
+        <td class="act" style="width:214px">
+          <button class="btn ghost sm">View</button>
+          <button class="btn sm" style="background:transparent;color:var(--ink-3);border-color:var(--rule);cursor:not-allowed">Not published</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sec">
+    <span class="idx">04</span>
+    <h2>Nothing new was invented</h2>
+    <span class="line"></span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:36px">
+    <div>
+      <p class="spec">Borrowed unchanged</p>
+      <ul class="tally">
+        <li><span class="k">Masthead and rule</span><span class="dots"></span><span class="n">.mast</span></li>
+        <li><span class="k">Document head</span><span class="dots"></span><span class="n">.dochead</span></li>
+        <li><span class="k">Register table</span><span class="dots"></span><span class="n">.reg</span></li>
+        <li><span class="k">Question rows</span><span class="dots"></span><span class="n">.q</span></li>
+        <li><span class="k">Stamps</span><span class="dots"></span><span class="n">.stamp</span></li>
+        <li><span class="k">Notice band</span><span class="dots"></span><span class="n">.notice</span></li>
+        <li><span class="k">Examiner margin</span><span class="dots"></span><span class="n">.margin-col</span></li>
+      </ul>
+    </div>
+    <div>
+      <p class="spec">Added</p>
+      <ul class="tally">
+        <li><span class="k">Department rule</span><span class="dots"></span><span class="n">.subbar</span></li>
+        <li><span class="k">Pack manifest</span><span class="dots"></span><span class="n">.pack</span></li>
+        <li><span class="k">Picture plate</span><span class="dots"></span><span class="n">.plate</span></li>
+        <li><span class="k">Variant chips</span><span class="dots"></span><span class="n">.vchip</span></li>
+        <li class="tot"><span class="k">New rules</span><span class="dots"></span><span class="n">44 lines</span></li>
+      </ul>
+    </div>
+    <div>
+      <p class="spec">Held to</p>
+      <p class="fine" style="margin-top:0">No cards. No corner radii. No shadows. No gradients. One marker&rsquo;s
+        red, used only where a marker would use it, and a tick-green for what is already done.</p>
+      <p class="fine">The one circle on these screens is the OMR bubble on the item-bank side. Diagnostics has
+        no picker, so it has no bubbles.</p>
+    </div>
+  </div>
+</main>

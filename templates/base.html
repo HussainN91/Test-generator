@@ -1,0 +1,53 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}English Test Generator{% endblock %}</title>
+{# "Examinations Office" — the whole system lives in static/css/paper.css. #}
+{# docs/design/ holds the design canvas built from that same stylesheet.   #}
+<link rel="stylesheet" href="{% static 'css/paper.css' %}">
+{% block head %}{% endblock %}
+</head>
+<body>
+{% block chrome %}
+<header class="mast">
+  <div class="mast-in">
+    <svg class="mark" width="30" height="34" viewBox="0 0 30 34" fill="none" style="color: var(--ink)" aria-hidden="true">
+      <rect x="1" y="1" width="28" height="32" stroke="currentColor" stroke-width="1.5"></rect>
+      <path d="M7 9h9M7 15h9M7 21h9M7 27h9" stroke="currentColor" stroke-width="1.5"></path>
+      <circle cx="23" cy="9" r="2.6" fill="currentColor"></circle>
+      <circle cx="23" cy="15" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+      <circle cx="23" cy="21" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+      <circle cx="23" cy="27" r="2.6" fill="currentColor"></circle>
+    </svg>
+    <span class="wordmark">English Test Generator<span class="sm">ITEM BANK &middot; ASSEMBLY &middot; EXPORT</span></span>
+    <nav>
+      <a href="{% url 'builder' %}"{% block nav_builder %}{% endblock %}>Test builder</a>
+      <a href="{% url 'coverage' %}"{% block nav_coverage %}{% endblock %}>Bank coverage</a>
+      <a href="{% url 'diagnostics:paper_index' %}"{% block nav_diagnostics %}{% endblock %}>Diagnostics</a>
+      {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+      {% if user.is_authenticated %}
+        <span class="who">{{ user.username|upper }}</span>
+        <form method="post" action="{% url 'logout' %}" style="display:inline">
+          {% csrf_token %}<button class="btn ghost sm" style="border-color:var(--rule)">Log out</button>
+        </form>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+<div class="hair"></div>
+{% endblock %}
+<main class="sheet">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="notice {{ message.tags }}">
+        <b>{% if message.tags == 'error' %}Stop{% elif message.tags == 'success' %}Done{% else %}Notice{% endif %}</b>
+        <span>{{ message }}</span>
+      </div>
+    {% endfor %}
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

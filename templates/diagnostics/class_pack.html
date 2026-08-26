@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Grade {{ grade }} &mdash; class {{ class_number }}{% endblock %}
+{% block nav_diagnostics %} class="on"{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/nav.css' %}">{% endblock %}
+
+{% block content %}
+{% comment %}
+The end of the trail: the register, but only this class's papers. The table
+is the one that used to carry all sixteen variants of a grade on the front
+page -- same columns, same paper names, four rows instead of forty-eight.
+{% endcomment %}
+<p class="crumb">
+  <a href="{% url 'diagnostics:paper_index' %}">Diagnostics</a>
+  <span class="sep">/</span>
+  <a href="{% url 'diagnostics:grade_detail' grade %}">Grade {{ grade }}</a>
+  <span class="sep">/</span>
+  <b>Class {{ class_number }}</b>
+</p>
+
+<div class="dochead">
+  <div>
+    <p class="eyebrow">Diagnostics &middot; Grade {{ grade }}</p>
+    <h1 class="doc">Class {{ class_number }}</h1>
+    <p class="sub">Papers {{ span }} &mdash; this class's pack. Open a paper to read it on screen and
+      download the test, the answer key and the audio. Downloading issues that paper and records it
+      against your name.</p>
+  </div>
+  <div class="ref">
+    <b>Class {{ class_number }}</b>
+    <span>GRADE {{ grade }}</span>
+    <span>PAPERS {{ span }}</span>
+    <span>{% if generation_open %}GENERATION OPEN{% else %}GENERATION CLOSED{% endif %}</span>
+  </div>
+</div>
+
+{% if not generation_open %}
+  <div class="notice">
+    <b>Closed</b>
+    <span>An administrator has closed generation. You can still read every paper on screen, but
+      downloads are refused until it reopens.</span>
+  </div>
+{% endif %}
+
+<div class="sec">
+  <span class="idx">03</span>
+  <h2>Papers</h2>
+  <span class="line"></span>
+  <span class="note">{{ papers|length }} PAPER{{ papers|length|pluralize:"S" }} &middot; CEFR B1 &middot; 40 MARKS</span>
+</div>
+
+<table class="reg">
+  <thead>
+    <tr>
+      <th style="width:78px">Paper</th>
+      <th style="width:186px">Recordings</th>
+      <th>Reading passage</th>
+      <th style="width:150px">State</th>
+      <th style="width:214px"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for paper in papers %}
+      <tr>
+        <td class="u">G{{ paper.grade }}-{{ paper.variant }}</td>
+        <td class="clips">{{ paper.listening_clip_1.number|stringformat:"02d" }} &middot; {{ paper.listening_clip_2.number|stringformat:"02d" }}
+          <em>{{ paper.listening_clip_1.get_task_type_display }}</em></td>
+        <td class="ttl">{{ paper.reading_passage.title }}
+          <em>{{ paper.reading_passage.label }} &middot; {{ paper.reading_passage.word_count }} words</em></td>
+        <td>
+          {% with paper.generations.first as latest %}
+            {% if latest %}
+              <span class="stamp ok">Issued {{ latest.generated_at|date:"j M" }}</span>
+            {% else %}
+              <span class="stamp mute">Not issued</span>
+            {% endif %}
+          {% endwith %}
+        </td>
+        <td class="act">
+          <a class="btn sm" href="{% url 'diagnostics:paper_detail' paper.grade paper.variant %}">Open paper</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5" class="fine">No published papers in this pack yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="packnav">
+  {% if prev_class %}
+    <a class="btn ghost sm" href="{% url 'diagnostics:class_pack' grade prev_class %}">&larr; Class {{ prev_class }}</a>
+  {% else %}
+    <span class="mute">First pack</span>
+  {% endif %}
+  <span class="spacer"></span>
+  <a class="btn ghost sm" href="{% url 'diagnostics:grade_detail' grade %}">All class packs</a>
+  <span class="spacer"></span>
+  {% if next_class %}
+    <a class="btn ghost sm" href="{% url 'diagnostics:class_pack' grade next_class %}">Class {{ next_class }} &rarr;</a>
+  {% else %}
+    <span class="mute">Last pack</span>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,844 @@
+# Grade 11 Vocabulary and Grammar Reference Guide
+
+This study guide systematically organizes the complete Grade 11 English curriculum. All vocabulary sets, word-building forms, and phrasal verbs are presented chronologically alongside their corresponding grammar units. All bulky practice exercises have been omitted to provide a clean, high-density study reference.
+
+---
+
+## Unit 1: Shopping & Countable/Uncountable Nouns
+
+### Vocabulary: Shopping List
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **charge** | v | to ask an amount of money for something, especially a service or activity |
+| **charges** | n | the amount of money that you have to pay for something, especially for a service |
+| **discount** | n | a reduction in price |
+| **exchange** | v | to take something back to a shop and change it for something else |
+| **online shopping** | n | the activity of buying things on the internet |
+| **promotions** | n | activities to advertise something |
+| **purchases** | n | the act of buying something |
+| **receipt** | n | a piece of paper that proves that you have received goods or money |
+| **refunds** | n | an amount of money that is given back to you, especially because you are not happy with something you have bought |
+| **send sth back** | pv | to return something to the person who sent it to you, especially because it is damaged or not suitable |
+| **serve** | v | to help customers and sell things to them in a shop |
+| **service** | n | the work that people who work in shops, restaurants, hotels, etc. do to help customers |
+| **shop** | v | to buy things in shops |
+| **spend** | v | to use money to buy or pay for something |
+
+### Word Formation: Prefixes `un-` and `dis-`
+*   **disagree** (v): to have a different opinion from someone else
+*   **disappear** (v): to become impossible to see or find
+*   **dislike** (v): to not like someone or something
+*   **unhappy** (adj): sad
+*   **uninteresting** (adj): not interesting
+*   **unkind** (adj): slightly cruel
+*   **unlucky** (adj): having bad things happen to you
+*   **unpleasant** (adj): not enjoyable or pleasant
+*   **unreliable** (adj): unable to be trusted or depended upon
+
+### Grammar: Countable & Uncountable Nouns; Determiners
+#### Countable Nouns
+*   Can be singular or plural (e.g., *card → cards*, *phone → phones*).
+*   **Irregular Plurals**: *child → children*, *woman → women*, *person → people*.
+
+#### Uncountable Nouns
+*   Always singular (e.g., *bread*, *information*, *news*, *homework*, *money*, *water*).
+*   Can be measured using counting phrases: *a slice of bread*, *a great deal of money*, *two glasses of water*.
+
+#### Nouns with Dual Usage
+*   **noise**: "There’s a strange noise coming from that box" (countable) vs. "Can you hear that noise?" / "Noise is annoying" (uncountable).
+*   **hair**: "There’s a hair in my soup!" (countable) vs. "I’ve got long hair" (uncountable).
+*   **coffee**: "Do you want a coffee?" (countable cup) vs. "Coffee is my favourite drink" (uncountable substance).
+
+#### Determiners
+*   **some, any, no, plenty of, (not) a lot of**: Used with both plural countable and uncountable nouns.
+    *   *Positive*: "I've got some biscuits and some cheese." / "There are no oranges." / "There are a lot of people."
+    *   *Negative/Questions*: "We haven't got any milk." / "Is there any cake?"
+    *   *Offers/Requests*: Use **some** in questions when offering or expecting a "Yes" answer (e.g., "Would you like some tea?").
+*   **many**: Used with plural countable nouns in positive, negative, and question forms.
+*   **much**: Used with uncountable nouns (primarily in negative sentences and questions).
+*   **several**: Used exclusively with plural countable nouns (e.g., "I've got several friends").
+
+---
+
+## Unit 2: Personality Adjectives & -ing Forms
+
+### Vocabulary: Personality Adjectives
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **annoying** | adj | making you feel annoyed |
+| **anxious** | adj | worried and nervous |
+| **easygoing** | adj | relaxed and not easily upset or worried |
+| **jealous** | adj | unhappy and angry because you want something that someone else has |
+| **loyal** | adj | always liking and supporting someone or something, sometimes when other people do not |
+| **reliable** | adj | able to be trusted or believed |
+| **sensible** | adj | showing good judgment |
+| **silly** | adj | not taking things seriously |
+| **sociable** | adj | enjoying being with people and meeting new people |
+| **thoughtful** | adj | kind and always thinking about how you can help other people |
+| **talented** | adj | having a natural ability to do something well |
+
+### Grammar: -ing Forms (Present Participle / Gerund)
+We use the **-ing form** of a verb in three main ways:
+
+#### 1. After Verbs of Liking and Disliking
+*   Follows verbs like: `like`, `love`, `enjoy`, `dislike`, `hate`, `not mind`, `can't stand`.
+    *   *Example*: I love going out with my friends. My mum can't stand doing housework.
+
+#### 2. After Adjective + Preposition Phrases
+*   Follows adjective phrases such as: `good at`, `bad at`, `keen on`, `interested in`, `crazy about`, `afraid of`, `tired of`.
+    *   *Example*: My brother is good at singing. Our cats are afraid of getting wet.
+
+#### 3. As Part of the Sentence Subject
+*   Placed at the beginning of a clause as a gerund subject.
+    *   *Example*: Playing online games is a fun thing to do. Keeping in touch with friends is easy.
+
+---
+
+## Unit 3: Sports & Present Simple vs. Continuous
+
+### Vocabulary: Sports Phrases
+| Sports Phrase | Definition |
+| :--- | :--- |
+| **beat the other team** | to defeat or do better than someone in a competition |
+| **enter a competition or tournament** | to take part in a competition or tournament |
+| **give (someone) the chance** | to provide someone with an opportunity to do something |
+| **have a go at something** | to try something you have not done before |
+| **join a club** | to become a member of a club |
+| **lose a game or match** | if you lose a game or competition, the opposing team or person wins |
+| **miss an opportunity to do something** | to not use an opportunity to do something |
+| **score a goal or point** | to get points in a game or test |
+| **win a prize, medal, game or match** | to get the most points, or to get a prize, in a competition or game |
+
+### Word Formation: Suffixes `-ist`, `-er`, `-or`
+These suffixes are added to base words to indicate a person performing an action or sport:
+*   **-ist**: `canoeist` (travels in a canoe)
+*   **-er**: `climber` (climbs mountains), `footballer` (plays football), `runner` (runs), `sailor` (sails boats), `surfer` (surfs), `swimmer` (swims), `winner` (wins)
+*   **-or**: `competitor` (tries to win a competition), `spectator` (watches an event/sport)
+
+### Grammar: Present Simple vs. Present Continuous
+#### Present Simple
+*   **Form**: 
+    *   *Positive*: `I/You/We/They play/study` \| `He/She/It plays/studies`
+    *   *Negative*: `I/You/We/They don't play/study` \| `He/She/It doesn't play/study`
+    *   *Questions*: `Do I/you/we/they play?` \| `Does he/she/it play?`
+*   **Usage**:
+    *   Regular habits, routines, or general truths (*"Most evenings, we play video games after dinner."*).
+    *   Facts, systems, and scientific processes (*"Water freezes when it gets cold."*).
+    *   **State Verbs**: Verbs describing feelings, thoughts, or states that are not normally used in continuous forms: `believe`, `dislike`, `hate`, `know`, `like`, `love`, `prefer`, `remember`, `think`, `understand`, `want`, `wish`.
+
+#### Present Continuous
+*   **Form**: `am/is/are + verb-ing`
+    *   *Positive*: `I'm watching` \| `He's running` \| `They're sitting`
+    *   *Negative*: `I'm not watching` \| `He isn't running` \| `They aren't sitting`
+    *   *Questions*: `Am I watching?` \| `Is he running?` \| `Are they sitting?`
+*   **Usage**:
+    *   Actions happening exactly at the moment of speaking (*"We're sitting on the train at the moment."*).
+    *   Definite future plans and confirmed arrangements (*"I'm meeting some friends after school."*).
+
+---
+
+## Unit 4: Extreme Weather & Past Simple vs. Used To
+
+### Vocabulary: Extreme Weather
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **blow** | v | (wind) to move and make currents of air |
+| **earthquake** | n | a sudden movement of the Earth’s surface, often causing severe damage |
+| **fall down** | v | to fall onto the ground |
+| **flood** | n | a situation in which water covers an area that is usually dry |
+| **flow** | v | (liquid) to move somewhere in a smooth, continuous way |
+| **lightning** | n | a sudden flash of light in the sky during a storm |
+| **pour** | v | to rain heavily |
+| **rise** | v | to increase in level |
+| **shake** | v | to make quick, short movements from side to side or up and down |
+| **snowstorm** | n | a storm with heavy snowfall |
+| **tornado** | n | an extremely strong wind blowing in a circle that destroys buildings |
+
+### Phrasal Verbs
+*   **blow away**: to be moved or make something move on a current of air
+*   **burn down**: to destroy something (especially a building) completely by fire
+*   **clear up**: (weather) the clouds and rain disappear, revealing clear skies
+*   **come out**: (sun/moon/stars) to appear in the sky
+*   **fall down**: to fall to the ground
+*   **put out**: to extinguish or stop something burning
+
+### Grammar: Past Simple and Used To
+#### Past Simple
+*   **Form**: Regular verbs add `-ed` (*open → opened*). Irregular verbs change completely (*break → broke*, *run → ran*, *think → thought*, *rise → rose*, *put → put*).
+*   **Negatives & Questions**: Formed using `did` / `didn't` + base infinitive.
+    *   *Example*: I didn't open the window. Did she lock the car?
+*   **Verb "to be"**: has two forms: `was/wasn't` (singular) and `were/weren't` (plural).
+*   **Usage**:
+    *   Single completed actions in the past.
+    *   Events that occurred at a specific, defined time.
+    *   Regular past habits or repetitive past actions.
+
+#### Used To
+*   **Form**: `used to + infinitive` (Positive) \| `didn't use to + infinitive` (Negative) \| `Did you use to + infinitive?` (Question)
+*   **Usage**: To describe habits, states, or situations in the past that are no longer true in the present.
+    *   *Example*: We used to live in a small flat. (We don’t live there now).
+
+---
+
+## Unit 5: Verbs for Making Things & Past Continuous Interruption
+
+### Vocabulary: Verbs for Making Things
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **create** | v | to make something happen or exist |
+| **customise** | v | to change something to make it suitable for a particular person or purpose |
+| **decorate** | v | to make something look more attractive by putting things on or around it |
+| **design** | v | to draw or plan something before making it |
+| **fix** | v | to repair something |
+| **mend** | v | to repair something that is broken, torn, or not working correctly |
+| **rebuild** | v | to build something again after it has been damaged |
+| **recycle** | v | to put used paper, glass, plastic, etc. through a process so it can be used again |
+| **sew** | v | to join things together with a needle and thread |
+
+### Grammar: Past Simple and Past Continuous
+#### Past Continuous
+*   **Form**: `was/were + present participle (verb-ing)`
+    *   *Positive*: I was eating / You were sleeping
+    *   *Negative*: I wasn't eating / You weren't sleeping
+    *   *Questions*: Was I eating? / Were you sleeping?
+*   **Usage**:
+    *   To talk about actions and situations that were actively in progress at a specific moment in the past (*"It was raining all night."*).
+    *   To describe background atmosphere or settings within a story (*"We were travelling with some friends..."*).
+    *   **Interrupted Actions**: To show an action in progress (Past Continuous) that is interrupted by a sudden, shorter action (Past Simple).
+        *   *Example*: I **was waiting** for a bus when you **texted**.
+*   **State Verbs Restriction**: State verbs are not used in the past continuous (e.g., use *"I didn't understand it"*, never *"I wasn't understanding it"*).
+
+---
+
+## Unit 6: Health Verbs & Modals (1)
+
+### Vocabulary: Health Verbs
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **ache** | v | to feel continuous dull pain |
+| **beat** | v | (heart) to make regular, rhythmic movements and sounds |
+| **bleed** | v | to have blood flowing out from your body |
+| **blink** | v | to open and close your eyes very quickly |
+| **blow your nose** | pv | to clear your nasal passage by forcing air through it |
+| **breathe** | v | to take air into and out of your lungs |
+| **burn** | v | to be hurt or damaged by fire or heat |
+| **cough** | v | to force air out of your throat with a sudden, sharp sound |
+| **cut** | v | to injure yourself on a sharp object, causing bleeding |
+| **injure** | v | to hurt a physical part of your body |
+| **recover** | v | to become healthy, fit, or happy again after an illness or injury |
+| **yawn** | v | to take a deep breath with your mouth wide open because you are tired or bored |
+
+### Grammar: Modals of Obligation, Necessity, and Advice (1)
+#### 1. must, should, ought to
+*   These modals are helper verbs. Their forms do not change with the subject, and they are always followed by the base infinitive of the main verb (without *to*).
+    *   *Positive*: `must` (strong obligation) \| `should` / `ought to` (advice)
+    *   *Negative*: `mustn't` (prohibition) \| `shouldn't` (negative advice)
+
+#### 2. have to / has to
+*   Unlike other modal verbs, **have to** changes its form depending on the subject tenses and persons.
+    *   *Positive*: `I/You/We/They have to` \| `He/She/It has to`
+    *   *Negative*: `I/You/We/They don't have to` \| `He/She/It doesn't have to`
+    *   *Questions*: `Do you have to?` \| `Does he have to?`
+
+#### Modal Meanings & Comparisons
+| Modal | Meaning | Strength / Context |
+| :--- | :--- | :--- |
+| **must** \| **have to** | Absolute necessity / strong obligation | Rules, laws, or urgent requirements (*"You must rest your leg."*). |
+| **mustn't** | Prohibition / extremely important not to | Against the rules (*"You mustn't use your phone during the exam."*). |
+| **don't have to** | Lack of necessity | It is not required (*"My mother doesn't have to work at weekends."*). |
+| **should** \| **ought to** | Positive advice | It is a good idea (*"You should try to relax before your exam."*). |
+| **shouldn't** | Negative advice | It is a bad idea (*"You shouldn't eat sweets before a meal."*). |
+
+---
+
+## Unit 7: Music & Present Perfect vs. Past Simple
+
+### Vocabulary: Music Terms
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **celebrity** | n | a famous person |
+| **clip** | n | a short portion of a film or television programme |
+| **concert hall** | n | a large building specifically designed for musical performances |
+| **DJ** | n | someone who plays recorded music on the radio or at events |
+| **festival** | n | a series of public performances/events held over several days |
+| **gig** | n | a live performance of pop, rock, or contemporary music |
+| **guitarist** | n | someone who plays the guitar |
+| **live** | adj | a performance done directly in front of an active audience |
+| **lyrics** | n | the words of a song |
+| **music channel** | n | a television channel showing music videos and music-themed programmes |
+| **musician** | n | someone who plays a musical instrument, often as a job |
+| **music video** | n | a short film made to accompany a commercial song |
+| **production** | n | the process of controlling how a recording, film, or play is produced |
+| **sound technician** | n | someone who works with the physical equipment in a recording studio |
+| **studio** | n | a room equipped for recording audio or broadcasting programs |
+
+### Word Families
+*   **achieve** (v) / **achievement** (n)
+*   **advertise** (v) / **advertisement** (n)
+*   **entertain** (v) / **entertainer** (n) / **entertaining** (adj) / **entertainment** (n)
+*   **music** (n) / **musical** (adj) / **musician** (n)
+*   **perform** (v) / **performance** (n) / **performer** (n)
+*   **record** (n) / **record** (v)
+
+### Grammar: Present Perfect and Past Simple
+#### Present Perfect
+*   **Form**: `has/have + past participle`
+*   **Usage**: To describe an action that started in the past but has a direct link or consequence in the present.
+*   **Key Time Adverbs**:
+    *   **just**: Explains something that finished a few moments ago. Placed after *have/has* and before the main verb (*"I've just arrived"*).
+    *   **already**: Explains that an action occurred sooner than expected. Placed after *have/has* or at the end of positive clauses (*"I've already made one recording"*).
+    *   **yet**: Used in negative statements and questions to mean "up to this point". Placed at the very end of the clause (*"I haven't finished yet"*).
+    *   **ever**: Used in questions to mean "at any time in your life up to now". Placed before the main verb (*"Have you ever made a recording?"*).
+
+#### Past Simple vs. Present Perfect Comparison
+*   **Past Simple**: Used for completed actions that started and finished at a defined time in the past (*"We spent hours in the recording studio yesterday."*).
+*   **Present Perfect**: Used when the exact time of the action is unspecified or irrelevant, focusing instead on life experience or current results (*"We've spent hours in the recording studio."*).
+
+---
+
+## Unit 8: Architecture & Comparative/Superlative Adjectives
+
+### Vocabulary: Amazing Architecture
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **brand new** | adj | completely, 100% new |
+| **classic** | adj | typical, traditional, or serving as an outstanding representative |
+| **cosy** | adj | comfortable, warm, and inviting |
+| **fresh** | adj | new, clean, or different from what was previously there |
+| **historic** | adj | important in history or likely to be important in future history |
+| **modern** | adj | relating to the current or present time rather than the past |
+| **original** | adj | special, unique, and interesting because of not being a copy |
+| **spectacular** | adj | extremely beautiful, exciting, or surprising |
+| **traditional** | adj | following long-established customs or cultural habits |
+| **unusual** | adj | different, unexpected, and not ordinary |
+
+### Strong Adjectives and Adverbs
+Adverbs of degree can modify regular or strong adjectives:
+*   **absolutely** (adv): used exclusively with *strong adjectives* to mean "completely" or "very" (e.g., *absolutely ancient*, *absolutely freezing*).
+*   **extremely / incredibly** (adv): used with *regular adjectives* (e.g., *extremely cold*, *incredibly tired*).
+
+#### Base vs. Strong Adjective Pairs
+*   Old → **ancient**
+*   New → **brand new**
+*   Large → **enormous**
+*   Tired → **exhausted**
+*   Cold → **freezing**
+*   Good/Exciting → **spectacular**
+*   Bad/Unpleasant → **terrible**
+
+### Grammar: Comparative and Superlative Adjectives
+#### Adjective Spelling Rules
+1.  **One-syllable**: Add `-er` and `-est` (*new → newer → newest*).
+2.  **Ending in 'e'**: Add `-r` and `-st` (*nice → nicer → nicest*).
+3.  **Vowel + Consonant**: Double the final consonant (*big → bigger → biggest*).
+4.  **Ending in '-y'**: Change `-y` to `-ier` and `-iest` (*tidy → tidier → tidiest*).
+5.  **Multi-syllable**: Use `more` and `the most` (*active → more active → the most active*).
+6.  **Irregular Adjectives**:
+    *   *good → better → the best*
+    *   *bad → worse → the worst*
+    *   *far → further/farther → the furthest/farthest*
+7.  **Compound Adjectives**: Use `more` and `the most` (*user-friendly → more user-friendly*).
+
+#### Comparative Structures
+*   **Superiority**: `comparative adjective + than` (*"Your bike is newer than mine."*)
+*   **Inferiority**:
+    *   `less + adjective + than` (*"The dictionary was less useful than the grammar book."*)
+    *   `not as + adjective + as` (*"My bike isn't as good as yours."*)
+*   **Equality**: `as + adjective + as` (*"My bedroom is as big as my brother's."*)
+
+#### Superlative Structures
+*   Identifies one item as containing the maximum or minimum of a quality among a group: `the + superlative` or `possessive + superlative`.
+    *   *Example*: Rob is the fastest runner. Rob is the school's most successful runner.
+
+---
+
+## Unit 9: Technology & Future Forms
+
+### Vocabulary: Technology Terms
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **charge** | v | to put electricity into an electronic battery |
+| **connection** | n | a link or joint that fastens things together |
+| **display** | n | electronic information shown on a computer or phone screen |
+| **experiments** | n | scientific tests conducted to learn or prove something |
+| **fuel** | n | a substance burned to provide heat, mechanical power, or energy |
+| **invention** | n | a unique machine or process designed for the first time |
+| **plug in** | pv | to connect an electrical device to a power supply |
+| **power** | n | physical energy, usually electricity, used to run appliances |
+| **pump** | n | a piece of equipment used to force liquids or gases to move |
+| **satellite** | n | a machine sent into orbit around Earth to transmit signals |
+
+*   *Note*: Degree modifiers such as **enough**, **too**, **very**, and **not... enough** are used to change adjective intensity (e.g., *too expensive*, *not fast enough*).
+
+### Grammar: Future Forms and Future Continuous
+#### 1. Present Continuous for Plans
+*   Used to discuss highly definite, pre-arranged future schedules or appointments.
+    *   *Example*: Charlie is leaving on Tuesday. I'm meeting my doctor at 4:00 PM.
+
+#### 2. Will
+*   Used for:
+    *   General or subjective future predictions (*"The price of phones will fall."*).
+    *   Spontaneous offers or promises (*"I'll help you set up the equipment."*).
+
+#### 3. Going To
+*   Used for:
+    *   Personal intentions, plans, and decisions (*"We're going to drive to the coast."*).
+    *   Predictions based on current, clear physical evidence (*"Look at those clouds! It is going to rain."*).
+
+#### 4. Future Continuous
+*   **Form**: `will/won't + be + verb-ing`
+    *   *Positive*: I'll be working \| *Negative*: He won't be playing \| *Question*: Will you be living...?
+*   **Usage**: To talk about actions that are certain to be actively in progress at a specific, defined point in the future.
+    *   *Example*: This time next year, I'll be studying at university.
+
+---
+
+## Unit 10: Nature, Wildlife & Conditionals
+
+### Vocabulary: Nature and Wildlife
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **creature** | n | any living animal, bird, or organism (excluding plants) |
+| **crop** | n | a plant (grains, fruits, vegetables) grown in large quantities |
+| **endangered** | adj | species facing a high risk of extinction in the wild |
+| **environment** | n | the natural air, land, and water systems supporting life |
+| **habitat** | n | the natural native environment of an animal or plant |
+| **human** | n | a person (man, woman, or child) |
+| **hunting** | n | the activity of chasing and killing wild animals for sport or food |
+| **jungle** | n | land in tropical areas overgrown with thick, dense vegetation |
+| **landscape** | n | the visible features of an area of countryside or land |
+| **population** | n | the total number of individuals of a species living in an area |
+| **rainforest** | n | a dense forest in a high-rainfall area featuring tall trees |
+
+### Fixed Prepositional Phrases: `at`
+*   **at first**: at the beginning of a situation
+*   **at its best**: at the absolute peak of quality or achievement
+*   **at least**: as much as or more than a specified amount
+*   **at long last**: finally, after a long delay
+*   **at once**: simultaneously or immediately
+*   **at present**: currently, right now
+*   **at risk**: in a dangerous situation where harm is likely
+
+### Grammar: Conditional Sentences & Unless
+#### Zero Conditional
+*   **Form**: `If/When + Present Simple, Present Simple`
+*   **Usage**: To state general truths, scientific facts, or automatic habits.
+    *   *Example*: If you heat ice, it melts. A lioness is dangerous if she has cubs.
+
+#### First Conditional
+*   **Form**: `If + Present Simple, will + base verb`
+*   **Usage**: To describe highly likely, realistic future possibilities.
+    *   *Example*: If the forests disappear, the local weather will change.
+
+#### Second Conditional
+*   **Form**: `If + Past Simple, would + base verb`
+*   **Usage**: To describe hypothetical, imaginary, or highly improbable situations in the present or future.
+    *   *Example*: If I had a garden, I'd grow fruit. (Fact: I don't have a garden).
+
+#### Unless
+*   **Meaning**: Acts as a replacement for "if... not" (`unless` = `if not`).
+    *   *Example*: We wouldn't eat honey **unless** we liked it. (= if we didn't like it)
+
+---
+
+## Unit 11: School & Past Perfect
+
+### Vocabulary: School Terms
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **attend** | v | to go regularly to an institution like a school or church |
+| **boarding school** | n | a residential school where students live and study |
+| **break up** | v | when school terms end and holidays officially begin |
+| **degree** | n | an academic qualification awarded for completing a university course |
+| **do well** | phr | to succeed or perform successfully |
+| **do badly** | phr | to fail or perform unsuccessfully |
+| **education** | n | the systematic process of teaching and learning in schools |
+| **primary** | adj | relating to education of young children (ages 5 to 11) |
+| **qualifications** | n | official skills, certificates, or diplomas needed for a task |
+| **secondary** | adj | relating to education of adolescents (ages 11 to 18) |
+| **undergraduate** | n | a university student studying for their first degree |
+| **Year** | n | the numbered grade or educational stage a child is in |
+
+### Compound School Nouns
+*   **classroom**: a room where academic lessons are conducted
+*   **blackboard / whiteboard**: a flat wall surface used by teachers for writing
+*   **break time**: a short interval of rest during the school day
+*   **bus stop**: a designated waiting point for public buses
+*   **head teacher**: the principal in charge of a school
+*   **homework**: schoolwork assigned to be completed at home
+*   **lunchtime**: the designated period for eating lunch
+*   **school bus**: a bus chartered exclusively for students
+*   **textbook**: an educational manual covering a specific subject
+*   **timetable**: a grid outlining schedule times and locations
+
+### Grammar: Past Perfect
+*   **Form**: `had / hadn't + past participle`
+    *   *Positive*: I had looked / He had written
+    *   *Negative*: I hadn't looked / He hadn't written
+    *   *Questions*: Had he looked? / Had he written?
+*   **Usage**: To talk about a past event or action that occurred **before** another action in the past (which is in the Past Simple). It provides background details or makes chronological order clear.
+    *   *Example*: When John arrived late for his exam, he was upset because the schedule **had changed**.
+
+---
+
+## Unit 12: Travel & Modals (2)
+
+### Vocabulary: Travel List
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **abroad** | adv | in or to a foreign country |
+| **be held up** | phr | to be delayed or stopped |
+| **check in** | pv | to present tickets/baggage at an airport desk to register arrival |
+| **go away** | pv | to leave your home for a trip or holiday |
+| **land** | v | (aircraft) to touch down on the ground at the destination |
+| **reach** | v | to successfully arrive at a destination |
+| **sail** | v | to travel across water in a ship or boat |
+| **set off** | pv | to begin a journey |
+| **tour** | n | a journey visiting several places of interest |
+| **unpack** | v | to remove contents from a suitcase or box |
+
+### Fixed Prepositional Phrases: `on`
+*   **on board**: on an active boat, train, or aircraft
+*   **on display**: shown publicly for people to view
+*   **on foot**: walking rather than using transport
+*   **on my own**: alone, without companion assistance
+*   **on purpose**: intentionally, not by accident
+*   **on sale**: available for purchase in a shop (often at a lower price)
+*   **on time**: punctually, neither early nor late
+
+### Grammar: Modals of Obligation, Necessity, and Advice (2)
+#### Advice
+*   **should / shouldn't**: Used to express personal recommendations, opinions, or what the speaker believes is the right course of action.
+
+#### Obligation and Necessity
+*   **need to**: Used to express what the speaker considers personal, practical importance (not a strict rule/law).
+*   **have to**: Used to express objective necessity resulting from an external rule, code, or law.
+    *   *Example*: You **need to** pack your bag tonight. You **have to** show your passport at the border.
+
+#### Lack of Obligation (Absence of Necessity)
+These phrases mean that an action is **not necessary** (you can do it if you want, but there is no rule/need).
+*   `don't have to + infinitive`
+*   `don't need to + infinitive`
+*   `needn't + infinitive` (Note: **needn't** is a modal and is **never** followed by *to*).
+    *   *Example*: You don't have to pay. \| You don't need to hurry. \| You needn't bring an umbrella.
+
+---
+
+## Unit 13: Social Media & The Passive
+
+### Vocabulary: Social Media Verbs
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **block** | v | to restrict a user's ability to view your page or contact you |
+| **comment** | v | to post a written response underneath an online update |
+| **follow** | v | to subscribe to see all future updates posted by a user |
+| **like** | v | to click a button showing approval of an online post |
+| **post** | v | to publish content on a website or social media platform |
+| **share** | v | to republish someone else's post onto your own feed |
+| **tag** | v | to link a user's account name inside a shared photo or post |
+| **take down** | pv | to remove content from the internet so it can no longer be seen |
+
+### Fixed Prepositional Phrases: `in`
+*   **in advance**: ahead of a scheduled time
+*   **in detail**: fully, including every single element
+*   **in fact**: in reality, truly
+*   **in future**: starting from this point forward
+*   **in general**: usually, or in the vast majority of cases
+*   **in particular**: specifically, especially
+*   **in the end**: finally, after long discussion or thought
+
+### Grammar: The Passive Voice
+*   **Structure**: `subject + verb be + past participle`
+*   **Usage**: The passive shifts the focus from the performer of the action (the agent) to the recipient of the action. It is used when:
+    *   The agent is **unknown** (*"My bag was taken while I was sunbathing."*).
+    *   The agent is **unimportant** (*"My phone was delivered."*).
+    *   We want to **emphasize** the object of the active sentence (*"I was asked to sing!"*).
+
+#### Passive Tense Forms
+| Passive Tense | Form | Example Sentence |
+| :--- | :--- | :--- |
+| **Present Simple Passive** | `is/are + past participle` | Millions of photos **are posted** online daily. |
+| **Past Simple Passive** | `was/were + past participle` | This picture **was drawn** by my grandfather. |
+| **Modal Passive** | `modal + be + past participle` | Tickets **must be booked** in advance. |
+
+*   **The Agent**: If we want to state who performed the action in a passive sentence, we use the preposition **by** (*"I was given presents **by** my friends"*).
+
+---
+
+## Unit 14: Cooking Verbs & Relative Clauses
+
+### Vocabulary: Cooking Verbs
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **bake** | v | to cook food (bread/cakes) with dry heat in an oven |
+| **barbecue** | v | to cook food on a metal rack over an open outdoor fire |
+| **bite** | v | to cut something using your teeth |
+| **boil** | v | to cook food in actively boiling water ($100^\circ\text{C}$) |
+| **burn** | v | to cook food excessively, damaging its flavor and coloring |
+| **freeze** | v | to preserve food by storing it at freezing temperatures |
+| **fry** | v | to cook food in a pan of hot oil or fat |
+| **grill** | v | to cook food on a flat metal structure directly over a fire |
+| **roast** | v | to cook food (meat/vegetables) with dry oven heat or over a fire |
+| **steam** | v | to cook food using the vapor produced by boiling water |
+| **stir** | v | to mix liquids or food with circular movements of a utensil |
+| **taste** | v | to test the flavor of food by placing a small amount in your mouth |
+
+*   *Note*: Cooking verbs can be **transitive** (taking a direct object, e.g., *"fry the onions"*) or **intransitive** (not taking an object, e.g., *"the soup is boiling"*).
+
+### Grammar: Relative Clauses (Defining & Non-Defining)
+Relative clauses are introduced by relative pronouns: `who` (people), `which` (things), `that` (people/things), `whose` (belonging to), and `where` (places).
+
+#### Defining Relative Clauses
+*   Provide **essential** information identifying the specific noun.
+*   **No commas** are used.
+*   The pronoun can be **omitted** if it is the object of the relative clause (*"The cakes [which] my brother makes are good."*).
+*   The pronoun cannot be omitted if it is the subject of the clause (*"The woman **who** runs the café is friendly."*).
+*   **that** can replace *who* or *which*.
+
+#### Non-Defining Relative Clauses
+*   Provide **extra, non-essential** details about a noun.
+*   **Commas must separate** the clause from the rest of the sentence.
+*   The relative pronoun **cannot be omitted**.
+*   **that** can **never** be used to introduce a non-defining relative clause (you must use *who* or *which*).
+    *   *Example*: My brother, **who** is an excellent cook, has written a book. The recipes, **which** he tested, are easy.
+
+---
+
+## Unit 15: Natural World & Articles
+
+### Vocabulary: Artificial and Natural World
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **air conditioning** | n | a mechanical cooling system for a room or vehicle |
+| **bug** | n | a small insect |
+| **facilities** | n | amenities, equipment, or spaces designed for a purpose |
+| **health centre** | n | a community clinic housing several practicing doctors |
+| **historic buildings** | n | old buildings noted for historical significance |
+| **modern architecture** | n | contemporary building design utilizing new technologies |
+| **open spaces** | n | areas of land with no buildings (parks, fields) |
+| **pollution** | n | damage caused to environments by harmful substances |
+| **ruins** | n | the remaining broken structures of ancient collapsed buildings |
+| **season** | n | one of the four weather periods (spring, summer, autumn, winter) |
+| **street light** | n | a lamp mounted on a tall street pole |
+| **valley** | n | low-lying land stretched between mountains or hills |
+| **wildlife** | n | native animals, birds, and organisms in their natural habitat |
+
+### Phrasal Verbs
+*   **catch up with someone**: to meet someone to share recent news after being apart
+*   **end up**: to find oneself in an unexpected final place or situation
+*   **move in**: to begin living in a new home
+*   **move out**: to permanently leave a residential home
+*   **show someone around**: to act as a guide, leading someone through a place
+*   **stay in**: to remain inside your home instead of going out
+
+### Grammar: Articles (a/an, the, zero article)
+#### 1. Indefinite Article: `a / an`
+*   Used with singular countable nouns when mentioned for the **first time** (*"I live in a flat."*).
+*   Used when declaring someone's **job, profession, or role** (*"My mum is a doctor."*).
+
+#### 2. Definite Article: `the`
+*   Used with any noun when mentioned for the **second time** (*"We found a park. The park had tennis courts."*).
+*   Used when there is **only one** of a noun (*"swimming in the sea"*, *"the sun"*).
+*   Used when referring to a **highly specific thing** (*"The school I go to is near."*).
+*   Used with names of **mountain ranges** (*the Andes*), plural **states/countries** (*the USA*, *the UK*), and **deserts, oceans, or rivers** (*the Sahara*, *the Pacific*, *the Amazon*).
+
+#### 3. Zero Article (No Article)
+*   Used with plural countables and uncountable nouns when discussing them in a **general** sense (*"Cheese is nice."* \| *"Volleyball is fun."*).
+*   Used with names of individual cities, countries, continents, single islands, single mountains, and single lakes (*Rome*, *Europe*, *Sicily*, *Mount Fuji*, *Lake Louise*).
+
+---
+
+## Unit 16: Film & Reported Speech (Statements)
+
+### Vocabulary: Film Terms
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **animated** | adj | film made using drawings, models, or CGI that appear to move |
+| **appear** | v | to perform a role in a film, television show, or play |
+| **come out** | pv | (film/album/book) to become publicly available to view/buy |
+| **direct** | v | to instruct actors and coordinate technical film production |
+| **director** | n | the person in charge of directing a movie or play |
+| **musical** | n | a play or film where the story is partly told through song and dance |
+| **performance** | n | the acting, singing, or dancing delivery of an entertainer |
+| **recording** | n | captured sound or moving images stored on electronic media |
+| **role** | n | a specific character part played by an actor |
+| **soundtrack** | n | the musical score and songs recorded for a film |
+
+### Reporting Verbs
+*   **announce** (v): to state something officially or confidently
+*   **demand** (v): to request something firmly, expecting no refusal
+*   **explain** (v): to clarify something by giving reasons or details
+*   **insist** (v): to state or demand something forcefully
+*   **suggest** (v): to offer an idea or plan for consideration
+
+### Grammar: Reported Speech (Statements)
+When reporting what someone said using a past-tense reporting verb (*said*, *told*, *explained*), the tenses within the statement backshift:
+
+#### Tense Shifts in Reported Speech
+| Direct Speech Tense | Reported Speech Tense | Direct Example | Reported Example |
+| :--- | :--- | :--- | :--- |
+| **Present Simple** | **Past Simple** | "I enjoy films." | He said he **enjoyed** films. |
+| **Present Continuous** | **Past Continuous** | "She is acting well." | He said she **was acting** well. |
+| **Past Simple** | **Past Perfect** | "She studied here." | He said she **had studied** there. |
+| **Present Perfect** | **Past Perfect** | "I haven't seen her." | He said he **hadn't seen** her. |
+| **Future (will)** | **would** | "She'll be famous." | He said she **would** be famous. |
+| **Modal (can)** | **could** | "She can sing well." | He said she **could** sing well. |
+
+*   **No Backshift Modals**: Do not change `could`, `would`, `should`, `might`, `used to`, or the `past perfect`.
+*   **Pronoun Shifts**: Pronouns must adjust to match the reporter's context (*"I"* becomes *"he/she"*, etc.).
+
+#### Verb Patterns with Say and Tell
+*   **say**: Does **not** take a personal indirect object (*"He said that he was tired."*).
+*   **tell**: **Must** be followed by a personal indirect object/pronoun (*"He told **us** that he was tired."*).
+*   **insist, suggest, demand**: Can be followed by `that + subject + should + base verb` (*"I suggested that we should watch it again."*).
+
+---
+
+## Unit 17: Communication & Reported Questions
+
+### Vocabulary: Verbs of Communication
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **apologise** | v | to state that you are sorry for a wrongdoing |
+| **complain** | v | to state that something is wrong or unsatisfactory |
+| **disagree** | v | to hold a different opinion on a topic |
+| **joke** | v | to say humorous things, not intending to be serious |
+| **promise** | v | to state with certainty that you will do something |
+| **remind** | v | to make someone remember to perform an action |
+| **warn** | v | to inform someone of potential future danger or trouble |
+| **wonder** | v | to express a desire to know or understand something |
+
+*   *Note*: Adverbs of degree such as **fairly**, **pretty**, **quite**, and **reasonably** are used to modify the intensity of communicative descriptions (e.g., *fairly quite*, *reasonably sure*).
+
+### Grammar: Reported Questions
+Reported questions do **not** use question word order or auxiliary question structures. They are structured as standard statements.
+
+#### Key Structuring Rules
+1.  **Word Order**: Subject + Verb (identical to a positive statement, not a question).
+    *   *Direct*: "What is the time?" → *Reported*: She asked me what the time **was** (not *what was the time*).
+2.  **No Auxiliaries**: The auxiliary verbs `do`, `does`, and `did` are **omitted**.
+    *   *Direct*: "When did you leave?" → *Reported*: He asked when I **had left**.
+3.  **Yes/No Questions**: Use **if** or **whether** to introduce the reported clause.
+    *   *Direct*: "Are you busy?" → *Reported*: She asked **if** I was busy.
+4.  **Wh- Questions**: Keep the original question word (*what*, *when*, *where*, *why*, *which*, *how*).
+    *   *Direct*: "Where is it?" → *Reported*: He asked where it was.
+5.  **Reporting Verbs**: Introduce reported questions using `ask`, `want to know`, or `wonder`.
+    *   *Note*: Only *ask* can be followed directly by a personal noun/pronoun (*"She asked **us** what time it was."*).
+
+---
+
+## Unit 18: Personal Feelings & Causatives (Have Something Done)
+
+### Vocabulary: Personal Feelings and Qualities
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **annoyed** | adj | slightly angry or irritated |
+| **charming** | adj | pleasant, attractive, and likable |
+| **curious** | adj | possessing a strong desire to know or learn |
+| **delighted** | adj | highly pleased or very happy |
+| **lonely** | adj | sad because you are isolated or lack companions |
+| **be mad (about)** | adj | to love someone or something intensely |
+| **nasty** | adj | unkind, malicious, or highly unpleasant |
+| **professional** | adj | demonstrating skilled, careful, and polite attention |
+| **rude** | adj | behaving impolitely, showing bad manners |
+| **shy** | adj | nervous or self-conscious when meeting new people |
+| **stressful** | adj | causing mental worry or stress |
+| **unexpected** | adj | causing surprise because it was not planned or foreseen |
+
+### Prepositions and Conjunctions
+*   **according to** (prep): as stated or reported by an authority source
+*   **because of** (prep): as a direct result of something
+*   **besides** (prep): in addition to, or other than
+*   **despite** (prep): in spite of, used to show contrast
+*   **instead of** (prep): in place of or as a substitute for
+*   **unless** (conj): except under the condition that
+
+### Grammar: Causative (Have Something Done)
+*   **Structure**: `Subject + have (any tense) + object + past participle`
+*   **Usage**: To discuss a service where someone else performs an action/task for us.
+    *   *Active*: The hairdresser cut my hair.
+    *   *Causative*: I **had my hair cut** yesterday.
+*   **Get**: We can substitute *have* with **get** in informal spoken English (*"I'll get my bike fixed."*).
+*   **The Agent**: We do not mention who did the action unless necessary. If included, use **by** (*"I had my portrait painted **by** an artist."*).
+
+---
+
+## Unit 19: Work Tasks & Clauses
+
+### Vocabulary: Work Tasks
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **arrange** | v | to make necessary plans and preparations for an event |
+| **calculate** | v | to determine a mathematical sum or value |
+| **deal with** | pv | to take direct action to achieve or solve a problem |
+| **deliver** | v | to transport and drop off goods to a recipient |
+| **develop** | v | to design, iterate, and make a brand new product |
+| **handle** | v | to take charge of or deal with a situation |
+| **install** | v | to load software onto a computer or set up machinery |
+| **manage** | v | to be in authoritative control of a shop, office, or team |
+| **organise** | v | to plan or arrange an activity systematically |
+| **produce** | v | to grow, manufacture, or make something |
+| **run** | v | to control, organize, and operate an organization or business |
+| **update** | v | to add the newest information to a document or file |
+
+*   *Usage Note*: We use **as** to indicate a real role/job (*"He works as a builder"*), whereas we use **like** to make physical or behavioral comparisons (*"He climbs like a monkey"*).
+
+### Grammar: Clauses of Contrast, Purpose, and Reason
+We use conjunctions to join clauses together, stating contrast, purpose, or reason:
+
+#### 1. Contrast Clauses (although, whereas, while)
+*   **although**: Used to join two contrasting facts. Can go in the middle or at the start (*"Although it was hard work, I enjoyed it."*).
+*   **whereas**: Used to contrast two opposite ideas. Placed in the middle or start (*"I prefer to wake up early, whereas my friends sleep late."*).
+*   **while**: Typically placed at the start of a sentence to show contrast (*"While I don't run often, I know it is healthy."*).
+
+#### 2. Purpose Clauses (so that, in order to)
+*   **in order to**: Followed directly by a base verb infinitive (*"I got a job in order to save money."*).
+*   **so that**: Followed by a subject/object clause (*"I got a job so that I could save money."*).
+
+#### 3. Reason Clauses (because, as)
+*   **because**: Explains the cause or reason (*"I left because it was late."*).
+*   **as**: Carries the identical meaning of *because* (*"I walked to work as it was a fine morning."*).
+
+---
+
+## Unit 20: Hopes/Dreams & Verbs with Two Objects
+
+### Vocabulary: Hopes and Dreams
+| Vocabulary Word | Part of Speech | Definition |
+| :--- | :--- | :--- |
+| **achieve** | v | to succeed in completing something good through hard work |
+| **admire** | v | to respect or look up to someone |
+| **aim** | v | to set a goal or intend to achieve something |
+| **choose** | v | to select or decide on a course of action |
+| **dream** | v | to imagine or wish for something you want to happen |
+| **encourage** | v | to inspire or support someone to take action |
+| **imagine** | v | to create a visual picture or concept in your mind |
+| **try your best** | pv | to make the greatest personal effort possible |
+
+### Phrasal Verbs
+*   **believe in**: to have trust in the truth, value, or capability of something
+*   **depend on**: to be influenced, determined, or supported by someone/something
+*   **go for**: to actively try to achieve a goal
+*   **get into**: to succeed in being selected or admitted into an organization/school
+*   **join in**: to actively participate in a group activity
+*   **keep on**: to persistently continue doing an action
+*   **miss out**: to fail to experience something enjoyable that others are doing
+*   **work out**: to solve or understand a problem after careful thought
+
+### Grammar: Verbs with Two Objects
+Many active verbs can have **two objects**: a **direct object** (usually a thing) and an **indirect object** (usually a person).
+Verbs that take two objects include: `bring`, `buy`, `cook`, `choose`, `fetch`, `give`, `lend`, `make`, `offer`, `owe`, `pay`, `send`, `show`, `take`, `teach`, `tell`, `throw`, `write`.
+
+There are two primary ways to order these objects:
+
+#### Pattern A: Direct Object First
+If the direct object (the thing) is placed first, you must use the prepositions **to** or **for** before the indirect object (the person).
+*   **Structure**: `Subject + Verb + Direct Object + to / for + Indirect Object`
+    *   *Example (to)*: I sent **a text** to **my aunt**.
+    *   *Example (for)*: I bought **flowers** for **my mum**.
+
+#### Pattern B: Indirect Object First
+If the indirect object (the person) is placed first, do **not** use *to* or *for*.
+*   **Structure**: `Subject + Verb + Indirect Object + Direct Object`
+    *   *Example*: I sent **my aunt** **a text**.
+    *   *Example*: I bought **my mum** **flowers**.

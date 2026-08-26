@@ -1,0 +1,44 @@
+/* == Diagnostics screens — additions to paper.css ========================
+   Everything else on these artboards is paper.css verbatim. These are the
+   only new rules the diagnostics screens need, built from the same tokens.
+   ====================================================================== */
+
+/* department bar: the pages inside the current section of the app */
+.subbar{background:var(--paper)}
+.subbar-in{max-width:1180px;margin:0 auto;padding:0 40px;display:flex;gap:24px;align-items:center;
+  border-bottom:1px solid var(--rule)}
+.subbar a{font:600 10px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+  text-decoration:none;border-bottom:2px solid transparent;padding:12px 0 10px}
+.subbar a:hover{color:var(--ink)}
+.subbar a.on{color:var(--ink);border-bottom-color:var(--ink)}
+.subbar .note{margin-left:auto;font:400 10.5px/1 var(--mono);color:var(--ink-3);letter-spacing:.04em}
+
+/* the paper register: table.reg with a recordings cell and an action cell */
+.reg .clips{font:500 11.5px/1.55 var(--mono);color:var(--ink-2);white-space:nowrap}
+.reg .clips em{display:block;font:italic 400 11.5px/1.5 var(--serif);color:var(--ink-3);margin-top:2px}
+.reg .ttl{font:400 13px/1.45 var(--sans)}
+.reg .ttl em{display:block;font:italic 400 12px/1.4 var(--serif);color:var(--ink-3);margin-top:2px}
+.reg td.act{text-align:right;white-space:nowrap;padding-right:0}
+.reg td.act .btn{margin-left:9px}
+
+/* pack manifest, sits in the examiner's margin */
+.pack{list-style:none;margin:0;padding:0}
+.pack li{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px dotted var(--rule)}
+.pack li:last-child{border-bottom:0}
+.pack .f{font:500 11.5px/1.6 var(--mono);color:var(--ink)}
+.pack .z{font:600 9px/1.6 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-left:auto}
+
+/* an imported picture-option plate, shown in place of the real image */
+.plate{border:1px solid var(--rule);background:var(--paper-2);height:118px;margin-top:12px;
+  display:flex;align-items:center;justify-content:center}
+.plate span{font:400 10.5px/1 var(--mono);color:var(--ink-3);letter-spacing:.05em}
+
+/* variant chips in the issue register */
+.vset{display:flex;gap:7px}
+.vchip{width:30px;height:26px;border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;
+  font:600 11px/1 var(--mono);color:var(--ink-3)}
+.vchip.done{border-color:var(--seal);color:var(--seal);background:var(--seal-wash)}
+
+/* specimen sheet labels, Shell artboard only */
+.spec{font:600 9px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);
+  margin:0 0 12px;padding-bottom:7px;border-bottom:1px solid var(--rule)}

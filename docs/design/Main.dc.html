@@ -1,0 +1,535 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+/* == Examinations Office =================================================
+   A visual language borrowed from printed examination stationery:
+   warm paper stock, blue-black ink, hairline rules, a marker's red.
+   No cards, no radii, no shadows, no gradients.
+   ====================================================================== */
+
+:root{
+  --paper:      oklch(0.972 0.010 84);
+  --paper-2:    oklch(0.947 0.014 84);
+  --paper-3:    oklch(0.914 0.018 84);
+  --ink:        oklch(0.215 0.018 258);
+  --ink-2:      oklch(0.435 0.016 258);
+  --ink-3:      oklch(0.618 0.014 258);
+  --rule:       oklch(0.818 0.016 84);
+  --stamp:      oklch(0.50 0.13 27);
+  --seal:       oklch(0.46 0.10 152);
+  --stamp-wash: oklch(0.947 0.028 27);
+  --seal-wash:  oklch(0.947 0.024 152);
+  --serif:"Libre Caslon Text", Georgia, "Times New Roman", serif;
+  --sans:"Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono:"IBM Plex Mono", "Courier New", ui-monospace, monospace;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--paper); background-image:var(--grain);
+  color:var(--ink); font:400 14px/1.55 var(--sans);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+a{color:var(--stamp);text-decoration:none;border-bottom:1px solid oklch(0.50 0.13 27 / 0.35)}
+a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+h1,h2,h3,p{text-wrap:pretty}
+
+/* -- masthead ---------------------------------------------------------- */
+.mast{border-bottom:2px solid var(--ink);background:var(--paper-2)}
+.mast-in{max-width:1180px;margin:0 auto;padding:17px 40px 13px;display:flex;align-items:flex-end;gap:26px}
+.mark{flex:none;display:block}
+.wordmark{font:400 20px/1 var(--serif);letter-spacing:.004em;color:var(--ink)}
+.wordmark .sm{display:block;font:500 10px/1 var(--mono);letter-spacing:.24em;color:var(--ink-3);margin-top:8px}
+.mast nav{margin-left:auto;display:flex;gap:24px;align-items:center;padding-bottom:2px}
+.mast nav a{font:600 10.5px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);
+  text-decoration:none;border-bottom:2px solid transparent;padding-bottom:7px}
+.mast nav a:hover{color:var(--ink);border-bottom-color:transparent}
+.mast nav a.on{color:var(--ink);border-bottom-color:var(--stamp)}
+.mast .who{font:500 10px/1 var(--mono);letter-spacing:.1em;color:var(--ink-3);
+  border-left:1px solid var(--rule);padding:3px 0 3px 24px}
+.hair{height:0;border-top:1px solid var(--ink);margin-top:3px}
+
+/* -- page furniture ---------------------------------------------------- */
+.sheet{max-width:1180px;margin:0 auto;padding:34px 40px 60px}
+.dochead{display:flex;align-items:flex-start;gap:36px;padding-bottom:26px;border-bottom:1px solid var(--rule)}
+.eyebrow{font:600 10px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--stamp);margin:0}
+h1.doc{font:400 34px/1.08 var(--serif);margin:11px 0 0;letter-spacing:-.006em}
+.sub{font:400 14.5px/1.62 var(--serif);color:var(--ink-2);max-width:60ch;margin:13px 0 0}
+.ref{margin-left:auto;flex:none;border:1px solid var(--ink);padding:9px 13px 10px;text-align:right;background:var(--paper)}
+.ref b{display:block;font:600 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+.ref span{font:500 12px/1.45 var(--mono);letter-spacing:.02em;display:block}
+
+/* section rule: NN  LABEL ---------------------------------- note */
+.sec{display:flex;align-items:center;gap:14px;margin:36px 0 14px}
+.sec .idx{font:500 11px/1 var(--mono);color:var(--stamp)}
+.sec h2{font:600 10.5px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;margin:0;white-space:nowrap}
+.sec .line{flex:1;height:0;border-top:1px solid var(--rule)}
+.sec .note{font:400 11px/1 var(--mono);color:var(--ink-3);white-space:nowrap}
+
+/* -- controls ---------------------------------------------------------- */
+.flabel{display:block;font:600 10px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);margin-bottom:9px}
+.inp{width:100%;height:46px;background:var(--paper-2);border:0;border-bottom:1.5px solid var(--ink);
+  padding:0 12px;font:500 15px/1 var(--mono);color:var(--ink);appearance:none}
+.inp:focus{outline:0;border-bottom:2px solid var(--stamp);background:var(--stamp-wash)}
+select.inp{font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:.02em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:11px;min-height:46px;padding:0 26px;
+  background:var(--ink);color:var(--paper);border:1.5px solid var(--ink);border-radius:0;
+  font:600 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;cursor:pointer}
+.btn:hover{background:var(--stamp);border-color:var(--stamp);color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.sm{min-height:38px;padding:0 16px;font-size:10px;letter-spacing:.16em}
+
+/* -- stamps and tallies ------------------------------------------------ */
+.stamp{display:inline-block;border:1.5px solid var(--stamp);color:var(--stamp);padding:4px 9px;
+  font:600 10px/1.25 var(--mono);letter-spacing:.18em;text-transform:uppercase}
+.stamp.ok{border-color:var(--seal);color:var(--seal)}
+.stamp.mute{border-color:var(--ink-3);color:var(--ink-3)}
+.tally{list-style:none;margin:0;padding:0}
+.tally li{display:flex;align-items:baseline;gap:9px;padding:8px 0;border-bottom:1px solid var(--rule)}
+.tally li:last-child{border-bottom:0}
+.tally .k{font:400 12.5px/1.4 var(--sans);color:var(--ink-2)}
+.tally .dots{flex:1;height:0;border-bottom:1px dotted var(--ink-3);position:relative;top:-4px}
+.tally .n{font:500 12.5px/1.4 var(--mono);color:var(--ink)}
+.tally .n.zero{color:var(--ink-3)}
+.tally .tot{border-top:2px solid var(--ink);border-bottom:0;margin-top:4px;padding-top:11px}
+.tally .tot .k{font:600 10px/1.4 var(--sans);color:var(--ink);text-transform:uppercase;letter-spacing:.18em}
+
+/* -- register table ---------------------------------------------------- */
+table.reg{width:100%;border-collapse:collapse}
+.reg th{font:600 10px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);
+  text-align:left;padding:0 10px 10px;border-bottom:2px solid var(--ink)}
+.reg td{padding:11px 10px;border-bottom:1px solid var(--rule);vertical-align:baseline;font-size:13px}
+.reg tbody tr:hover td{background:var(--paper-2)}
+.reg .num{font:500 12.5px/1.4 var(--mono);text-align:right;white-space:nowrap}
+.reg .u{font:600 13px/1.4 var(--mono);color:var(--ink);width:52px}
+.reg tr.off td{color:var(--ink-3)}
+.reg .bar{display:inline-block;height:9px;background:var(--ink);vertical-align:middle}
+
+/* -- OMR unit sheet ---------------------------------------------------- */
+.omr{border-top:1px solid var(--ink);border-bottom:2px solid var(--ink)}
+.omr-grid{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr))}
+.omr-grid > *:nth-child(odd){border-right:1px solid var(--rule)}
+.unit{display:flex;gap:13px;align-items:flex-start;padding:11px 14px;border-bottom:1px solid var(--rule);cursor:pointer}
+.unit:hover{background:var(--paper-2)}
+.unit.on{background:var(--paper-3)}
+.bub{width:15px;height:15px;border:1.5px solid var(--ink);border-radius:50%;flex:none;margin-top:2px;background:transparent}
+.unit.on .bub{background:var(--ink)}
+.unit.off .bub{border-color:var(--ink-3);border-style:dashed}
+.unit .code{font:600 11px/1.5 var(--mono);color:var(--ink-2);flex:none;width:46px;letter-spacing:.02em}
+.unit .t{flex:1;font:400 12.5px/1.45 var(--sans);color:var(--ink)}
+.unit .t em{display:block;font:italic 400 12px/1.4 var(--serif);color:var(--ink-3);margin-top:2px}
+.unit .c{font:500 11px/1.5 var(--mono);color:var(--ink-3);flex:none;text-align:right;width:44px}
+.unit.off{cursor:not-allowed}
+.unit.off .t,.unit.off .code{color:var(--ink-3)}
+.unit.off .t{text-decoration:line-through;text-decoration-color:var(--rule)}
+
+/* -- examiner's margin ------------------------------------------------- */
+.grid2{display:grid;grid-template-columns:1fr 292px;gap:44px;align-items:start;margin-top:10px}
+.margin-col{border-left:1px solid var(--ink);padding-left:24px}
+.margin-col h3{font:600 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;margin:0 0 14px;color:var(--ink)}
+.margin-col .blk{margin-top:34px}
+.fine{font:400 11.5px/1.55 var(--serif);color:var(--ink-3);margin:12px 0 0}
+
+/* -- notices ----------------------------------------------------------- */
+.notice{display:flex;gap:14px;align-items:baseline;border-top:2px solid var(--stamp);
+  border-bottom:1px solid var(--rule);background:var(--stamp-wash);padding:11px 16px;margin-bottom:10px;font-size:13px}
+.notice b{font:600 10px/1.6 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--stamp);flex:none}
+.notice.ok{border-top-color:var(--seal);background:var(--seal-wash)}
+.notice.ok b{color:var(--seal)}
+
+/* -- question list, screen preview ------------------------------------- */
+.actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);padding:20px 0;margin-top:26px}
+.vhead{display:flex;align-items:baseline;gap:16px;margin:40px 0 4px}
+.vhead h2{font:400 24px/1 var(--serif);margin:0}
+.vhead .line{flex:1;height:0;border-top:2px solid var(--ink);position:relative;top:-4px}
+.qcols{display:grid;grid-template-columns:44px 1fr 152px;gap:0 20px;
+  font:600 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);
+  padding:14px 0 8px;border-bottom:1px solid var(--ink)}
+.qcols span:last-child{text-align:right}
+.q{display:grid;grid-template-columns:44px 1fr 152px;gap:0 20px;padding:16px 0;border-bottom:1px solid var(--rule)}
+.q:hover{background:var(--paper-2)}
+.qn{font:500 12px/1.75 var(--mono);color:var(--ink-3)}
+.qinstr{font:italic 400 12.5px/1.5 var(--serif);color:var(--ink-3);margin:0 0 7px}
+.qprompt{font:400 14.5px/1.55 var(--serif);color:var(--ink);margin:0}
+.qopts{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:7px 26px;margin-top:11px}
+.qopt{display:flex;gap:10px;align-items:baseline;font:400 13px/1.5 var(--sans);color:var(--ink-2)}
+.qopt i{font:600 10px/1 var(--mono);font-style:normal;border:1px solid var(--rule);
+  width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;
+  flex:none;color:var(--ink-3);position:relative;top:2px}
+.qopt.right i{border-color:var(--stamp);color:var(--paper);background:var(--stamp)}
+.qopt.right{color:var(--ink)}
+.qans{font:500 12px/1.75 var(--mono);color:var(--stamp);text-align:right;
+  border-left:1px solid var(--rule);padding-left:16px}
+.qmatch{width:100%;max-width:580px;border-collapse:collapse;margin-top:11px}
+.qmatch td{border:1px solid var(--rule);padding:7px 11px;font:400 12.5px/1.45 var(--sans)}
+.qmatch td:first-child{width:36%;font-weight:600;font-family:var(--mono);font-size:11.5px}
+.cont{font:500 10px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);
+  padding:16px 0;text-align:center;border-bottom:1px solid var(--rule)}
+
+/* == Django wiring ======================================================
+   Selectors that reach widgets Django renders without classes.
+   ====================================================================== */
+
+/* form widgets: Django renders these bare, so match on type */
+input[type=text],input[type=number],input[type=password],select,textarea{
+  width:100%;height:46px;background:var(--paper-2);border:0;border-bottom:1.5px solid var(--ink);
+  padding:0 12px;font:500 15px/1 var(--mono);color:var(--ink);appearance:none;border-radius:0}
+select{font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:.02em}
+input[type=text]:focus,input[type=number]:focus,input[type=password]:focus,select:focus{
+  outline:0;border-bottom:2px solid var(--stamp);background:var(--stamp-wash)}
+
+/* checkboxes are square ink boxes; the unit picker overrides them below */
+input[type=checkbox]{appearance:none;width:16px;height:16px;border:1.5px solid var(--ink);
+  background:var(--paper);cursor:pointer;flex:none;border-radius:0;vertical-align:-3px;margin:0 4px 0 0}
+input[type=checkbox]:checked{background:var(--ink)}
+input[type=checkbox]:focus-visible{outline:2px solid var(--stamp);outline-offset:2px}
+
+/* the unit picker: the checkbox itself is the OMR bubble */
+.unit input[type=checkbox]{appearance:none;width:15px;height:15px;border:1.5px solid var(--ink);
+  border-radius:50%;flex:none;margin:2px 0 0;padding:0;height:15px;background:transparent;cursor:pointer}
+.unit input[type=checkbox]:checked{background:var(--ink)}
+.unit input[type=checkbox]:disabled{border-color:var(--ink-3);border-style:dashed;cursor:not-allowed}
+.unit input[type=checkbox]:focus-visible{outline:2px solid var(--stamp);outline-offset:2px}
+.unit:has(input:checked){background:var(--paper-3)}
+.unit:has(input:disabled){cursor:not-allowed}
+.unit:has(input:disabled) .t,.unit:has(input:disabled) .code,.unit:has(input:disabled) .c{color:var(--ink-3)}
+.unit:has(input:disabled) .t{text-decoration:line-through;text-decoration-color:var(--rule)}
+
+/* optional question-mix panel */
+details.mix{border-bottom:1px solid var(--rule);padding-bottom:16px}
+details.mix summary{list-style:none;display:flex;gap:14px;align-items:baseline;cursor:pointer;
+  font:600 11px/1.5 var(--sans);letter-spacing:.16em;text-transform:uppercase}
+details.mix summary::-webkit-details-marker{display:none}
+details.mix summary::before{content:"+";font:600 13px/1 var(--mono);color:var(--stamp);
+  border:1.5px solid var(--stamp);padding:4px 8px;flex:none}
+details.mix[open] summary::before{content:"\2212"}
+details.mix summary .note{margin-left:auto;font:400 11px/1.5 var(--mono);
+  color:var(--ink-3);letter-spacing:0;text-transform:none}
+.mixgrid{display:grid;grid-template-columns:repeat(auto-fill, minmax(190px, 1fr));gap:20px;margin-top:22px}
+
+.errorlist{list-style:none;margin:10px 0 0;padding:0}
+.errorlist li{font:600 11px/1.6 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--stamp)}
+
+/* Django message tags map onto the notice band */
+.notice.success{border-top-color:var(--seal);background:var(--seal-wash)}
+.notice.success b{color:var(--seal)}
+.notice.debug,.notice.info{border-top-color:var(--ink);background:var(--paper-2)}
+.notice.debug b,.notice.info b{color:var(--ink-2)}
+
+@media (max-width: 980px){
+  .mast-in{flex-wrap:wrap;align-items:flex-start;gap:14px}
+  .mast nav{margin-left:0;width:100%;gap:20px;flex-wrap:wrap;
+    border-top:1px solid var(--rule);padding:12px 0 0}
+  .mast nav a{padding-bottom:0}
+  .mast .who{border-left:0;padding:0;margin-left:auto}
+  .grid2{grid-template-columns:1fr;gap:34px}
+  .margin-col{border-left:0;border-top:2px solid var(--ink);padding:24px 0 0}
+  .omr-grid{grid-template-columns:1fr}
+  .omr-grid > *:nth-child(odd){border-right:0}
+  .q,.qcols{grid-template-columns:34px 1fr;gap:0 14px}
+  .qans{grid-column:2;text-align:left;border-left:0;padding:8px 0 0;border-top:1px solid var(--rule);margin-top:10px}
+  .qcols span:last-child{display:none}
+}
+@media (max-width: 720px){
+  .sheet,.mast-in{padding-left:20px;padding-right:20px}
+  .dochead{flex-direction:column;gap:20px}
+  .ref{margin-left:0;text-align:left}
+  h1.doc{font-size:28px}
+}
+
+  </style>
+</helmet>
+<div class="mast">
+    <div class="mast-in">
+      <svg class="mark" width="30" height="34" viewBox="0 0 30 34" fill="none" style="color: var(--ink)" aria-hidden="true">
+        <rect x="1" y="1" width="28" height="32" stroke="currentColor" stroke-width="1.5"></rect>
+        <path d="M7 9h9M7 15h9M7 21h9M7 27h9" stroke="currentColor" stroke-width="1.5"></path>
+        <circle cx="23" cy="9" r="2.6" fill="currentColor"></circle>
+        <circle cx="23" cy="15" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+        <circle cx="23" cy="21" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+        <circle cx="23" cy="27" r="2.6" fill="currentColor"></circle>
+      </svg>
+      <span class="wordmark">English Test Generator<span class="sm">ITEM BANK &#183; ASSEMBLY &#183; EXPORT</span></span>
+      <nav>
+        <a href="#" class="on">Test builder</a>
+        <a href="#">Bank coverage</a>
+        <a href="#">Admin</a>
+        <span class="who">M.ANNAHS</span>
+        <a href="#" class="btn ghost sm" style="border-color: var(--rule)">Log out</a>
+      </nav>
+    </div>
+  </div>
+  <div class="hair"></div>
+
+<div class="sheet">
+
+  <div class="dochead">
+    <div>
+      <p class="eyebrow">Assembly</p>
+      <h1 class="doc">Test builder</h1>
+      <p class="sub">Shade the units you want drawn from, set the length, and generate as many tagged
+        variants as you need. Sampling runs against approved items only, on this machine, and never
+        calls an external service.</p>
+    </div>
+    <div class="ref">
+      <b>This paper</b>
+      <span>GRADE 10</span>
+      <span>12 Q &#215; 4 VARIANTS</span>
+      <span>4 UNITS SHADED</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div>
+
+      <div class="sec">
+        <span class="idx">01</span>
+        <h2>Specification</h2>
+        <span class="line"></span>
+      </div>
+
+      <div style="display: flex; gap: 26px">
+        <div style="flex: 1 1 240px">
+          <span class="flabel">Grade</span>
+          <select class="inp">
+            <option>Grade 9</option>
+            <option selected>Grade 10</option>
+            <option>Grade 11</option>
+          </select>
+        </div>
+        <div style="flex: 0 1 170px">
+          <span class="flabel">Questions per test</span>
+          <input class="inp" type="text" value="12">
+        </div>
+        <div style="flex: 0 1 170px">
+          <span class="flabel">Variants</span>
+          <input class="inp" type="text" value="4">
+        </div>
+      </div>
+
+      <div class="sec">
+        <span class="idx">02</span>
+        <h2>Units</h2>
+        <span class="line"></span>
+        <span class="note">SHADE TO INCLUDE</span>
+      </div>
+
+      <p style="font: italic 400 13px/1.6 var(--serif); color: var(--ink-2); margin: 0 0 14px">
+        Units with no approved items yet are struck through and cannot be shaded &#8212;
+        their banks are still waiting on the offline pipeline.
+      </p>
+
+      <div class="omr">
+        <div class="omr-grid">
+
+          <label class="unit on">
+            <span class="bub"></span>
+            <span class="code">U 01</span>
+            <span class="t">Present Simple and Continuous<em>Describing People</em></span>
+            <span class="c">40</span>
+          </label>
+          <label class="unit on">
+            <span class="bub"></span>
+            <span class="code">U 02</span>
+            <span class="t">Past Simple (Regular &amp; Irregular)<em>Clothes Adjectives</em></span>
+            <span class="c">35</span>
+          </label>
+
+          <label class="unit on">
+            <span class="bub"></span>
+            <span class="code">U 03</span>
+            <span class="t">Comparatives and Superlatives<em>Life Events</em></span>
+            <span class="c">18</span>
+          </label>
+          <label class="unit on">
+            <span class="bub"></span>
+            <span class="code">U 04</span>
+            <span class="t">Past Continuous<em>Sports</em></span>
+            <span class="c">18</span>
+          </label>
+
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 05</span>
+            <span class="t">Past Simple and Continuous Combined<em>Crimes and Criminals</em></span>
+            <span class="c">19</span>
+          </label>
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 06</span>
+            <span class="t">Quantifiers<em>City Problems</em></span>
+            <span class="c">22</span>
+          </label>
+
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 07</span>
+            <span class="t">Have To, Must, and Should<em>Verbs of Collocation</em></span>
+            <span class="c">22</span>
+          </label>
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 08</span>
+            <span class="t">Future (Plans, Arrangements &amp; Intentions)<em>International Travel</em></span>
+            <span class="c">22</span>
+          </label>
+
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 09</span>
+            <span class="t">Present Perfect<em>Money and Shopping</em></span>
+            <span class="c">7</span>
+          </label>
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 10</span>
+            <span class="t">Present Perfect vs. Past Simple<em>Food and Drink Adjectives</em></span>
+            <span class="c">15</span>
+          </label>
+
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 11</span>
+            <span class="t">Future: Will vs. Be Going To<em>Body and Health</em></span>
+            <span class="c">42</span>
+          </label>
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 12</span>
+            <span class="t">Modals of Probability<em>Animals</em></span>
+            <span class="c">18</span>
+          </label>
+
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 13</span>
+            <span class="t">Just, Already, and Yet<em>Moods, Feelings</em></span>
+            <span class="c">13</span>
+          </label>
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 14</span>
+            <span class="t">Relative Clauses<em>TV, Film Genres</em></span>
+            <span class="c">24</span>
+          </label>
+
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 15</span>
+            <span class="t">Present Simple Passive<em>Computer Phrases</em></span>
+            <span class="c">20</span>
+          </label>
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 16</span>
+            <span class="t">Conditionals (Zero &amp; First)<em>Science Experiments</em></span>
+            <span class="c">19</span>
+          </label>
+
+          <label class="unit off">
+            <span class="bub"></span>
+            <span class="code">U 17</span>
+            <span class="t">Reported Commands<em>No approved items yet</em></span>
+            <span class="c">0</span>
+          </label>
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 18</span>
+            <span class="t">Second Conditional<em>Arts, Adjective Suffixes</em></span>
+            <span class="c">41</span>
+          </label>
+
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 19</span>
+            <span class="t">Reported Speech<em>Reading Materials</em></span>
+            <span class="c">14</span>
+          </label>
+          <label class="unit">
+            <span class="bub"></span>
+            <span class="code">U 20</span>
+            <span class="t">Past Simple Passive<em>Collocations of Thinking</em></span>
+            <span class="c">9</span>
+          </label>
+
+        </div>
+      </div>
+
+      <div class="sec">
+        <span class="idx">03</span>
+        <h2>Question mix</h2>
+        <span class="line"></span>
+        <span class="note">OPTIONAL</span>
+      </div>
+
+      <div style="display: flex; gap: 14px; align-items: baseline; border-bottom: 1px solid var(--rule); padding-bottom: 14px">
+        <span style="font: 600 13px/1 var(--mono); color: var(--stamp); border: 1.5px solid var(--stamp); padding: 4px 8px">+</span>
+        <span style="font: 600 11px/1.5 var(--sans); letter-spacing: .16em; text-transform: uppercase">Customise the question mix</span>
+        <span style="flex: 1"></span>
+        <span style="font: 400 11px/1.5 var(--mono); color: var(--ink-3)">WEIGHTED DEFAULT IN USE</span>
+      </div>
+      <p style="font: italic 400 13px/1.6 var(--serif); color: var(--ink-2); margin: 12px 0 0">
+        These are relative weights, not counts. The default favours production types &#8212; gap-fill,
+        word formation, transformation, error correction &#8212; over recognition types.
+      </p>
+
+      <div style="border-top: 2px solid var(--ink); margin-top: 34px; padding-top: 22px; display: flex; align-items: center; gap: 22px">
+        <button class="btn" type="button">Generate tests</button>
+        <span style="font: 400 11.5px/1.6 var(--mono); color: var(--ink-3)">
+          48 QUESTION SLOTS<br>111 APPROVED ITEMS AVAILABLE
+        </span>
+      </div>
+
+    </div>
+
+    <div class="margin-col">
+      <h3>Bank &#183; units 01&#8211;04</h3>
+      <ul class="tally">
+        <li><span class="k">Gap-fill (contextual)</span><span class="dots"></span><span class="n zero">&#8212;</span></li>
+        <li><span class="k">Word formation</span><span class="dots"></span><span class="n">4</span></li>
+        <li><span class="k">Key word transformation</span><span class="dots"></span><span class="n zero">&#8212;</span></li>
+        <li><span class="k">Error correction</span><span class="dots"></span><span class="n zero">&#8212;</span></li>
+        <li><span class="k">Matching</span><span class="dots"></span><span class="n">17</span></li>
+        <li><span class="k">Multiple choice</span><span class="dots"></span><span class="n">90</span></li>
+        <li class="tot"><span class="k">Total approved</span><span class="dots"></span><span class="n">111</span></li>
+      </ul>
+      <p class="fine">Types showing no count are produced by the offline pipeline and imported.
+        The running app never generates content itself.</p>
+
+      <div class="blk">
+        <h3>Recent batches</h3>
+        <ul class="tally">
+          <li>
+            <span class="k"><a href="#" style="font: 600 12.5px/1.4 var(--mono)">#0002</a></span>
+            <span class="dots"></span>
+            <span class="n" style="color: var(--ink-3)">G10 &#183; 4 VAR</span>
+          </li>
+        </ul>
+        <p class="fine">Batches are kept per teacher. Nothing is deleted &#8212; an old batch can be
+          reprinted exactly as it was first generated.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1280,"height":1490}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

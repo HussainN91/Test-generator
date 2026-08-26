@@ -1,0 +1,24 @@
+.venv/
+db.sqlite3
+db.sqlite3-*
+staticfiles/
+__pycache__/
+*.pyc
+*.docx
+bank-export*.json
+.env
+
+# Client's real diagnostic-test content (audio, images) - not app code,
+# not for GitHub. The server gets this via a separate file copy, not git.
+media/
+
+# SSH keys - never belong in the repo, regardless of who pushes.
+key.txt
+key.txt.pub
+Key.txt
+Key.txt.pub
+*.pem
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub

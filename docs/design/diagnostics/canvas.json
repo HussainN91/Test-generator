@@ -1,0 +1,15 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html",     "x": 0,    "y": 0,    "w": 1280, "h": 1500, "title": "Papers" },
+    { "file": "Register.dc.html", "x": 0,    "y": 1580, "w": 1280, "h": 1100, "title": "Issue register" },
+    { "file": "Shell.dc.html",    "x": 0,    "y": 2760, "w": 1280, "h": 1420, "title": "One app, two departments" },
+    { "file": "Paper.dc.html",    "x": 1360, "y": 0,    "w": 1280, "h": 2400, "title": "Paper preview" }
+  ],
+  "annotations": [
+    { "id": "why-merged", "x": -420, "y": 0, "w": 340, "text": "Merged, not separate.\n\nSame teachers, same login, same Django project, same launcher. A second site would mean a second password and a second thing to keep running for a non-technical user.\n\nWhat keeps the two jobs from blurring is the masthead: Item bank and Diagnostics are departments, and the rule under them changes to the pages of whichever one you are in." },
+    { "id": "build-order", "x": -420, "y": 470, "w": 340, "text": "Order I would build it:\n\n1. Papers + preview + download (needs diagnostics/export.py, the Examiner doc, the ZIP)\n2. Issue register + generation window + per-teacher grades\n\nOne refactor is unavoidable in step 1: the .docx building currently sits inside the render_paper command, where a view cannot reach it." },
+    { "id": "answers-note", "x": 1360, "y": -230, "w": 380, "text": "Shown in staff view, with answers in the margin column. A teacher without staff rights sees the same page with that column blank — the key travels in the downloaded pack instead, which is what they administer from." },
+    { "id": "stand-ins", "x": -420, "y": 1580, "w": 340, "text": "TEACHER01-04 are stand-ins. No teacher is assigned to a grade yet and no pack has ever been downloaded, so the live register is empty until someone is assigned in the Django admin." }
+  ],
+  "launch": { "view": "canvas" }
+}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Diagnostic papers{% endblock %}
+{% block nav_diagnostics %} class="on"{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/nav.css' %}">{% endblock %}
+
+{% block content %}
+{% comment %}
+Step one of three: grade -> class pack -> the four papers. This screen used
+to be the whole register, all sixteen variants of every visible grade in one
+table; a teacher had to scan forty-eight rows to reach the four that were
+theirs.
+{% endcomment %}
+<div class="dochead">
+  <div>
+    <p class="eyebrow">Diagnostics</p>
+    <h1 class="doc">Diagnostic papers</h1>
+    <p class="sub">Sixteen fixed papers per grade, taken at the start of the year: four classes in
+      each grade, four papers to a class. Choose your grade, then your class pack. Downloading a
+      pack issues that paper and records it against your name.</p>
+  </div>
+  <div class="ref">
+    <b>This term</b>
+    <span>{{ grades|length }} GRADE{{ grades|length|pluralize:"S" }} VISIBLE</span>
+    <span>{{ classes_per_grade }} CLASSES &middot; {{ variants_per_class }} PAPERS EACH</span>
+    <span>CEFR B1 &middot; 40 MARKS</span>
+    <span>{% if generation_open %}GENERATION OPEN{% else %}GENERATION CLOSED{% endif %}</span>
+  </div>
+</div>
+
+{% if not generation_open %}
+  <div class="notice">
+    <b>Closed</b>
+    <span>An administrator has closed generation. You can still read every paper on screen, but
+      downloads are refused until it reopens.</span>
+  </div>
+{% endif %}
+
+{% if grades %}
+  <div class="sec">
+    <span class="idx">01</span>
+    <h2>Choose a grade</h2>
+    <span class="line"></span>
+    <span class="note">STEP 1 OF 2</span>
+  </div>
+
+  <div class="picker">
+    {% for grade in grades %}
+      <a class="pick" href="{% url 'diagnostics:grade_detail' grade.number %}">
+        <span class="idx">Grade</span>
+        <span class="ttl">Grade {{ grade.number }}</span>
+        <span class="span">{{ grade.pack_count }} class packs &middot; {{ grade.paper_count }} papers</span>
+        <span class="meta">
+          <span>Issued</span>
+          <span class="dots"></span>
+          <span class="n{% if not grade.issued_count %} zero{% endif %}">{{ grade.issued_count }}/{{ grade.paper_count }}</span>
+        </span>
+        <span class="go">Open grade <i>&rarr;</i></span>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="fine" style="padding:18px 0">No grades are assigned to you yet. Ask an administrator to
+    add one before you can see or issue any papers.</p>
+{% endif %}
+{% endblock %}

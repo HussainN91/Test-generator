@@ -1,0 +1,766 @@
+# Grade 9 English Vocabulary and Grammar Guide
+
+This study guide provides a complete, organized, unit-by-unit breakdown of the vocabulary and grammar covered in the Grade 9 English curriculum. All phonetic transcriptions and lengthy practice exercises have been streamlined for maximum clarity and ease of study.
+
+---
+
+## Unit 1
+### Vocabulary
+*   **Adjectives of Personality**:
+    *   active *(adjective)*
+    *   creative *(adjective)*
+    *   friendly *(adjective)*
+    *   funny *(adjective)*
+    *   helpful *(adjective)*
+    *   kind *(adjective)*
+    *   lazy *(adjective)*
+    *   polite *(adjective)*
+    *   popular *(adjective)*
+    *   quiet *(adjective)*
+*   **Personal Details**:
+    *   address *(noun)*
+    *   age *(noun)*
+    *   email address *(noun)*
+    *   first language *(noun)*
+    *   first name *(noun)*
+    *   home telephone *(noun)*
+    *   mobile *(noun)*
+    *   surname *(noun)*
+*   **Geographical Features**:
+    *   desert *(noun)*
+    *   forest *(noun)*
+    *   hill *(noun)*
+    *   lake *(noun)*
+    *   mountain *(noun)*
+    *   river *(noun)*
+    *   sea *(noun)*
+    *   valley *(noun)*
+    *   volcano *(noun)*
+*   **Animals (Part 1)**:
+    *   dolphin *(noun)*
+    *   elephant *(noun)*
+    *   giraffe *(noun)*
+    *   monkey *(noun)*
+
+### Grammar: Present Simple & Present Continuous
+*   **Present Simple**: Used for things that are always true or happen regularly. Often used with words like *often, usually, every day, twice a week*.
+    *   *Form*: Subject + Verb (adds *-s*, *-es*, or *-ies* for third-person singular).
+        *   *Most verbs*: add *-s* (e.g., *learns, works*)
+        *   *Verbs ending in -o, -s, -sh, -ch, -x, -zz*: add *-es* (e.g., *goes, watches*)
+        *   *Verbs ending in consonant + -y*: remove *-y* and add *-ies* (e.g., *studies*)
+        *   *Irregular*: *have* → *has*
+*   **Present Continuous**: Used for things happening now or at the present moment. Often used with words like *now, today, this week, at the moment*.
+    *   *Form*: Subject + am/is/are + Verb-ing.
+        *   *Most verbs*: add *-ing* (e.g., *playing*)
+        *   *Verbs ending in -e*: remove *-e* and add *-ing* (e.g., *living, making*)
+        *   *Verbs ending in -ie*: change *-ie* to *-y* and add *-ing* (e.g., *lying*)
+        *   *One-syllable verbs ending in vowel + consonant*: double the consonant and add *-ing* (e.g., *sitting, swimming*)
+        *   *Two-syllable verbs ending in stressed vowel + consonant*: double the consonant (e.g., *beginning*, but *opening*)
+        *   *British English doubling*: *travel* → *travelling*
+
+---
+
+## Unit 2
+### Vocabulary
+*   **Animals (Part 2)**:
+    *   parrot *(noun)*
+    *   penguin *(noun)*
+    *   polar bear *(noun)*
+    *   snake *(noun)*
+    *   tiger *(noun)*
+    *   whale *(noun)*
+*   **Holidays: Ways of Travelling**:
+    *   by bike *(adverb)*
+    *   by boat *(adverb)*
+    *   by coach *(adverb)*
+    *   by helicopter *(adverb)*
+    *   by motorbike *(adverb)*
+    *   by plane *(adverb)*
+    *   by scooter *(adverb)*
+    *   by ship *(adverb)*
+    *   by tram *(adverb)*
+    *   by underground *(adverb)*
+*   **Holiday Vocabulary**:
+    *   guest *(noun)*
+    *   guidebook *(noun)*
+    *   luggage *(noun)*
+    *   map *(noun)*
+    *   on foot *(adverb)*
+    *   receptionist *(noun)*
+    *   suitcase *(noun)*
+    *   tourist *(noun)*
+    *   visitor *(noun)*
+
+### Grammar: State Verbs (Non-Continuous Verbs)
+*   These verbs are not normally used in the continuous form:
+    *   **Verbs of thinking**: *believe, understand, know, think, mean, hope* (e.g., *Scientists believe...*)
+    *   **Verbs of liking/disliking**: *like, hate, love, want, need, prefer* (e.g., *I like those monkeys...*)
+    *   **Verbs of owning**: *own, belong, have* (e.g., *That coat belongs to me...*)
+    *   **Verbs of sensation**: *see, feel, hear, smell, taste* (e.g., *The water feels cold...*)
+*   **Special Exceptions**:
+    *   We can use continuous form to say how someone looks or feels *now* (e.g., *I'm feeling better* or *I feel better*).
+    *   We often use *can* with sensation verbs (e.g., *I can hear the sea*).
+    *   When *think* means "have an opinion," do not use the continuous (e.g., *I think it's good*). When *think* means "consider," the continuous is allowed (e.g., *I'm thinking of working in a zoo*).
+
+---
+
+## Unit 3
+### Vocabulary
+*   **Homes**:
+    *   balcony *(noun)*
+    *   ceiling *(noun)*
+    *   cooker *(noun)*
+    *   cupboard *(noun)*
+    *   entrance *(noun)*
+    *   first floor *(noun)*
+    *   garage *(noun)*
+    *   ground floor *(noun)*
+    *   lamp *(noun)*
+    *   sink *(noun)*
+    *   sofa *(noun)*
+*   **Adjectives to Describe Homes**:
+    *   attractive *(adjective)*
+    *   bright *(adjective)*
+    *   cold *(adjective)*
+    *   comfortable *(adjective)*
+    *   cool *(adjective)*
+    *   cosy *(adjective)*
+    *   dark *(adjective)*
+    *   light *(adjective)*
+    *   peaceful *(adjective)*
+    *   tiny *(adjective)*
+    *   unusual *(adjective)*
+    *   warm *(adjective)*
+
+### Grammar: Past Simple
+*   Used to talk about completed events in the past.
+    *   *Positive regular*: Subject + Verb-ed (e.g., *climbed*)
+    *   *Positive irregular*: Subject + Past Simple Form (e.g., *knew*)
+    *   *Negative*: Subject + didn't + Verb (e.g., *didn't want*)
+    *   *Questions*: Did + Subject + Verb? (e.g., *Did you travel?*)
+    *   *Spelling (regular)*:
+        *   *Most verbs*: add *-ed* (e.g., *played, climbed*)
+        *   *Verbs ending in -e*: add *-d* (e.g., *decided, arrived*)
+        *   *Verbs ending in consonant + -y*: change *-y* to *-i* and add *-ed* (e.g., *carried*)
+        *   *One-syllable verbs ending in vowel + consonant*: double the consonant and add *-ed* (e.g., *stopped*)
+        *   *Two-syllable verbs ending in stressed vowel + consonant*: double the consonant (e.g., *preferred*)
+        *   *British English doubling*: *travel* → *travelled*
+
+---
+
+## Unit 4
+### Vocabulary
+*   **School Subjects**:
+    *   biology *(noun)*
+    *   chemistry *(noun)*
+    *   design and technology *(noun)*
+    *   drama *(noun)*
+    *   foreign languages *(noun)*
+    *   geography *(noun)*
+    *   history *(noun)*
+    *   ICT *(noun)*
+    *   maths *(noun)*
+    *   PE *(noun)*
+    *   physics *(noun)*
+    *   science *(noun)*
+*   **Take**:
+    *   take [= carry, e.g. an umbrella] *(verb)*
+    *   take [= catch, e.g. a train] *(verb)*
+    *   take [= do, e.g. exams] *(verb)*
+    *   take [= go along, e.g. the second turning] *(verb)*
+    *   take [= make, e.g. a photo/picture] *(verb)*
+    *   take [= study, e.g. maths] *(verb)*
+    *   take [= use, e.g. medicine] *(verb)*
+
+### Grammar: Past Continuous & Past Simple
+*   **Past Continuous**: Used to describe activities happening at a particular moment in the past. Multiple actions can happen at the same time.
+    *   *Form*: Subject + was/were + Verb-ing (e.g., *eating, standing*).
+*   **Combining Past Continuous & Past Simple**:
+    *   Use **Past Continuous** after *while* to refer to a longer action that occurred at the same time as another action.
+    *   Use **Past Simple** when actions occur sequentially (one after another).
+    *   Use **Past Simple** after *when* for a shorter action that interrupts a longer, ongoing past action (e.g., *I was putting on my coat when it started to rain*).
+
+---
+
+## Unit 5
+### Vocabulary
+*   **Materials**:
+    *   cotton *(noun/adjective)*
+    *   glass *(noun/adjective)*
+    *   gold *(noun/adjective)*
+    *   leather *(noun/adjective)*
+    *   metal *(noun/adjective)*
+    *   paper *(noun/adjective)*
+    *   plastic *(noun/adjective)*
+    *   silver *(noun/adjective)*
+    *   wood *(noun)*
+    *   wool *(noun/adjective)*
+*   **Adjectives for Describing Objects**:
+    *   colourful *(adjective)*
+    *   hard *(adjective)*
+    *   heavy *(adjective)*
+    *   large *(adjective)*
+    *   little *(adjective)*
+    *   lovely *(adjective)*
+    *   old *(adjective)*
+    *   pretty *(adjective)*
+    *   round *(adjective)*
+    *   small *(adjective)*
+    *   smooth *(adjective)*
+    *   soft *(adjective)*
+    *   wooden *(adjective)*
+*   **Get**:
+    *   get back [= arrive home] *(phrasal verb)*
+    *   get lost *(phrasal verb)*
+    *   get on [+ form of transport] *(phrasal verb)*
+    *   get to [= arrive at] *(phrasal verb)*
+    *   get up [= leave the bed] *(phrasal verb)*
+
+### Grammar: Comparative & Superlative Adverbs
+*   Adjectives describe nouns; adverbs describe verbs (most end in *-ly* like *slowly*, but some do not like *fast, hard, late, well*).
+*   **Comparative Adverbs**: Used to compare two things.
+    *   Use *more + adverb* for adverbs ending in *-ly* (e.g., *more carefully*). Opposite: *less*.
+    *   Add *-er* to short adverbs (e.g., *faster, harder, later*).
+    *   Irregular: *well* → *better*, *badly* → *worse*.
+    *   *Often* comparison: *more often*.
+    *   Use *(not) as + adverb + as* for equal or unequal comparisons.
+*   **Superlative Adverbs**: Used to compare one thing with two or more others.
+    *   Use *the most + adverb* for adverbs ending in *-ly* (e.g., *the most slowly*). Opposite: *the least*.
+    *   Add *-est* to short adverbs (e.g., *the fastest, the hardest, the latest*).
+    *   Irregular: *well* → *the best*, *badly* → *the worst*.
+    *   *Often* comparison: *the most often*.
+
+---
+
+## Unit 6
+### Vocabulary
+*   **Holiday Activities**:
+    *   camping *(noun)*
+    *   diving *(noun)*
+    *   hiking *(noun)*
+    *   horse riding *(noun)*
+    *   kite surfing *(noun)*
+    *   mountain biking *(noun)*
+    *   paddle boarding *(noun)*
+    *   sailing *(noun)*
+    *   waterskiing *(noun)*
+    *   zip wiring *(noun)*
+*   **Things to Take on an Adventure Holiday**:
+    *   backpack *(noun)*
+    *   first-aid kit *(noun)*
+    *   map and compass *(noun)*
+    *   sleeping bag *(noun)*
+    *   snacks *(noun)*
+    *   sun cream *(noun)*
+    *   tent *(noun)*
+    *   torch *(noun)*
+    *   trainers *(noun)*
+    *   walking boots *(noun)*
+    *   wash bag *(noun)*
+    *   waterproof trousers and jacket *(noun)*
+
+### Grammar: Possession (Apostrophes, Determiners & Pronouns)
+*   **Apostrophe + s ('s)**:
+    *   Used for people and animals.
+    *   *Singular nouns*: add *'s* (e.g., *my mum's necklace*).
+    *   *Plural nouns ending in -s*: add apostrophe only (e.g., *my friends' shoes*).
+    *   *Irregular plural nouns not ending in -s*: add *'s* (e.g., *the children's bedroom*).
+*   **Possessive Determiners vs. Possessive Pronouns**:
+    *   *Determiners* (followed by noun): *my, your, his, her, our, their*.
+    *   *Pronouns* (replace determiner + noun): *mine, yours, his, hers, ours, theirs* (e.g., *Is this your jacket? No, it's hers*).
+    *   **Double Possessive**: Use *'a friend of mine/yours/his/hers/ours/theirs'* (e.g., *a classmate of his*, not *a classmate of him*).
+
+---
+
+## Unit 7
+### Vocabulary
+*   **Furniture and Household Appliances**:
+    *   air conditioning *(noun)*
+    *   barbecue *(noun)*
+    *   bin *(noun)*
+    *   bookcase *(noun)*
+    *   drawer *(noun)*
+    *   fridge *(noun)*
+    *   heating *(noun)*
+    *   lights *(noun)*
+    *   roof *(noun)*
+    *   seat *(noun)*
+    *   stairs *(noun)*
+    *   washing machine *(noun)*
+
+### Grammar: Present Continuous for Future Plans
+*   We can use the Present Continuous to talk about future plans and arrangements.
+    *   Usually used with a future time expression (e.g., *later, on Friday, next weekend, tomorrow*) to differentiate it from action happening right now.
+        *   *Now*: *We're learning how to ski.*
+        *   *Future*: *We're learning how to ski next weekend.*
+
+---
+
+## Unit 8
+### Vocabulary
+*   **Words with Two Meanings**:
+    *   book [= for reading] *(noun)* / book [= reserve] *(verb)*
+    *   kind [= nice] *(adjective)* / kind [= variety] *(noun)*
+    *   letter [= in the mail] *(noun)* / letter [= part of writing] *(noun)*
+    *   picture [= drawing] *(noun)* / picture [= photo] *(noun)*
+    *   ring [= jewellery] *(noun)* / ring [= phone] *(verb)*
+    *   watch [= for the time] *(noun)* / watch [= look at] *(verb)*
+*   **Sports and Activities**:
+    *   badminton *(noun)*
+    *   board game *(noun)*
+    *   card game *(noun)*
+    *   climbing *(noun)*
+    *   cricket *(noun)*
+    *   dance class *(noun)*
+    *   diving *(noun)*
+    *   fishing *(noun)*
+    *   fitness class *(noun)*
+    *   golf *(noun)*
+    *   karate *(noun)*
+    *   puzzle *(noun)*
+    *   skateboarding *(noun)*
+    *   skiing *(noun)*
+    *   video game *(noun)*
+*   **Sports Vocabulary**:
+    *   champion *(noun)*
+    *   fan *(noun)*
+    *   prize *(noun)*
+    *   professional *(adjective)*
+    *   take part *(verb)*
+    *   tournament *(noun)*
+*   **Suffix -er**:
+    *   cleaner *(noun)*
+    *   climber *(noun)*
+    *   dancer *(noun)*
+    *   diver *(noun)*
+    *   golfer *(noun)*
+    *   photographer *(noun)*
+    *   runner *(noun)*
+    *   singer *(noun)*
+    *   skier *(noun)*
+    *   swimmer *(noun)*
+    *   teacher *(noun)*
+    *   worker *(noun)*
+
+### Grammar: Future with Will
+*   Used to predict things we think are certain to happen in the future.
+    *   *Form*: Subject + will/won't + infinitive (e.g., *We'll live..., We won't live...*).
+    *   *Expressions*: Often used with *I think, I hope, I'm sure, I'm certain* (e.g., *I'm sure my friends won't...*).
+
+---
+
+## Unit 9
+### Vocabulary
+*   **People**:
+    *   best friend *(noun)*
+    *   classmate *(noun)*
+    *   close friend *(noun)*
+    *   contact [= person you know] *(noun)*
+    *   guest *(noun)*
+    *   member *(noun)*
+    *   neighbour *(noun)*
+    *   old friend *(noun)*
+    *   penfriend *(noun)*
+    *   relative *(noun)*
+*   **Internet Nouns and Verbs**:
+    *   blog *(noun)*
+    *   download *(verb)*
+    *   link *(noun)*
+    *   menu *(noun)*
+    *   message board *(noun)*
+    *   post *(verb)*
+    *   record *(verb)*
+    *   save *(verb)*
+    *   search *(verb)*
+    *   site *(noun)*
+    *   the web *(noun)*
+    *   upload *(verb)*
+
+### Grammar: Modal Verbs of Obligation & Necessity
+*   **Must / Mustn't**: Used for rules and obligations.
+    *   *Must*: Obligation to do something (e.g., *You must switch off your mobile phone*).
+    *   *Mustn't*: Prohibition (e.g., *You mustn't eat or drink*).
+    *   *Note*: In questions, we prefer *Do I have to...?* over *Must I...?*
+*   **Have to / Don't have to**:
+    *   *Have to*: It is necessary (e.g., *You have to bring sandwiches*).
+    *   *Don't have to*: It is not necessary (e.g., *You don't have to bring a drink*).
+
+---
+
+## Unit 10
+### Vocabulary
+*   **Places in a City**:
+    *   art gallery *(noun)*
+    *   cathedral *(noun)*
+    *   embassy *(noun)*
+    *   fountain *(noun)*
+    *   mosque *(noun)*
+    *   old town *(noun)*
+    *   palace *(noun)*
+    *   shopping area *(noun)*
+    *   skyscraper *(noun)*
+    *   sports centre *(noun)*
+    *   stadium *(noun)*
+    *   statue *(noun)*
+    *   temple *(noun)*
+*   **Uncountable Nouns**:
+    *   electricity *(noun)*
+    *   food *(noun)*
+    *   furniture *(noun)*
+    *   homework *(noun)*
+    *   information *(noun)*
+    *   jewellery *(noun)*
+    *   luggage *(noun)*
+    *   money *(noun)*
+    *   news *(noun)*
+    *   staff *(noun)*
+    *   traffic *(noun)*
+    *   wildlife *(noun)*
+
+### Grammar: Verb Patterns – Gerunds & Infinitives
+*   When using two verbs together, the second is usually a gerund (*-ing*) or an infinitive (*to + verb*).
+    *   **Verb + Gerund**: *finish, don't mind, enjoy, miss*
+    *   **Verb + Infinitive**: *decide, choose, learn, help, hope, plan, want, need*
+    *   **Verb + Gerund OR Infinitive**: *start, begin, prefer, like, love* (no major change in meaning)
+*   **Gerund after Prepositions**: Use a gerund after prepositions like *at, in, for, of, about* (e.g., *Thank you for inviting me*, *I'm thinking of buying...*).
+*   **Subject Gerund**: A gerund can be the subject of a verb (e.g., *Joining the film club was...*).
+
+---
+
+## Unit 11
+### Vocabulary
+*   **Types of Film**:
+    *   a comedy *(noun)*
+    *   a drama *(noun)*
+    *   a horror film *(noun)*
+    *   a musical *(noun)*
+    *   a science-fiction film *(noun)*
+    *   a thriller *(noun)*
+    *   an action film *(noun)*
+    *   an adventure film *(noun)*
+    *   an animated film *(noun)*
+*   **Conjunctions**:
+    *   and *(conjunction)*
+    *   because *(conjunction)*
+    *   but *(conjunction)*
+    *   if *(conjunction)*
+    *   or *(conjunction)*
+    *   so *(conjunction)*
+    *   that *(conjunction)*
+    *   when *(conjunction)*
+    *   where *(conjunction)*
+    *   while *(conjunction)*
+
+### Grammar: Determiners & Both / All
+*   **a / an / the**:
+    *   Use **a/an** when introducing something for the first time or talking in general.
+    *   Use **the**:
+        *   When referring to something already mentioned.
+        *   Before superlatives (e.g., *the biggest city*).
+        *   Before ordinal numbers (e.g., *the first man*).
+        *   When there is only one of something (e.g., *the sea*).
+*   **Both / All**:
+    *   **Both**: Used to talk about two things (e.g., *Both Rachel and Ruth...*).
+    *   **All**: Used to talk about the total number of three or more things/people (e.g., *all the museums...*).
+
+---
+
+## Unit 12
+### Vocabulary
+*   **Outdoor Activities**:
+    *   camp under the stars *(verb phrase)*
+    *   climb a tree *(verb phrase)*
+    *   explore a cave *(verb phrase)*
+    *   kayak down a river *(verb phrase)*
+    *   look for fossils *(verb phrase)*
+    *   pick wild fruit *(verb phrase)*
+    *   play in the snow *(verb phrase)*
+    *   record birdsong *(verb phrase)*
+    *   track wild animals *(verb phrase)*
+    *   try rock climbing *(verb phrase)*
+*   **Past Participles (Irregular)**:
+    *   be → **been** *(verb)*
+    *   break → **broken** *(verb)*
+    *   eat → **eaten** *(verb)*
+    *   fly → **flown** *(verb)*
+    *   grow → **grown** *(verb)*
+    *   have → **had** *(verb)*
+    *   make → **made** *(verb)*
+    *   meet → **met** *(verb)*
+    *   ride → **ridden** *(verb)*
+    *   send → **sent** *(verb)*
+    *   sleep → **slept** *(verb)*
+    *   swim → **swum** *(verb)*
+
+### Grammar: Relative Pronouns (Who, Which, That)
+*   Used to give more information about nouns in a relative clause.
+    *   **who**: Used for people (e.g., *A fan is a person who loves...*).
+    *   **which**: Used for things (e.g., *Horror is a film which is...*).
+    *   **that**: Can be used for both people or things (e.g., *someone that loves...*, *films that make...*).
+
+---
+
+## Unit 13
+### Vocabulary
+*   **Shops**:
+    *   bakery *(noun)*
+    *   bookshop *(noun)*
+    *   butcher’s *(noun)*
+    *   café *(noun)*
+    *   chemist’s *(noun)*
+    *   clothes shop *(noun)*
+    *   department store *(noun)*
+    *   market *(noun)*
+    *   newsagent’s *(noun)*
+    *   shoe shop *(noun)*
+    *   supermarket *(noun)*
+    *   sweet shop *(noun)*
+*   **Units of Measurement**:
+    *   a pair of *(noun)*
+    *   a set of *(noun)*
+    *   a slice of *(noun)*
+    *   a variety of *(noun)*
+    *   centimetres *(noun)*
+    *   dollars and cents *(noun)*
+    *   euros and cents *(noun)*
+    *   grams *(noun)*
+    *   kilograms *(noun)*
+    *   kilometres *(noun)*
+    *   litres *(noun)*
+    *   metres *(noun)*
+    *   millilitres *(noun)*
+    *   pounds and pence *(noun)*
+
+### Grammar: Present Perfect with Ever & Never
+*   Used to talk about life experiences before the present moment.
+    *   *Form*: Subject + have/has (not) + past participle (regular verbs end in *-ed*, irregulars vary).
+    *   **ever**: Used in questions to mean 'at any time in your life' (e.g., *Have you ever climbed a tree?*).
+    *   **never**: Used in positive sentences to mean 'not at any time in your life' (e.g., *My grandparents have never flown...*).
+    *   *Contrast*: Do not use past time expressions (like *yesterday, last year*) with the Present Perfect. Use them with the Past Simple.
+
+---
+
+## Unit 14
+### Vocabulary
+*   **Free-Time Activities**:
+    *   chatting *(noun)*
+    *   collecting things *(noun phrase)*
+    *   cooking *(noun)*
+    *   dancing *(noun)*
+    *   going out with friends *(noun phrase)*
+    *   going shopping *(noun phrase)*
+    *   listening to music *(noun phrase)*
+    *   photography *(noun)*
+    *   playing an instrument *(noun phrase)*
+    *   playing computer games *(noun phrase)*
+    *   playing sport *(noun phrase)*
+    *   reading books *(noun phrase)*
+    *   singing *(noun)*
+    *   spend time doing something *(verb phrase)*
+    *   spending time online *(noun phrase)*
+    *   watching TV *(noun phrase)*
+*   **Collocations about Having Fun**:
+    *   a brilliant day out *(collocation)*
+    *   a brilliant hobby *(collocation)*
+    *   a fantastic feeling *(collocation)*
+    *   a fun day out *(collocation)*
+    *   a fun hobby *(collocation)*
+    *   an exciting day out *(collocation)*
+    *   an exciting hobby *(collocation)*
+    *   be glad *(collocation)*
+    *   be happy *(collocation)*
+    *   enjoy an activity *(collocation)*
+    *   enjoy yourself *(collocation)*
+    *   feel happy *(collocation)*
+    *   have a great time *(collocation)*
+    *   have a laugh *(collocation)*
+    *   have fun *(collocation)*
+    *   making things *(noun phrase)*
+    *   spend time with someone *(collocation)*
+
+### Grammar: Present Perfect with Just, Yet, & Already
+*   **just**: Indicates that something happened a very short time ago. Placed between *have/has* and the past participle (e.g., *I've just eaten*).
+*   **already**: States that something happened before now, often sooner than expected. Placed between *have/has* and the past participle (e.g., *I've already done it*).
+*   **yet**: Used to ask or talk about time until now (expecting it to happen in the future). Placed at the end of questions or negative sentences (e.g., *Have you been there yet? / I haven't been yet*).
+
+---
+
+## Unit 15
+### Vocabulary
+*   **Words to Describe Language Learning**:
+    *   article *(noun)*
+    *   exercise *(noun)*
+    *   guess *(verb)*
+    *   list *(noun)*
+    *   look up *(verb)*
+    *   meaning *(noun)*
+    *   mistake *(noun)*
+    *   spell *(verb)*
+    *   topic *(noun)*
+    *   translate *(verb)*
+*   **Large Numbers**:
+    *   billion *(noun)*
+    *   hundred *(noun)*
+    *   million *(noun)*
+    *   thousand *(noun)*
+
+### Grammar: Present Perfect with Since & For
+*   Used to describe actions or situations that started in the past and continue in the present.
+    *   **since**: Used with a specific starting point in time (e.g., *since March, since 2013, since my birthday, since I was young*).
+    *   **for**: Used with a duration or amount of time (e.g., *for four months, for eight weeks, for ten seconds, for ages*).
+    *   **how long**: Used to ask questions about duration (e.g., *How long have you had your dog?*).
+
+---
+
+## Unit 16
+### Vocabulary
+*   **Body Parts**:
+    *   ankle *(noun)*
+    *   back *(noun)*
+    *   blood *(noun)*
+    *   brain *(noun)*
+    *   ear *(noun)*
+    *   finger *(noun)*
+    *   heart *(noun)*
+    *   mouth *(noun)*
+    *   neck *(noun)*
+    *   stomach *(noun)*
+    *   thumb *(noun)*
+    *   toe *(noun)*
+    *   tongue *(noun)*
+*   **Adjectives to Express Emotion**:
+    *   angry *(adjective)*
+    *   confident *(adjective)*
+    *   embarrassed *(adjective)*
+    *   friendly *(adjective)*
+    *   lazy *(adjective)*
+    *   lonely *(adjective)*
+    *   surprised *(adjective)*
+    *   unhappy *(adjective)*
+    *   upset *(adjective)*
+    *   worried *(adjective)*
+
+### Grammar: Present Perfect vs. Past Simple
+*   **Present Perfect**:
+    *   Finished action where the *result* is important now (no interest in when it happened).
+    *   Life experiences up to now (with *ever/never*).
+    *   Recent actions (with *just/already/yet*).
+    *   Actions continuing from past to present (with *for/since*).
+*   **Past Simple**:
+    *   Actions completely finished in the past.
+    *   When the specific *time* of the action is important or mentioned (e.g., *last week*, *yesterday*).
+    *   Finished past periods (e.g., *When did you learn...?*).
+
+---
+
+## Unit 17
+### Vocabulary
+*   **Books and Reading**:
+    *   bring back *(phrasal verb)*
+    *   find out *(phrasal verb)*
+    *   give back *(phrasal verb)*
+    *   pick up *(verb phrase)*
+    *   put back *(phrasal verb)*
+    *   put down *(phrasal verb)*
+    *   take back *(phrasal verb)*
+    *   take out *(phrasal verb)*
+*   **Words about Books**:
+    *   author *(noun)*
+    *   chapter *(noun)*
+    *   cover *(noun)*
+    *   drawings *(noun)*
+    *   end *(noun)*
+    *   fan *(noun)*
+    *   opinion *(noun)*
+    *   pages *(noun)*
+    *   shelf *(noun)*
+    *   title *(noun)*
+
+### Grammar: Reflexive Pronouns
+*   **Reflexive Pronouns**: *myself, yourself, himself, herself, itself, ourselves, yourselves, themselves*.
+    *   Used when the **subject** and the **object** of the verb are the same person/thing (e.g., *I hurt myself*, *My friends enjoyed themselves*).
+    *   **by + pronoun**: Means "alone" or "without help" (e.g., *I walk to school by myself*, *They did it by themselves*).
+
+---
+
+## Unit 18
+### Vocabulary
+*   **Words to Describe Cooking**:
+    *   add *(verb)*
+    *   bake *(verb)*
+    *   boil *(verb)*
+    *   cover *(verb)*
+    *   dry *(verb)*
+    *   fill *(verb)*
+    *   fried *(adjective)*
+    *   grilled *(adjective)*
+    *   mix *(verb)*
+    *   prepare *(verb)*
+    *   roast *(adjective)*
+*   **Ingredients**:
+    *   beans *(noun)*
+    *   carrots *(noun)*
+    *   garlic *(noun)*
+    *   melon *(noun)*
+    *   pears *(noun)*
+    *   potatoes *(noun)*
+    *   salt and pepper *(noun phrase)*
+    *   steak *(noun)*
+
+### Grammar: First Conditional
+*   Used to describe real or highly probable future situations and their results.
+    *   *Structure*: **If + Present Simple, will/won't + infinitive** (e.g., *If you study, you will pass*).
+    *   *Reversed Structure*: **will/won't + infinitive if + Present Simple** (e.g., *You will pass if you study*).
+    *   *Punctuation*: Use a comma if the "If" clause comes first. No comma is used if the "If" clause is in the middle.
+    *   *Negatives*: Can be used in either or both clauses (e.g., *If you don't finish, you won't know*).
+
+---
+
+## Unit 19
+### Vocabulary
+*   **Make and Do**:
+    *   do the cleaning *(collocation)*
+    *   do the dishes *(collocation)*
+    *   do the shopping *(collocation)*
+    *   do the washing *(collocation)*
+    *   do your homework *(collocation)*
+    *   make a cake *(collocation)*
+    *   make a cup of tea *(collocation)*
+    *   make a mess *(collocation)*
+    *   make a mistake *(collocation)*
+    *   make the bed *(collocation)*
+
+### Grammar: Present Simple Passive
+*   Used to talk about what happens to something or someone (the action or object is more important than who does it).
+    *   *Form*: **Subject + am/is/are (not) + past participle** (e.g., *Cereal is covered in sugar. Packets of cereal are sold.*).
+    *   *Agent*: Use **by** to say who or what performed the action if it is important (e.g., *We are taught maths by Mr Green*).
+
+---
+
+## Unit 20
+### Vocabulary
+*   **Change as a Verb and Noun**:
+    *   change [= alternative clothes] *(noun)*
+    *   change [= become something different] *(verb)*
+    *   change [= give money back when buying something] *(verb)*
+    *   change [= something in a shop] *(verb)*
+    *   change [= something new] *(noun)*
+    *   change [= transport] *(verb)*
+    *   change schools *(verb phrase)*
+*   **Life Changes**:
+    *   be born *(verb phrase)*
+    *   become a teenager *(verb phrase)*
+    *   find part-time work *(verb phrase)*
+    *   get married *(verb phrase)*
+    *   go to high school *(verb phrase)*
+    *   learn to walk and talk *(verb phrase)*
+    *   move house *(verb phrase)*
+    *   start school *(verb phrase)*
+    *   start working or training *(verb phrase)*
+    *   take exams *(verb phrase)*
+    *   travel *(verb)*
+
+### Grammar: Past Simple Passive
+*   Used to talk about what happened to something or someone in the past.
+    *   *Form*: **Subject + was/were (not) + past participle** (e.g., *This museum was built 150 years ago. Animals were kept...*).
+    *   *Questions*: **Was/Were + Subject + past participle?** (e.g., *Was St Paul's Cathedral built by Christopher Wren?*).

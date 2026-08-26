@@ -1,0 +1,7 @@
+# Offline generation + validation only. Never install these on the production
+# server: nothing the deployed app imports depends on them.
+-r requirements.txt
+anthropic>=0.40         # §3.2 generation via the Claude API
+spacy>=3.8              # §3.3 structural validation
+# plus the small English model (~13MB download, ~45MB installed):
+#   python -m spacy download en_core_web_sm

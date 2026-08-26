@@ -1,0 +1,32 @@
+/* -- sign in ----------------------------------------------------------- */
+main.sheet{max-width:none;padding:0;margin:0}
+.gate{position:relative;min-height:max(100vh, 780px);overflow:hidden}
+.gate .margin-rule{position:absolute;left:96px;top:0;bottom:0;width:0;border-left:1.5px solid var(--stamp);opacity:.75}
+.gate .divider{position:absolute;left:660px;top:0;bottom:0;width:0;border-left:1px solid var(--rule)}
+
+/* a blank answer sheet, laid on the far side of the page */
+.answersheet{position:absolute;left:660px;right:0;top:-14px;opacity:.42;padding-left:56px}
+.arow{display:flex;align-items:center;gap:15px;height:38px;border-bottom:1px solid var(--rule)}
+.arow b{font:500 10px/1 var(--mono);color:var(--ink-3);width:22px;letter-spacing:.06em}
+.arow i{width:13px;height:13px;border:1.5px solid var(--ink-3);border-radius:50%;display:block;flex:none}
+/* a scattering of shaded bubbles, so it reads as a used sheet */
+.arow:nth-child(4n+1) i:nth-child(2){background:var(--ink-3)}
+.arow:nth-child(4n+2) i:nth-child(5){background:var(--ink-3)}
+.arow:nth-child(4n+3) i:nth-child(3){background:var(--ink-3)}
+.arow:nth-child(4n)   i:nth-child(4){background:var(--ink-3)}
+
+.gate .form{position:relative;z-index:2;padding:130px 0 150px 152px;width:436px;max-width:100%}
+.gate h1{font:400 42px/1.06 var(--serif);margin:26px 0 0;letter-spacing:-.01em}
+.gate .kicker{font:500 10px/1 var(--mono);letter-spacing:.26em;color:var(--ink-3);margin:14px 0 0}
+.gate .dbl{height:5px;border-top:2px solid var(--ink);border-bottom:1px solid var(--ink);margin:26px 0 30px}
+.gate .fld{margin-bottom:24px}
+.gate .foot{position:absolute;left:152px;bottom:56px;z-index:2;
+  font:400 12px/1.7 var(--serif);color:var(--ink-3);max-width:400px}
+
+@media (max-width: 900px){
+  .gate .divider,.answersheet{display:none}
+  .gate .margin-rule{left:24px}
+  .gate .form{padding:64px 24px 120px 56px;width:100%}
+  .gate h1{font-size:34px}
+  .gate .foot{left:56px;right:24px;bottom:40px}
+}

@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% block title %}G{{ paper.grade }}-{{ paper.variant }}{% endblock %}
+{% block nav_diagnostics %} class="on"{% endblock %}
+
+{% block content %}
+<div class="dochead">
+  <div>
+    <p class="eyebrow">Diagnostics &middot; Grade {{ paper.grade }}</p>
+    <h1 class="doc">Variant {{ paper.variant }}</h1>
+    <p class="sub">The paper as it will print. Nothing on this screen can be edited &mdash; the content
+      was imported once from the client&rsquo;s own bank and is fixed for the year.</p>
+  </div>
+  <div class="ref">
+    <b>This paper</b>
+    <span>G{{ paper.grade }}-{{ paper.variant }}</span>
+    <span>RECORDINGS {{ paper.listening_clip_1.number|stringformat:"02d" }} &amp; {{ paper.listening_clip_2.number|stringformat:"02d" }}</span>
+    <span>PASSAGE {{ paper.reading_passage.label }}</span>
+    <span>40 MARKS &middot; B1</span>
+  </div>
+</div>
+
+<div class="actions">
+  {% if generation_open %}
+    {% if docx_available %}
+      <a class="btn" href="{% url 'diagnostics:paper_file' paper.grade paper.variant 'student' %}">Download test</a>
+      <a class="btn ghost" href="{% url 'diagnostics:paper_file' paper.grade paper.variant 'answer_key' %}">Answer key</a>
+      <a class="btn ghost" href="{% url 'diagnostics:paper_file' paper.grade paper.variant 'examiner' %}">Speaking pack</a>
+    {% endif %}
+    <a class="btn ghost" href="{% url 'diagnostics:paper_file' paper.grade paper.variant 'audio_1' %}">Audio 1</a>
+    <a class="btn ghost" href="{% url 'diagnostics:paper_file' paper.grade paper.variant 'audio_2' %}">Audio 2</a>
+  {% else %}
+    <span class="stamp mute">Generation closed &mdash; downloads refused</span>
+  {% endif %}
+  <span style="flex:1"></span>
+  <a class="btn ghost sm" href="{% url 'diagnostics:class_pack' paper.grade class_number %}">Back to class pack</a>
+</div>
+
+<div class="grid2">
+  <div>
+
+    <div class="vhead">
+      <h2>Section 1 &mdash; Listening</h2>
+      <span class="line"></span>
+      <span style="font:500 11px/1 var(--mono);color:var(--ink-3)">10 MARKS</span>
+    </div>
+    <p class="qinstr">{{ listening.instructions }}</p>
+
+    {% for clip in listening.clips %}
+      <div class="cont" style="border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)">Recording {{ clip.number }}{% if clip.audio_name %} &middot; {{ clip.audio_name }}{% endif %}</div>
+      {% if clip.audio %}
+        <audio class="clipaudio" controls preload="none" src="{{ clip.audio.url }}">
+          Your browser cannot play audio. Use the Audio download button above.
+        </audio>
+      {% endif %}
+      {% if clip.intro %}<p class="qinstr">{{ clip.intro }}</p>{% endif %}
+
+      {% for question in clip.questions %}
+        <div class="q">
+          <span class="qn">{{ question.display_number }}</span>
+          <div>
+            <p class="qprompt"><strong>{{ question.stem }}</strong>{% if question.inline_blank %}<span class="blank"></span>{% endif %}</p>
+            {% if question.image_name %}
+              <div class="plate"><span>{{ question.image_name }} &mdash; picture options, imported</span></div>
+            {% endif %}
+            {% if question.options %}
+              <div class="qopts">
+                {% for row in question.option_rows %}
+                  <div class="qrow">
+                    {% for letter, option in row %}
+                      <span class="qopt{% if answer_key and letter == question.answer %} right{% endif %}"><i>{{ letter }}</i>{{ option }}</span>
+                    {% endfor %}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <span class="qans">{% if answer_key %}{{ question.answer }}{% endif %}</span>
+        </div>
+      {% endfor %}
+    {% endfor %}
+
+    <div class="vhead">
+      <h2>Section 2 &mdash; Reading</h2>
+      <span class="line"></span>
+      <span style="font:500 11px/1 var(--mono);color:var(--ink-3)">10 MARKS</span>
+    </div>
+
+    <p style="font:600 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px">{{ reading.passage.label }} &middot; {{ reading.passage.word_count }} words</p>
+    <h3 style="font:400 19px/1.2 var(--serif);margin:0 0 12px">{{ reading.passage.title }}</h3>
+    <p style="font:400 14.5px/1.72 var(--serif);color:var(--ink);margin:0">{{ reading.passage.body }}</p>
+
+    <div class="qcols" style="margin-top:22px">
+      <span>No.</span>
+      <span>Question</span>
+      <span>Answer</span>
+    </div>
+
+    {% for subtype, instruction, questions in reading_groups %}
+      {% if instruction %}<p class="qinstr" style="margin:16px 0 4px">{{ instruction }}</p>{% endif %}
+      {% for question in questions %}
+        <div class="q">
+          <span class="qn">{{ question.position }}</span>
+          <div>
+            <p class="qprompt"><strong>{{ question.stem }}</strong>{% if question.inline_blank %}<span class="blank"></span>{% endif %}</p>
+            {% if question.options %}
+              <div class="qopts">
+                {% for row in question.option_rows %}
+                  <div class="qrow">
+                    {% for letter, option in row %}
+                      <span class="qopt{% if answer_key and letter == question.answer %} right{% endif %}"><i>{{ letter }}</i>{{ option }}</span>
+                    {% endfor %}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <span class="qans">{% if answer_key %}{{ question.answer }}{% endif %}</span>
+        </div>
+      {% endfor %}
+    {% endfor %}
+
+    <div class="vhead">
+      <h2>Section 3 &mdash; Writing</h2>
+      <span class="line"></span>
+      <span style="font:500 11px/1 var(--mono);color:var(--ink-3)">10 MARKS</span>
+    </div>
+
+    {% for question in writing.questions %}
+      <div class="q">
+        <span class="qn">{{ forloop.counter }}</span>
+        <div>
+          <p class="qprompt"><strong>{{ question.stem }}</strong>{% if question.inline_blank %}<span class="blank"></span>{% endif %}</p>
+          {% if question.options %}
+            <div class="qopts">
+              {% for row in question.option_rows %}
+                <div class="qrow">
+                  {% for letter, option in row %}
+                    <span class="qopt{% if answer_key and letter == question.answer %} right{% endif %}"><i>{{ letter }}</i>{{ option }}</span>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        <span class="qans">{% if answer_key %}{{ question.answer }}{% endif %}</span>
+      </div>
+    {% endfor %}
+
+    <div class="vhead">
+      <h2>Section 4 &mdash; Speaking</h2>
+      <span class="line"></span>
+      <span style="font:500 11px/1 var(--mono);color:var(--ink-3)">10 MARKS</span>
+    </div>
+
+    {% for prompt in speaking.prompts %}
+      <div class="q">
+        <span class="qn">{{ forloop.counter }}</span>
+        <div>
+          <p class="qinstr" style="margin:0 0 6px">{{ prompt.get_task_display }} &middot; {{ prompt.marks }} marks</p>
+          <p class="qprompt">{{ prompt.prompt }}</p>
+          {% if prompt.bullets %}
+            <div class="qopts" style="grid-template-columns:1fr;gap:4px;margin-top:9px">
+              {% for bullet in prompt.bullets %}
+                <span class="qopt" style="gap:8px">&mdash; {{ bullet }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        <span class="qans">{% if answer_key %}RUBRIC{% endif %}</span>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="margin-col">
+    <h3>Downloads</h3>
+    <ul class="pack">
+      <li><span class="f">{{ paper }}-Student.docx</span></li>
+      <li><span class="f">{{ paper }}-AnswerKey.docx</span></li>
+      <li><span class="f">{{ paper }}-Examiner.docx</span></li>
+      <li><span class="f">{{ paper }}-clip-{{ paper.listening_clip_1.number|stringformat:"02d" }}.mp3</span></li>
+      <li><span class="f">{{ paper }}-clip-{{ paper.listening_clip_2.number|stringformat:"02d" }}.mp3</span></li>
+    </ul>
+
+    <div class="blk">
+      <h3>Marks</h3>
+      <ul class="tally">
+        <li><span class="k">Listening</span><span class="dots"></span><span class="n">10</span></li>
+        <li><span class="k">Reading</span><span class="dots"></span><span class="n">10</span></li>
+        <li><span class="k">Writing</span><span class="dots"></span><span class="n">10</span></li>
+        <li><span class="k">Speaking</span><span class="dots"></span><span class="n">10</span></li>
+        <li class="tot"><span class="k">Total</span><span class="dots"></span><span class="n">40</span></li>
+      </ul>
+    </div>
+
+    <div class="blk">
+      <h3>Issued</h3>
+      {% with paper.generations.all|slice:":5" as recent %}
+        {% if recent %}
+          <ul class="pack">
+            {% for event in recent %}
+              <li><span class="f">{{ event.user }}</span><span class="z">{{ event.generated_at|date:"j M, H:i" }}</span></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="fine" style="margin-top:0">Not yet downloaded by anyone.</p>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="blk">
+      <h3>Answers</h3>
+      {% if answer_key %}
+        <p class="fine" style="margin-top:0">Visible here because you are staff. A teacher without staff
+          rights sees the same paper with the answer column blank, and gets the key inside the downloaded
+          pack instead.</p>
+      {% else %}
+        <p class="fine" style="margin-top:0">Not shown on this screen. Download the pack for the answer
+          key and marking rubric.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

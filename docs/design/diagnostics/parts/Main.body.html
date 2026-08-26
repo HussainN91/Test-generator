@@ -1,0 +1,250 @@
+<div class="mast">
+  <div class="mast-in">
+    <svg class="mark" width="30" height="34" viewBox="0 0 30 34" fill="none" style="color: var(--ink)" aria-hidden="true">
+      <rect x="1" y="1" width="28" height="32" stroke="currentColor" stroke-width="1.5"></rect>
+      <path d="M7 9h9M7 15h9M7 21h9M7 27h9" stroke="currentColor" stroke-width="1.5"></path>
+      <circle cx="23" cy="9" r="2.6" fill="currentColor"></circle>
+      <circle cx="23" cy="15" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+      <circle cx="23" cy="21" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+      <circle cx="23" cy="27" r="2.6" fill="currentColor"></circle>
+    </svg>
+    <span class="wordmark">English Test Generator<span class="sm">ITEM BANK &middot; DIAGNOSTICS</span></span>
+    <nav>
+      <a href="#">Item bank</a>
+      <a href="#" class="on">Diagnostics</a>
+      <span class="who">TEACHER01</span>
+      <button class="btn ghost sm" style="border-color:var(--rule)">Log out</button>
+    </nav>
+  </div>
+</div>
+<div class="hair"></div>
+
+<sc-if value="{{ isStaff }}" hint-placeholder-val="{{ true }}">
+  <div class="subbar">
+    <div class="subbar-in">
+      <a href="#" class="on">Papers</a>
+      <a href="#">Issue register</a>
+      <a href="#">Admin</a>
+      <span class="note">GENERATION OPEN</span>
+    </div>
+  </div>
+</sc-if>
+<sc-if value="{{ isTeacher }}" hint-placeholder-val="{{ true }}">
+  <div class="subbar">
+    <div class="subbar-in">
+      <a href="#" class="on">Papers</a>
+      <span class="note">GENERATION OPEN</span>
+    </div>
+  </div>
+</sc-if>
+
+<main class="sheet">
+  <div class="dochead">
+    <div>
+      <p class="eyebrow">Diagnostics</p>
+      <h1 class="doc">Diagnostic papers</h1>
+      <p class="sub">Twelve fixed papers, four per grade, taken at the start of the year. Within one grade
+        no two variants share a single recording, passage, question or prompt. Downloading a pack issues
+        that paper and records it against your name.</p>
+    </div>
+    <div class="ref">
+      <b>This term</b>
+      <span>12 PAPERS</span>
+      <span>3 GRADES &times; 4 VARIANTS</span>
+      <span>CEFR B1 &middot; 40 MARKS</span>
+    </div>
+  </div>
+
+  <div class="sec">
+    <span class="idx">01</span>
+    <h2>Grade 9</h2>
+    <span class="line"></span>
+    <span class="note">4 VARIANTS &middot; NO SHARED CONTENT</span>
+  </div>
+
+  <table class="reg">
+    <thead>
+      <tr>
+        <th style="width:78px">Paper</th>
+        <th style="width:186px">Recordings</th>
+        <th>Reading passage</th>
+        <th style="width:150px">State</th>
+        <th style="width:214px"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="u">G9-A</td>
+        <td class="clips">01 &middot; 02<em>pictures, three-option</em></td>
+        <td class="ttl">The School Garden<em>R01 &middot; true / false / not given</em></td>
+        <td><span class="stamp ok">Issued 25 Aug</span></td>
+        <td class="act">
+          <button class="btn ghost sm">View</button>
+          <button class="btn sm">Download pack</button>
+        </td>
+      </tr>
+      <tr>
+        <td class="u">G9-B</td>
+        <td class="clips">03 &middot; 04<em>gap-fill, true / false</em></td>
+        <td class="ttl">Learning to Use a Bicycle<em>R02 &middot; multiple choice</em></td>
+        <td><span class="stamp mute">Not issued</span></td>
+        <td class="act">
+          <button class="btn ghost sm">View</button>
+          <button class="btn sm">Download pack</button>
+        </td>
+      </tr>
+      <tr>
+        <td class="u">G9-C</td>
+        <td class="clips">05 &middot; 06<em>pictures, three-option</em></td>
+        <td class="ttl">Why Some Cities Are Becoming Greener<em>R03 &middot; heading matching</em></td>
+        <td><span class="stamp mute">Not issued</span></td>
+        <td class="act">
+          <button class="btn ghost sm">View</button>
+          <button class="btn sm">Download pack</button>
+        </td>
+      </tr>
+      <tr>
+        <td class="u">G9-D</td>
+        <td class="clips">07 &middot; 08<em>gap-fill, true / false</em></td>
+        <td class="ttl">The Changing World of Online Learning<em>R04 &middot; paragraph matching</em></td>
+        <td><span class="stamp mute">Not issued</span></td>
+        <td class="act">
+          <button class="btn ghost sm">View</button>
+          <button class="btn sm">Download pack</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <sc-if value="{{ isTeacher }}" hint-placeholder-val="{{ true }}">
+    <p class="fine" style="margin-top:20px">You are assigned to Grade 9. Ask an administrator to add a
+      grade if you need to issue papers for another year group.</p>
+  </sc-if>
+
+  <sc-if value="{{ isStaff }}" hint-placeholder-val="{{ true }}">
+    <div class="sec">
+      <span class="idx">02</span>
+      <h2>Grade 10</h2>
+      <span class="line"></span>
+      <span class="note">4 VARIANTS &middot; NO SHARED CONTENT</span>
+    </div>
+
+    <table class="reg">
+      <thead>
+        <tr>
+          <th style="width:78px">Paper</th>
+          <th style="width:186px">Recordings</th>
+          <th>Reading passage</th>
+          <th style="width:150px">State</th>
+          <th style="width:214px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="u">G10-A</td>
+          <td class="clips">09 &middot; 10<em>pictures, three-option</em></td>
+          <td class="ttl">Young People and Volunteering<em>R05 &middot; multiple choice</em></td>
+          <td><span class="stamp mute">Not issued</span></td>
+          <td class="act">
+            <button class="btn ghost sm">View</button>
+            <button class="btn sm">Download pack</button>
+          </td>
+        </tr>
+        <tr>
+          <td class="u">G10-B</td>
+          <td class="clips">11 &middot; 12<em>gap-fill, true / false</em></td>
+          <td class="ttl">The Rise of the Bicycle in Modern Cities<em>R06 &middot; true / false / not given</em></td>
+          <td><span class="stamp mute">Not issued</span></td>
+          <td class="act">
+            <button class="btn ghost sm">View</button>
+            <button class="btn sm">Download pack</button>
+          </td>
+        </tr>
+        <tr>
+          <td class="u">G10-C</td>
+          <td class="clips">13 &middot; 14<em>pictures, three-option</em></td>
+          <td class="ttl">The Changing Role of Libraries<em>R07 &middot; heading matching</em></td>
+          <td><span class="stamp mute">Not issued</span></td>
+          <td class="act">
+            <button class="btn ghost sm">View</button>
+            <button class="btn sm">Download pack</button>
+          </td>
+        </tr>
+        <tr>
+          <td class="u">G10-D</td>
+          <td class="clips">18 &middot; 17<em>gap-fill, true / false</em></td>
+          <td class="ttl">A Different Way to Travel<em>R08 &middot; multiple choice</em></td>
+          <td><span class="stamp mute">Not issued</span></td>
+          <td class="act">
+            <button class="btn ghost sm">View</button>
+            <button class="btn sm">Download pack</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="sec">
+      <span class="idx">03</span>
+      <h2>Grade 11</h2>
+      <span class="line"></span>
+      <span class="note">4 VARIANTS &middot; NO SHARED CONTENT</span>
+    </div>
+
+    <table class="reg">
+      <thead>
+        <tr>
+          <th style="width:78px">Paper</th>
+          <th style="width:186px">Recordings</th>
+          <th>Reading passage</th>
+          <th style="width:150px">State</th>
+          <th style="width:214px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="u">G11-A</td>
+          <td class="clips">15 &middot; 16<em>pictures, three-option</em></td>
+          <td class="ttl">Why Some Students Remember More<em>R09 &middot; true / false / not given</em></td>
+          <td><span class="stamp mute">Not issued</span></td>
+          <td class="act">
+            <button class="btn ghost sm">View</button>
+            <button class="btn sm">Download pack</button>
+          </td>
+        </tr>
+        <tr>
+          <td class="u">G11-B</td>
+          <td class="clips">19 &middot; 20<em>gap-fill, true / false</em></td>
+          <td class="ttl">The Rise of Urban Gardens<em>R10 &middot; multiple choice</em></td>
+          <td><span class="stamp mute">Not issued</span></td>
+          <td class="act">
+            <button class="btn ghost sm">View</button>
+            <button class="btn sm">Download pack</button>
+          </td>
+        </tr>
+        <tr>
+          <td class="u">G11-C</td>
+          <td class="clips">09 &middot; 06<em>pictures, three-option</em></td>
+          <td class="ttl">The Problem with Multitasking<em>R11 &middot; heading matching</em></td>
+          <td><span class="stamp mute">Not issued</span></td>
+          <td class="act">
+            <button class="btn ghost sm">View</button>
+            <button class="btn sm">Download pack</button>
+          </td>
+        </tr>
+        <tr>
+          <td class="u">G11-D</td>
+          <td class="clips">07 &middot; 12<em>gap-fill, true / false</em></td>
+          <td class="ttl">Learning from Failure<em>R12 &middot; paragraph matching</em></td>
+          <td><span class="stamp mute">Not issued</span></td>
+          <td class="act">
+            <button class="btn ghost sm">View</button>
+            <button class="btn sm">Download pack</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="fine" style="margin-top:22px">Grades 10 and 11 reuse four recordings that Grade 9 also uses
+      (09, 06, 07, 12). That is deliberate: the no-sharing rule binds within a grade, never across them.</p>
+  </sc-if>
+</main>

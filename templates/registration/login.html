@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Sign in{% endblock %}
+{% block chrome %}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/paper-gate.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="gate">
+  <div class="margin-rule"></div>
+  <div class="answersheet" aria-hidden="true">
+    {% for row in "xxxxxxxxxxxxxxxxxxxxxxxx" %}
+      <div class="arow"><b>{{ forloop.counter|stringformat:"02d" }}</b><i></i><i></i><i></i><i></i></div>
+    {% endfor %}
+  </div>
+  <div class="divider"></div>
+
+  <div class="form">
+    <svg width="30" height="34" viewBox="0 0 30 34" fill="none" style="color: var(--ink)" aria-hidden="true">
+      <rect x="1" y="1" width="28" height="32" stroke="currentColor" stroke-width="1.5"></rect>
+      <path d="M7 9h9M7 15h9M7 21h9M7 27h9" stroke="currentColor" stroke-width="1.5"></path>
+      <circle cx="23" cy="9" r="2.6" fill="currentColor"></circle>
+      <circle cx="23" cy="15" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+      <circle cx="23" cy="21" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+      <circle cx="23" cy="27" r="2.6" fill="currentColor"></circle>
+    </svg>
+
+    <h1>English Test<br>Generator</h1>
+    <p class="kicker">ITEM BANK &middot; ASSEMBLY &middot; EXPORT</p>
+
+    <div class="dbl"></div>
+
+    <form method="post">
+      {% csrf_token %}
+      {% if form.errors %}
+        <div class="notice error" style="margin-bottom:24px">
+          <b>Stop</b>
+          <span>That username and password did not match.</span>
+        </div>
+      {% endif %}
+      <div class="fld">
+        <label class="flabel" for="id_username">Username</label>
+        {{ form.username }}
+      </div>
+      <div class="fld">
+        <label class="flabel" for="id_password">Password</label>
+        {{ form.password }}
+      </div>
+      <button class="btn" type="submit" style="width:100%;margin-top:6px">Sign in</button>
+    </form>
+  </div>
+
+  <p class="foot">Grades 9 to 11, level B1 throughout. Only items a human has reviewed and
+    approved can reach a printed paper.</p>
+</div>
+{% endblock %}

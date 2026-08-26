@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Bank coverage{% endblock %}
+{% block nav_coverage %} class="on"{% endblock %}
+
+{% block content %}
+<div class="dochead">
+  <div>
+    <p class="eyebrow">Item bank</p>
+    <h1 class="doc">Bank coverage</h1>
+    <p class="sub">Which grade &times; unit cells have a reviewed bank behind them, and which are still
+      empty. Banks are filled by the offline pipeline and imported &mdash; the running app never
+      generates content itself.</p>
+  </div>
+  <div class="ref">
+    <b>Register</b>
+    <span>{{ grade_objects|length }} GRADE{{ grade_objects|length|pluralize:"S" }}</span>
+    <span>{{ approved_total }} APPROVED</span>
+    <span>{{ pending_total }} AWAITING REVIEW</span>
+  </div>
+</div>
+
+<div class="sec">
+  <span class="idx">01</span>
+  <h2>Approved items by question type</h2>
+  <span class="line"></span>
+  <span class="note">{{ approved_total }} TOTAL</span>
+</div>
+
+<table class="reg">
+  <tbody>
+    {% for label, count in type_totals %}
+      <tr>
+        <td style="width:260px">{{ label }}</td>
+        <td>
+          {% if count %}
+            <span class="bar" style="width:{% widthratio count type_peak 320 %}px"></span>
+          {% else %}
+            <span class="stamp mute">Bank empty</span>
+          {% endif %}
+        </td>
+        <td class="num" style="width:80px{% if not count %};color:var(--ink-3){% endif %}">{{ count }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% for grade_number, units in grades %}
+  <div class="sec">
+    <span class="idx">{{ forloop.counter|add:1|stringformat:"02d" }}</span>
+    <h2>Grade {{ grade_number }}</h2>
+    <span class="line"></span>
+    <span class="note">{{ units|length }} UNIT{{ units|length|pluralize:"S" }}</span>
+  </div>
+
+  <table class="reg">
+    <thead>
+      <tr>
+        <th style="width:52px">Unit</th>
+        <th>Grammar focus</th>
+        <th style="width:210px">Theme</th>
+        <th style="width:90px;text-align:right">Vocab</th>
+        <th style="width:100px;text-align:right">Approved</th>
+        <th style="width:120px;text-align:right">Review</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for unit in units %}
+        <tr{% if not unit.approved %} class="off"{% endif %}>
+          <td class="u">{{ unit.number|stringformat:"02d" }}</td>
+          <td>{{ unit.grammar_point.name|default:unit.title|default:"&mdash;" }}</td>
+          <td>{{ unit.theme|default:"&mdash;" }}</td>
+          <td class="num">{{ unit.vocabulary_count }}</td>
+          <td class="num">{% if unit.approved %}{{ unit.approved }}{% else %}<span class="stamp mute">Empty</span>{% endif %}</td>
+          <td class="num">{% if unit.pending %}<span class="stamp">{{ unit.pending }}</span>{% else %}&mdash;{% endif %}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endfor %}
+{% endblock %}

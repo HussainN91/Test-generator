@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Grade {{ grade }} &mdash; class packs{% endblock %}
+{% block nav_diagnostics %} class="on"{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/nav.css' %}">{% endblock %}
+
+{% block content %}
+{% comment %}
+Step two of three. One box per class; the variant span is shown because a
+teacher holding a printed paper knows it as "G9-F" long before they think
+of it as "class 2's second paper".
+{% endcomment %}
+<p class="crumb">
+  <a href="{% url 'diagnostics:paper_index' %}">Diagnostics</a>
+  <span class="sep">/</span>
+  <b>Grade {{ grade }}</b>
+</p>
+
+<div class="dochead">
+  <div>
+    <p class="eyebrow">Diagnostics</p>
+    <h1 class="doc">Grade {{ grade }}</h1>
+    <p class="sub">Four classes, each with its own pack of {{ variants_per_class }} papers. Open your
+      class to read its papers on screen and download what you need to print.</p>
+  </div>
+  <div class="ref">
+    <b>Grade {{ grade }}</b>
+    <span>{{ packs|length }} CLASS PACK{{ packs|length|pluralize:"S" }}</span>
+    <span>{{ paper_count }} PAPERS</span>
+    <span>{% if generation_open %}GENERATION OPEN{% else %}GENERATION CLOSED{% endif %}</span>
+  </div>
+</div>
+
+{% if not generation_open %}
+  <div class="notice">
+    <b>Closed</b>
+    <span>An administrator has closed generation. You can still read every paper on screen, but
+      downloads are refused until it reopens.</span>
+  </div>
+{% endif %}
+
+<div class="sec">
+  <span class="idx">02</span>
+  <h2>Choose a class pack</h2>
+  <span class="line"></span>
+  <span class="note">STEP 2 OF 2</span>
+</div>
+
+<div class="picker">
+  {% for pack in packs %}
+    <a class="pick" href="{% url 'diagnostics:class_pack' grade pack.number %}">
+      <span class="idx">Class {{ pack.number|stringformat:"02d" }}</span>
+      <span class="ttl">Class {{ pack.number }}</span>
+      <span class="span">Papers {{ pack.span }}</span>
+      <span class="meta">
+        <span>Issued</span>
+        <span class="dots"></span>
+        <span class="n{% if not pack.issued_count %} zero{% endif %}">{{ pack.issued_count }}/{{ pack.paper_count }}</span>
+      </span>
+      <span class="go">Open pack <i>&rarr;</i></span>
+    </a>
+  {% endfor %}
+</div>
+{% endblock %}

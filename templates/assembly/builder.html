@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Test builder{% endblock %}
+{% block nav_builder %} class="on"{% endblock %}
+
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+
+  <div class="dochead">
+    <div>
+      <p class="eyebrow">Assembly</p>
+      <h1 class="doc">Test builder</h1>
+      <p class="sub">Shade the units you want drawn from, set the length, and generate as many tagged
+        variants as you need. Sampling runs against approved items only, on this machine, and never
+        calls an external service.</p>
+    </div>
+    <div class="ref">
+      <b>This paper</b>
+      <span>GRADE {{ grade.number }}</span>
+      <span>{{ total_items }} APPROVED ITEM{{ total_items|pluralize:"S" }}</span>
+      <span>{{ units|length }} UNIT{{ units|length|pluralize:"S" }} LISTED</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div>
+
+      <div class="sec">
+        <span class="idx">01</span>
+        <h2>Specification</h2>
+        <span class="line"></span>
+      </div>
+
+      <div style="display:flex;gap:26px;flex-wrap:wrap">
+        <div style="flex:1 1 240px">
+          <label class="flabel" for="id_grade">Grade</label>
+          <select name="grade" id="id_grade"
+                  onchange="this.form.querySelector('[name=generate]').disabled=true; this.form.submit();">
+            {% for g in grades %}
+              <option value="{{ g.pk }}" {% if grade and g.pk == grade.pk %}selected{% endif %}>Grade {{ g.number }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div style="flex:0 1 170px">
+          <label class="flabel" for="id_question_count">Questions per test</label>
+          {{ form.question_count }}
+          {% if form.question_count.errors %}<ul class="errorlist">{% for e in form.question_count.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        <div style="flex:0 1 170px">
+          <label class="flabel" for="id_variant_count">Variants</label>
+          {{ form.variant_count }}
+          {% if form.variant_count.errors %}<ul class="errorlist">{% for e in form.variant_count.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+      </div>
+
+      <div class="sec">
+        <span class="idx">02</span>
+        <h2>Units</h2>
+        <span class="line"></span>
+        <span class="note">SHADE TO INCLUDE</span>
+      </div>
+
+      <p style="font:italic 400 13px/1.6 var(--serif);color:var(--ink-2);margin:0 0 14px">
+        Units with no approved items yet are struck through and cannot be shaded &mdash;
+        their banks are still waiting on the offline pipeline.
+      </p>
+
+      {% if form.units.errors %}<ul class="errorlist" style="margin-bottom:12px">{% for e in form.units.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+
+      <div class="omr">
+        <div class="omr-grid">
+          {% for unit in units %}
+            <label class="unit">
+              <input type="checkbox" name="units" value="{{ unit.pk }}"
+                     {% if unit.pk in selected_unit_ids %}checked{% endif %}
+                     {% if not unit.approved_items %}disabled title="No approved items in the bank yet"{% endif %}>
+              <span class="code">U {{ unit.number|stringformat:"02d" }}</span>
+              <span class="t">{{ unit.grammar_point.name|default:unit.title|truncatechars:52 }}
+                <em>{{ unit.theme|default:"&mdash;" }}</em></span>
+              <span class="c">{{ unit.approved_items }}</span>
+            </label>
+          {% empty %}
+            <p class="fine" style="padding:18px 14px">No units imported for this grade yet.
+              Run <code>manage.py import_guide</code>.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="sec">
+        <span class="idx">03</span>
+        <h2>Question mix</h2>
+        <span class="line"></span>
+        <span class="note">OPTIONAL</span>
+      </div>
+
+      <details class="mix">
+        <summary>Customise the question mix
+          <span class="note">WEIGHTED DEFAULT IN USE</span>
+        </summary>
+        <p style="font:italic 400 13px/1.6 var(--serif);color:var(--ink-2);margin:16px 0 0">
+          These are relative weights, not counts. The default favours production types &mdash; gap-fill,
+          word formation, transformation, error correction &mdash; over recognition types.
+        </p>
+        <div class="mixgrid">
+          {% for field in form.weight_fields %}
+            <div>
+              <label class="flabel" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+            </div>
+          {% endfor %}
+        </div>
+        <p style="margin:22px 0 0">
+          <label style="font:400 13px/1.6 var(--sans);display:flex;gap:10px;align-items:center">
+            {{ form.customize_mix }} Use these weights instead of the default
+          </label>
+        </p>
+      </details>
+
+      <div style="border-top:2px solid var(--ink);margin-top:34px;padding-top:22px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+        <button class="btn" type="submit" name="generate" value="1">Generate tests</button>
+        <span style="font:400 11.5px/1.6 var(--mono);color:var(--ink-3)">
+          {{ total_items }} APPROVED ITEM{{ total_items|pluralize:"S" }} IN THE UNITS SHOWN
+        </span>
+      </div>
+
+    </div>
+
+    <div class="margin-col">
+      <h3>Bank &middot; grade {{ grade.number }}</h3>
+      <ul class="tally">
+        {% for label, count in summary %}
+          <li>
+            <span class="k">{{ label }}</span>
+            <span class="dots"></span>
+            <span class="n{% if not count %} zero{% endif %}">{% if count %}{{ count }}{% else %}&mdash;{% endif %}</span>
+          </li>
+        {% endfor %}
+        <li class="tot">
+          <span class="k">Total approved</span>
+          <span class="dots"></span>
+          <span class="n">{{ total_items }}</span>
+        </li>
+      </ul>
+      <p class="fine">Types showing no count are produced by the offline pipeline and imported.
+        The running app never generates content itself.</p>
+
+      {% if recent_batches %}
+      <div class="blk">
+        <h3>Recent batches</h3>
+        <ul class="tally">
+          {% for b in recent_batches %}
+            <li>
+              <span class="k"><a href="{% url 'batch_preview' b.pk %}"
+                style="font:600 12.5px/1.4 var(--mono)">#{{ b.pk|stringformat:"04d" }}</a></span>
+              <span class="dots"></span>
+              <span class="n" style="color:var(--ink-3)">G{{ b.grade.number }} &middot; {{ b.variant_count }} VAR</span>
+            </li>
+          {% endfor %}
+        </ul>
+        <p class="fine">Batches are kept per teacher. Nothing is deleted &mdash; an old batch can be
+          reprinted exactly as it was first generated.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</form>
+{% endblock %}

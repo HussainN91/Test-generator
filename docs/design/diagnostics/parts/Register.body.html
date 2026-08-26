@@ -1,0 +1,173 @@
+<div class="mast">
+  <div class="mast-in">
+    <svg class="mark" width="30" height="34" viewBox="0 0 30 34" fill="none" style="color: var(--ink)" aria-hidden="true">
+      <rect x="1" y="1" width="28" height="32" stroke="currentColor" stroke-width="1.5"></rect>
+      <path d="M7 9h9M7 15h9M7 21h9M7 27h9" stroke="currentColor" stroke-width="1.5"></path>
+      <circle cx="23" cy="9" r="2.6" fill="currentColor"></circle>
+      <circle cx="23" cy="15" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+      <circle cx="23" cy="21" r="2.6" stroke="currentColor" stroke-width="1.2"></circle>
+      <circle cx="23" cy="27" r="2.6" fill="currentColor"></circle>
+    </svg>
+    <span class="wordmark">English Test Generator<span class="sm">ITEM BANK &middot; DIAGNOSTICS</span></span>
+    <nav>
+      <a href="#">Item bank</a>
+      <a href="#" class="on">Diagnostics</a>
+      <span class="who">ADMIN</span>
+      <button class="btn ghost sm" style="border-color:var(--rule)">Log out</button>
+    </nav>
+  </div>
+</div>
+<div class="hair"></div>
+
+<div class="subbar">
+  <div class="subbar-in">
+    <a href="#">Papers</a>
+    <a href="#" class="on">Issue register</a>
+    <a href="#">Admin</a>
+    <span class="note">STAFF ONLY</span>
+  </div>
+</div>
+
+<main class="sheet">
+  <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+    <div class="notice ok">
+      <b>Open</b>
+      <span>Teachers can download packs for the grades they are assigned to.</span>
+      <button class="btn ghost sm" style="margin-left:auto">Close generation</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ shut }}" hint-placeholder-val="{{ true }}">
+    <div class="notice">
+      <b>Closed</b>
+      <span>Downloads are refused. Teachers still see the papers and can read them on screen.</span>
+      <button class="btn sm" style="margin-left:auto">Open generation</button>
+    </div>
+  </sc-if>
+
+  <div class="dochead" style="margin-top:22px">
+    <div>
+      <p class="eyebrow">Diagnostics</p>
+      <h1 class="doc">Issue register</h1>
+      <p class="sub">Which teacher has issued which paper. A grade a teacher is not assigned to is left
+        blank rather than marked outstanding &mdash; absence only means something once someone is expected
+        to act.</p>
+    </div>
+    <div class="ref">
+      <b>Register</b>
+      <span>12 PAPERS</span>
+      <span>1 ISSUED</span>
+      <span>11 OUTSTANDING</span>
+    </div>
+  </div>
+
+  <div class="sec">
+    <span class="idx">01</span>
+    <h2>Teachers and their grades</h2>
+    <span class="line"></span>
+    <span class="note">4 ASSIGNED</span>
+  </div>
+
+  <table class="reg">
+    <thead>
+      <tr>
+        <th style="width:150px">Teacher</th>
+        <th style="width:100px">Grade</th>
+        <th style="width:190px">Variants issued</th>
+        <th>Last issued</th>
+        <th style="width:130px;text-align:right">Outstanding</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="u" style="width:150px">TEACHER01</td>
+        <td>Grade 9</td>
+        <td>
+          <span class="vset">
+            <span class="vchip done">A</span>
+            <span class="vchip">B</span>
+            <span class="vchip">C</span>
+            <span class="vchip">D</span>
+          </span>
+        </td>
+        <td class="num" style="text-align:left">25 Aug 2026, 12:07</td>
+        <td class="num"><span class="stamp">3</span></td>
+      </tr>
+      <tr>
+        <td class="u" style="width:150px">TEACHER02</td>
+        <td>Grade 9</td>
+        <td>
+          <span class="vset">
+            <span class="vchip">A</span>
+            <span class="vchip">B</span>
+            <span class="vchip">C</span>
+            <span class="vchip">D</span>
+          </span>
+        </td>
+        <td class="num" style="text-align:left;color:var(--ink-3)">&mdash;</td>
+        <td class="num"><span class="stamp">4</span></td>
+      </tr>
+      <tr>
+        <td class="u" style="width:150px">TEACHER03</td>
+        <td>Grade 10</td>
+        <td>
+          <span class="vset">
+            <span class="vchip">A</span>
+            <span class="vchip">B</span>
+            <span class="vchip">C</span>
+            <span class="vchip">D</span>
+          </span>
+        </td>
+        <td class="num" style="text-align:left;color:var(--ink-3)">&mdash;</td>
+        <td class="num"><span class="stamp">4</span></td>
+      </tr>
+      <tr>
+        <td class="u" style="width:150px">TEACHER04</td>
+        <td>Grade 11</td>
+        <td>
+          <span class="vset">
+            <span class="vchip">A</span>
+            <span class="vchip">B</span>
+            <span class="vchip">C</span>
+            <span class="vchip">D</span>
+          </span>
+        </td>
+        <td class="num" style="text-align:left;color:var(--ink-3)">&mdash;</td>
+        <td class="num"><span class="stamp">4</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="fine" style="margin-top:16px">Usernames are stand-ins &mdash; no teacher is assigned to a grade
+    yet, so the live register is empty until someone is. Assignments are made in the Django admin.</p>
+
+  <div class="sec">
+    <span class="idx">02</span>
+    <h2>Recent downloads</h2>
+    <span class="line"></span>
+    <span class="note">NEWEST FIRST</span>
+  </div>
+
+  <table class="reg">
+    <thead>
+      <tr>
+        <th style="width:190px">When</th>
+        <th style="width:150px">Teacher</th>
+        <th style="width:110px">Paper</th>
+        <th>Contents</th>
+        <th style="width:110px;text-align:right">Format</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num" style="text-align:left">25 Aug 2026, 12:07</td>
+        <td class="u" style="width:150px">TEACHER01</td>
+        <td class="u" style="width:110px">G9-A</td>
+        <td>Student, answer key, examiner pack, 2 recordings</td>
+        <td class="num">ZIP</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="fine" style="margin-top:16px">Every download writes one row here. Nothing is deleted &mdash; a
+    paper issued twice shows twice, which is how a re-print gets noticed.</p>
+</main>

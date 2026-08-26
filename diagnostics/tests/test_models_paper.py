@@ -1,0 +1,211 @@
+from django.core.exceptions import ValidationError
+from django.test import TestCase
+
+from diagnostics.constants import TaskType
+from diagnostics.models import (
+    AudioClip, Paper, PaperSpeakingPrompt, PaperWritingQuestion,
+    ReadingPassage, SpeakingPrompt, SpeakingTask, WritingQuestion, WritingSubtype,
+)
+
+
+def make_writing_questions(n, suffix):
+    return [
+        WritingQuestion.objects.create(
+            subtype=WritingSubtype.GRAMMAR, stem=f"stem-{suffix}-{i}",
+            options=["a", "b", "c", "d"], answer="A",
+        )
+        for i in range(n)
+    ]
+
+
+def make_speaking_prompts(suffix):
+    return [
+        SpeakingPrompt.objects.create(task=task, prompt=f"prompt-{suffix}-{task}")
+        for task in SpeakingTask.values
+    ]
+
+
+def make_paper(grade, variant, clip_a, clip_b, suffix, writing_questions=None, speaking_prompts=None):
+    paper = Paper.objects.create(
+        grade=grade,
+        variant=variant,
+        listening_clip_1=clip_a,
+        listening_clip_2=clip_b,
+        reading_passage=ReadingPassage.objects.create(
+            label=f"R{suffix}", title="T", body=" ".join(["word"] * 220)
+        ),
+    )
+    for position, question in enumerate(writing_questions or [], start=1):
+        PaperWritingQuestion.objects.create(paper=paper, question=question, position=position)
+    for position, prompt in enumerate(speaking_prompts or [], start=1):
+        PaperSpeakingPrompt.objects.create(paper=paper, prompt=prompt, position=position)
+    return paper
+
+
+class PaperReuseCapTests(TestCase):
+    def setUp(self):
+        self.clips = {
+            n: AudioClip.objects.create(number=n, task_type=TaskType.MCQ3)
+            for n in range(1, 9)
+        }
+
+    def test_valid_paper_saves(self):
+        paper = make_paper(9, "A", self.clips[1], self.clips[2], "01")
+        paper.full_clean()
+        self.assertEqual(Paper.objects.count(), 1)
+
+    def test_a_paper_cannot_use_the_same_clip_twice(self):
+        paper = Paper(
+            grade=9, variant="A",
+            listening_clip_1=self.clips[1], listening_clip_2=self.clips[1],
+            reading_passage=ReadingPassage.objects.create(
+                label="R01", title="T", body=" ".join(["word"] * 220)
+            ),
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            paper.full_clean()
+        self.assertIn("twice", str(ctx.exception))
+
+    def test_rotating_clip_reuse_up_to_the_cap_is_allowed(self):
+        """Rotating (non-picture) clips carry REUSE_CAPS['rotating_clip'] ==
+        2: a second variant in the same grade may reuse one without raising.
+        Clips 2, 3, 4, 6 are all outside PICTURE_CLIPS (1, 5, 9, 13, 15)."""
+        make_paper(9, "A", self.clips[2], self.clips[3], "01")
+        second = Paper(
+            grade=9, variant="B",
+            listening_clip_1=self.clips[2], listening_clip_2=self.clips[4],
+            reading_passage=ReadingPassage.objects.create(
+                label="R02", title="T", body=" ".join(["word"] * 220)
+            ),
+        )
+        second.full_clean()  # second use of clip 2 - still within the cap
+
+    def test_rotating_clip_reuse_beyond_the_cap_is_rejected(self):
+        make_paper(9, "A", self.clips[2], self.clips[3], "01")
+        make_paper(9, "B", self.clips[2], self.clips[4], "02")
+        third = Paper(
+            grade=9, variant="C",
+            listening_clip_1=self.clips[2], listening_clip_2=self.clips[6],
+            reading_passage=ReadingPassage.objects.create(
+                label="R03", title="T", body=" ".join(["word"] * 220)
+            ),
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            third.full_clean()
+        self.assertIn("Grade 9", str(ctx.exception))
+
+    def test_picture_clip_reuse_up_to_the_cap_is_allowed(self):
+        """Picture clips carry REUSE_CAPS['picture_clip'] == 4 - only five
+        exist against sixteen variants. Clip 1 is a picture clip by number
+        (PICTURE_CLIPS) regardless of the task_type given in setUp."""
+        picture = self.clips[1]
+        for variant, second in zip("ABC", (self.clips[2], self.clips[3], self.clips[4])):
+            make_paper(9, variant, picture, second, variant)
+        fourth = Paper(
+            grade=9, variant="D",
+            listening_clip_1=picture, listening_clip_2=self.clips[6],
+            reading_passage=ReadingPassage.objects.create(
+                label="R04", title="T", body=" ".join(["word"] * 220)
+            ),
+        )
+        fourth.full_clean()  # fourth use of clip 1 - still within the cap of 4
+
+    def test_picture_clip_reuse_beyond_the_cap_is_rejected(self):
+        picture = self.clips[1]
+        for variant, second in zip(
+            "ABCD", (self.clips[2], self.clips[3], self.clips[4], self.clips[6])
+        ):
+            make_paper(9, variant, picture, second, variant)
+        fifth = Paper(
+            grade=9, variant="E",
+            listening_clip_1=picture, listening_clip_2=self.clips[7],
+            reading_passage=ReadingPassage.objects.create(
+                label="R05", title="T", body=" ".join(["word"] * 220)
+            ),
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            fifth.full_clean()
+        self.assertIn("Grade 9", str(ctx.exception))
+
+    def test_clip_reuse_across_grades_is_allowed(self):
+        make_paper(9, "A", self.clips[1], self.clips[2], "01")
+        other = Paper(
+            grade=11, variant="C",
+            listening_clip_1=self.clips[2], listening_clip_2=self.clips[3],
+            reading_passage=ReadingPassage.objects.create(
+                label="R02", title="T", body=" ".join(["word"] * 220)
+            ),
+        )
+        other.full_clean()
+        other.save()
+        self.assertEqual(Paper.objects.count(), 2)
+
+    def test_reading_passage_reuse_up_to_the_cap_is_allowed(self):
+        """REUSE_CAPS['reading_passage'] == 2: a second variant in the same
+        grade may reuse a passage without raising."""
+        first = make_paper(9, "A", self.clips[2], self.clips[3], "01")
+        second = Paper(
+            grade=9, variant="B",
+            listening_clip_1=self.clips[4], listening_clip_2=self.clips[6],
+            reading_passage=first.reading_passage,
+        )
+        second.full_clean()  # second use of the passage - still within the cap
+
+    def test_reading_passage_reuse_beyond_the_cap_is_rejected(self):
+        first = make_paper(9, "A", self.clips[2], self.clips[3], "01")
+        Paper.objects.create(
+            grade=9, variant="B",
+            listening_clip_1=self.clips[4], listening_clip_2=self.clips[6],
+            reading_passage=first.reading_passage,
+        )
+        third = Paper(
+            grade=9, variant="C",
+            listening_clip_1=self.clips[7], listening_clip_2=self.clips[8],
+            reading_passage=first.reading_passage,
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            third.full_clean()
+        self.assertIn("Grade 9", str(ctx.exception))
+
+    def test_shared_writing_question_within_a_grade_is_rejected(self):
+        """REUSE_CAPS['writing_question'] == 1 - the pool of 50 per subtype
+        supports genuine zero reuse, so this cap boundary is unchanged from
+        the original rule: a second use in the same grade already raises."""
+        questions = make_writing_questions(2, "shared")
+        make_paper(9, "A", self.clips[1], self.clips[2], "01", writing_questions=questions[:1])
+        clash = make_paper(9, "B", self.clips[3], self.clips[4], "02")
+        PaperWritingQuestion.objects.create(paper=clash, question=questions[0], position=1)
+        with self.assertRaises(ValidationError) as ctx:
+            clash.full_clean()
+        self.assertIn("Grade 9", str(ctx.exception))
+
+    def test_shared_writing_question_across_grades_is_allowed(self):
+        questions = make_writing_questions(1, "cross-grade")
+        make_paper(9, "A", self.clips[1], self.clips[2], "01", writing_questions=questions)
+        other = make_paper(11, "A", self.clips[3], self.clips[4], "02")
+        PaperWritingQuestion.objects.create(paper=other, question=questions[0], position=1)
+        other.full_clean()  # must not raise
+
+    def test_speaking_prompt_reuse_up_to_the_cap_is_allowed(self):
+        """REUSE_CAPS['speaking_prompt'] == 2: a second variant in the same
+        grade may reuse a prompt without raising."""
+        prompts = make_speaking_prompts("shared")
+        make_paper(9, "A", self.clips[1], self.clips[2], "01", speaking_prompts=prompts)
+        second = make_paper(9, "B", self.clips[3], self.clips[4], "02")
+        PaperSpeakingPrompt.objects.create(paper=second, prompt=prompts[0], position=1)
+        second.full_clean()  # second use of the prompt - still within the cap
+
+    def test_speaking_prompt_reuse_beyond_the_cap_is_rejected(self):
+        prompts = make_speaking_prompts("shared")
+        make_paper(9, "A", self.clips[1], self.clips[2], "01", speaking_prompts=prompts)
+        second = make_paper(9, "B", self.clips[3], self.clips[4], "02")
+        PaperSpeakingPrompt.objects.create(paper=second, prompt=prompts[0], position=1)
+        third = make_paper(9, "C", self.clips[6], self.clips[7], "03")
+        PaperSpeakingPrompt.objects.create(paper=third, prompt=prompts[0], position=1)
+        with self.assertRaises(ValidationError) as ctx:
+            third.full_clean()
+        self.assertIn("Grade 9", str(ctx.exception))
+
+    def test_str_is_the_paper_code(self):
+        paper = make_paper(10, "C", self.clips[1], self.clips[2], "01")
+        self.assertEqual(str(paper), "G10-C")

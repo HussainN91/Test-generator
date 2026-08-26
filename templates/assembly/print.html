@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+{% load bank_extras %}
+{% block title %}{% if with_answers %}Answer keys{% else %}Tests{% endif %} &mdash; batch #{{ batch.pk }}{% endblock %}
+
+{% block chrome %}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/paper-print.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="toolbar">
+  <button class="btn" type="button" onclick="window.print()">Print</button>
+  <span style="font:400 11px/1.6 var(--mono);color:var(--ink-3)">
+    {{ variants|length }} SHEET{{ variants|length|pluralize:"S" }}
+    &middot; {% if with_answers %}ANSWER KEY{% else %}STUDENT COPY{% endif %}
+  </span>
+</div>
+
+{% for variant in variants %}
+<div class="page">
+  <div class="margin-rule"></div>
+  <div class="col">
+
+    <div class="slug">
+      <span>Grade {{ batch.grade.number }} &middot; English{% if with_answers %} &middot; Answer key{% endif %}</span>
+      <span class="rt">TG/G{{ batch.grade.number }}/B{{ batch.pk|stringformat:"04d" }}/{{ variant.label }}</span>
+    </div>
+
+    <div class="title-row">
+      <div>
+        <h1>English Test {{ variant.label }}</h1>
+        <p class="strap">
+          Units {% for u in batch.units.all %}{{ u.number|stringformat:"02d" }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          &middot; {{ variant.questions.count }} question{{ variant.questions.count|pluralize }}
+        </p>
+      </div>
+      {% if not with_answers %}
+      <div class="markbox">
+        <b>Mark</b>
+        <span><i>/</i> {{ variant.questions.count }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if with_answers %}
+      <div class="keygrid">
+        {% for position, q in variant|rendered %}
+          <div class="keyline"><b>{{ position|stringformat:"02d" }}</b><span>{{ q.answer }}</span></div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="candidate">
+        <div><b>Name</b><u></u></div>
+        <div class="sm"><b>Class</b><u></u></div>
+        <div class="sm"><b>Date</b><u></u></div>
+      </div>
+
+      <p class="rubric">Answer all questions. Write your answers in the spaces provided.</p>
+
+      <ol class="paper">
+        {% for position, q in variant|rendered %}
+          <li>
+            {% if q.instruction %}<p class="pinstr">{{ q.instruction }}</p>{% endif %}
+            {% if q.prompt %}<p class="pprompt">{{ q.prompt }}</p>{% endif %}
+            {% if q.options %}
+              <div class="popts">
+                {% for letter, option in q.lettered_options %}
+                  <span class="popt"><i>{{ letter }}</i>{{ option }}</span>
+                {% endfor %}
+              </div>
+            {% elif q.pairs %}
+              <table class="pmatch">
+                <tbody>
+                  {% for row in q.matching_rows %}
+                    <tr>
+                      <td>{{ row.number }}. {{ row.left }}</td>
+                      <td>{{ row.letter }}. {{ row.right }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <p class="pblanks">{% for row in q.matching_rows %}<span>{{ row.number }}. ____</span>{% endfor %}</p>
+            {% else %}
+              {% for _ in ""|ljust:q.answer_lines %}<div class="pline"></div>{% endfor %}
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ol>
+    {% endif %}
+
+    <div class="pfoot">
+      <span>{% if with_answers %}Answer key{% else %}Student copy{% endif %}
+        &middot; Test {{ variant.label }} of {{ variants|length }}</span>
+      <span>TG/G{{ batch.grade.number }}/B{{ batch.pk|stringformat:"04d" }}/{{ variant.label }}</span>
+    </div>
+
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

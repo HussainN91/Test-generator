@@ -1,0 +1,79 @@
+/* == the printed paper ==================================================
+   Screen shows an A4 sheet (794 x 1123 at 96dpi); print lets the browser
+   own the page box. Loaded only by assembly/print.html and the design
+   canvas's PrintSheet artboard.
+   ====================================================================== */
+.page{position:relative;width:794px;min-height:1123px;margin:0 auto 34px;background:#fff;
+  background-image:none;overflow:hidden;font-family:var(--serif);color:#111;
+  page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto;break-after:auto}
+.page .margin-rule{position:absolute;left:68px;top:0;bottom:0;width:0;border-left:1.5px solid var(--stamp);opacity:.6}
+.page .col{position:relative;margin:0 64px 0 96px;padding:56px 0 44px}
+
+.slug{display:flex;justify-content:space-between;align-items:baseline;
+  font:600 10px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:#555;
+  padding-bottom:9px;border-bottom:2px solid #111}
+.slug .rt{font-family:var(--mono);letter-spacing:.08em;font-weight:500}
+
+.title-row{display:flex;align-items:flex-start;gap:26px;margin-top:20px}
+.page h1{font:400 30px/1.1 var(--serif);margin:0;letter-spacing:-.008em}
+.page .strap{font:500 10px/1 var(--mono);letter-spacing:.18em;color:#555;margin:11px 0 0;text-transform:uppercase}
+.markbox{margin-left:auto;flex:none;width:96px;border:1.5px solid #111;text-align:center}
+.markbox b{display:block;font:600 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;
+  padding:6px 0;border-bottom:1px solid #111;color:#555}
+.markbox span{display:block;font:400 22px/1 var(--mono);padding:14px 0 12px;color:#111}
+.markbox span i{font-style:normal;color:#999;font-size:15px}
+
+.candidate{display:flex;gap:26px;margin-top:26px}
+.candidate div{flex:1}
+.candidate div.sm{flex:0 0 130px}
+.candidate b{display:block;font:600 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:#555;margin-bottom:20px}
+.candidate u{display:block;height:0;border-bottom:1px solid #111;text-decoration:none}
+
+.rubric{margin-top:24px;padding:11px 0;border-top:1px solid #111;border-bottom:1px solid #111;
+  font:italic 400 16px/1.4 var(--serif);color:#222}
+
+ol.paper{list-style:none;margin:26px 0 0;padding:0;counter-reset:q}
+ol.paper > li{position:relative;padding:0 0 18px 40px;margin-bottom:14px;counter-increment:q;
+  page-break-inside:avoid;break-inside:avoid}
+ol.paper > li::before{content:counter(q,decimal-leading-zero) ".";position:absolute;left:0;top:1px;
+  font:500 15px/1.5 var(--mono);color:#666}
+.pinstr{font:italic 400 16px/1.45 var(--serif);color:#444;margin:0 0 7px}
+.pprompt{font:400 16px/1.5 var(--serif);color:#111;margin:0}
+.popts{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:9px 30px;margin-top:12px}
+.popt{display:flex;gap:10px;align-items:baseline;font:400 16px/1.4 var(--serif)}
+.popt i{font:600 10px/1 var(--mono);font-style:normal;border:1px solid #111;width:21px;height:21px;
+  display:inline-flex;align-items:center;justify-content:center;flex:none;color:#111;position:relative;top:3px}
+.pline{height:0;border-bottom:1px solid #111;width:260px;margin-top:16px}
+table.pmatch{width:100%;border-collapse:collapse;margin-top:12px}
+table.pmatch td{border:1px solid #111;padding:7px 11px;font:400 15px/1.4 var(--serif)}
+table.pmatch td:first-child{width:34%}
+.pblanks{font:400 15px/1.4 var(--serif);margin-top:12px;color:#111}
+.pblanks span{display:inline-block;margin-right:22px}
+
+/* answer key */
+.keygrid{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:0 44px;margin-top:22px}
+.keyline{display:flex;gap:16px;align-items:baseline;padding:10px 0;border-bottom:1px solid #ccc;
+  font:400 15px/1.45 var(--serif);page-break-inside:avoid;break-inside:avoid}
+.keyline b{font:500 13px/1.45 var(--mono);color:#666;flex:none;width:26px}
+
+.pfoot{display:flex;justify-content:space-between;align-items:baseline;margin-top:34px;
+  padding-top:9px;border-top:1px solid #111;
+  font:500 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#666}
+
+main.sheet{max-width:none;padding:0 20px 40px}
+.toolbar{max-width:794px;margin:0 auto;padding:22px 0 4px;display:flex;gap:12px;align-items:center}
+
+/* the canvas artboard pins the sheet to exactly one A4 page */
+.page.fixed{height:1123px;margin:0}
+.page.fixed .col{position:absolute;left:96px;right:64px;top:56px;margin:0;padding:0}
+.page.fixed .pfoot{position:absolute;left:96px;right:64px;bottom:44px;margin:0}
+
+@media print{
+  body{background:#fff;background-image:none}
+  .toolbar{display:none}
+  main.sheet{padding:0}
+  .page{width:auto;min-height:0;margin:0;overflow:visible}
+  .page .col{margin:0 0 0 28px;padding:0}
+  .page .margin-rule{left:0}
+}

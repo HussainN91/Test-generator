@@ -1,0 +1,57 @@
+{
+  "pages": [
+    { "id": "screens", "name": "Screens" },
+    { "id": "reference", "name": "Reference" }
+  ],
+  "artboards": [
+    { "file": "SignIn.dc.html",     "page": "screens",   "title": "Sign in",         "x": 0,    "y": 0,    "w": 1280, "h": 820 },
+    { "file": "Main.dc.html",       "page": "screens",   "title": "Test builder",    "x": 0,    "y": 940,  "w": 1280, "h": 1490 },
+    { "file": "PrintSheet.dc.html", "page": "screens",   "title": "Printed paper",   "x": 1400, "y": 0,    "w": 794,  "h": 1123, "print": "fixed" },
+    { "file": "Coverage.dc.html",   "page": "screens",   "title": "Bank coverage",   "x": 1400, "y": 1300, "w": 1280, "h": 2310 },
+    { "file": "Preview.dc.html",    "page": "screens",   "title": "Batch preview",   "x": 2800, "y": 0,    "w": 1280, "h": 1740 },
+    { "file": "System.dc.html",     "page": "reference", "title": "Reference sheet", "x": 0,    "y": 0,    "w": 1280, "h": 1830 }
+  ],
+  "annotations": [
+    {
+      "id": "direction",
+      "page": "screens",
+      "x": -440,
+      "y": 940,
+      "w": 380,
+      "text": "DIRECTION — Examinations Office\n\nThe old screens were the median of every SaaS dashboard ever scraped: grey wash, white rounded cards, hairline shadows, system-ui, a safe desaturated blue. Nothing about them said 'this makes exam papers'.\n\nThis takes its language from printed examination stationery instead — warm paper, blue-black ink, hairline rules, a marker's red. No cards, no corner radii, no shadows, no gradients anywhere in the system.\n\nEvery number, unit title and question on these artboards is real, read out of your db.sqlite3. Nothing here is lorem ipsum."
+    },
+    {
+      "id": "omr",
+      "page": "screens",
+      "x": -440,
+      "y": 1660,
+      "w": 380,
+      "text": "THE ONE MOVE TO KEEP\n\nThe unit picker is an OMR answer sheet. Shading a bubble is what a teacher already does to a real answer sheet, so it needs no explaining, and it turns the longest list on the page into the most legible thing on it.\n\nUnits with no approved bank are struck through rather than merely dimmed — the app already disables them, it just never said so out loud."
+    },
+    {
+      "id": "print-note",
+      "page": "screens",
+      "x": 2300,
+      "y": 0,
+      "w": 340,
+      "text": "THE PRINTED PAPER\n\nA4 at 96dpi — what actually comes out of the printer. Mark box, ruled candidate fields, and a red margin rule down the left like a school exercise book.\n\nStudent-read text sits at 16px / 12pt, the floor for print. The lettered option boxes give a pen somewhere to go."
+    },
+    {
+      "id": "margin-note",
+      "page": "screens",
+      "x": 4200,
+      "y": 0,
+      "w": 360,
+      "text": "ANSWERS IN THE MARGIN\n\nThe old preview put a green 'Answer: B' line under every question. Here the key runs down the right margin in red, where a marker's annotations belong — so the paper reads as a paper and the key reads as a key.\n\nThe warning at the top is the app's real message, verbatim: gap-fill has no bank at all, so a mix that asks for it silently gets something else."
+    },
+    {
+      "id": "applied",
+      "page": "reference",
+      "x": 1400,
+      "y": 0,
+      "w": 380,
+      "text": "THIS IS ALREADY IN THE APP\n\nThese are not just pictures — the same system has been applied to the real Django templates in D:\\Test generator\\templates. base.html carries the tokens; builder, coverage, preview, print and login were rebuilt on top of them.\n\nThe working files behind this canvas live in docs/design/. Editing an artboard here changes the picture, not the app."
+    }
+  ],
+  "launch": { "view": "canvas", "page": "screens" }
+}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load bank_extras %}
+{% block title %}Batch #{{ batch.pk }}{% endblock %}
+{% block nav_builder %} class="on"{% endblock %}
+
+{% block content %}
+<div class="dochead">
+  <div>
+    <p class="eyebrow">Assembly &middot; batch</p>
+    <h1 class="doc">Batch {{ batch.pk|stringformat:"04d" }} &mdash; Grade {{ batch.grade.number }}</h1>
+    <p class="sub">Every variant with its answer key, exactly as it will print. Check it here before
+      you export &mdash; once a batch is generated its questions are fixed, so the copy you print
+      next term is the copy you print today.</p>
+  </div>
+  <div class="ref">
+    <b>Batch ref</b>
+    <span>TG/G{{ batch.grade.number }}/B{{ batch.pk|stringformat:"04d" }}</span>
+    <span>UNITS {% for u in batch.units.all %}{{ u.number|stringformat:"02d" }}{% if not forloop.last %}, {% endif %}{% endfor %}</span>
+    <span>{{ batch.created_at|date:"j M Y" }} &middot; {{ batch.created_at|date:"H:i" }}</span>
+  </div>
+</div>
+
+<div class="actions">
+  <a class="btn" href="{% url 'batch_print' batch.pk %}" target="_blank">Print tests</a>
+  <a class="btn ghost" href="{% url 'batch_print' batch.pk %}?answers=1" target="_blank">Print answer keys</a>
+  {% if docx_available %}
+    <a class="btn ghost" href="{% url 'batch_docx' batch.pk %}">Download .docx</a>
+  {% endif %}
+  <span style="flex:1"></span>
+  <a class="btn ghost sm" href="{% url 'builder' %}">New batch</a>
+</div>
+
+{% for variant in variants %}
+  <div class="vhead">
+    <h2>Test {{ variant.label }}</h2>
+    <span class="stamp ok">{{ variant.questions.count }} question{{ variant.questions.count|pluralize }}</span>
+    <span class="line"></span>
+    <span style="font:400 11px/1 var(--mono);color:var(--ink-3)">TG/G{{ batch.grade.number }}/B{{ batch.pk|stringformat:"04d" }}/{{ variant.label }}</span>
+  </div>
+
+  <div class="qcols">
+    <span>No.</span>
+    <span>Question</span>
+    <span>Answer</span>
+  </div>
+
+  {% for position, q in variant|rendered %}
+    <div class="q">
+      <span class="qn">{{ position|stringformat:"02d" }}</span>
+      <div>
+        {% if q.instruction %}<p class="qinstr">{{ q.instruction }}</p>{% endif %}
+        {% if q.prompt %}<p class="qprompt">{{ q.prompt }}</p>{% endif %}
+        {% if q.options %}
+          <div class="qopts">
+            {% for letter, option in q.lettered_options %}
+              <span class="qopt{% if letter == q.answer %} right{% endif %}"><i>{{ letter }}</i>{{ option }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% if q.pairs %}
+          <table class="qmatch">
+            <tbody>
+              {% for row in q.matching_rows %}
+                <tr>
+                  <td>{{ row.number }}. {{ row.left }}</td>
+                  <td>{{ row.letter }}. {{ row.right }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+      </div>
+      <span class="qans">{{ q.answer }}</span>
+    </div>
+  {% endfor %}
+{% endfor %}
+{% endblock %}
