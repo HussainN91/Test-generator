@@ -1,0 +1,136 @@
+"""The only place obligation status changes.
+
+Centralised so that no view, admin action or management command can invent its
+own transition. Everything that writes `Obligation.status` goes through here.
+"""
+
+from django.db import transaction
+from django.utils import timezone
+
+from step import constants
+from step.models import Evidence, Obligation, Submission
+
+
+class EvidenceRequired(Exception):
+    """The submission does not satisfy the type's evidence_spec."""
+
+
+class InvalidTransition(Exception):
+    """The requested change is not legal from the current status."""
+
+
+def _check_evidence(obligation_type, evidence_items):
+    """Raise EvidenceRequired unless the items satisfy the type.
+
+    Messages are written for a person, not a developer: they say what to do
+    next, per spec §7.1.
+    """
+    spec = obligation_type.evidence_spec
+    if spec == constants.EVIDENCE_NONE:
+        return
+
+    links = [e for e in evidence_items if e.get("kind") == constants.EVIDENCE_LINK_KIND]
+    files = [e for e in evidence_items if e.get("kind") == constants.EVIDENCE_FILE_KIND]
+    minimum = obligation_type.min_count
+
+    if spec == constants.EVIDENCE_LINK and len(links) < minimum:
+        raise EvidenceRequired(f"Please add {minimum} link(s) before submitting.")
+    if spec == constants.EVIDENCE_FILE and len(files) < minimum:
+        raise EvidenceRequired(f"Please attach {minimum} file(s) before submitting.")
+    if spec == constants.EVIDENCE_EITHER and len(evidence_items) < minimum:
+        raise EvidenceRequired(f"Please add {minimum} link(s) or file(s) before submitting.")
+    if spec == constants.EVIDENCE_BOTH and (len(links) < minimum or len(files) < minimum):
+        raise EvidenceRequired(
+            f"Please add {minimum} link(s) and attach {minimum} file(s) before submitting."
+        )
+
+
+@transaction.atomic
+def submit(obligation: Obligation, *, user, evidence, evaluation=None) -> Submission:
+    """Record a submission, creating a new revision if this is a resubmission."""
+    if obligation.status not in {constants.STATUS_NOT_STARTED, constants.STATUS_RETURNED}:
+        raise InvalidTransition(
+            f"{obligation.display_name} is {obligation.status}; it cannot be submitted again."
+        )
+
+    evidence = list(evidence or [])
+    _check_evidence(obligation.type, evidence)
+
+    previous = obligation.submissions.order_by("-revision").first()
+    revision = (previous.revision + 1) if previous else 1
+
+    fields = {"obligation": obligation, "revision": revision, "submitted_by": user}
+    fields.update(evaluation or {})
+    submission = Submission.objects.create(**fields)
+
+    for item in evidence:
+        Evidence.objects.create(
+            submission=submission,
+            kind=item.get("kind", constants.EVIDENCE_LINK_KIND),
+            url=item.get("url", "") or "",
+            file=item.get("file") or None,
+            caption=item.get("caption", "") or "",
+        )
+
+    if obligation.type.requires_review:
+        obligation.status = constants.STATUS_SUBMITTED
+    else:
+        obligation.status = constants.STATUS_ACCEPTED
+    obligation.save(update_fields=["status"])
+
+    return submission
+
+
+@transaction.atomic
+def accept(submission: Submission, *, reviewer) -> Submission:
+    obligation = submission.obligation
+    if obligation.status not in constants.AWAITING_REVIEW_STATUSES:
+        raise InvalidTransition(f"{obligation.display_name} is not awaiting review.")
+
+    submission.reviewed_by = reviewer
+    submission.reviewed_at = timezone.now()
+    submission.save(update_fields=["reviewed_by", "reviewed_at"])
+
+    obligation.status = constants.STATUS_ACCEPTED
+    obligation.save(update_fields=["status"])
+    return submission
+
+
+@transaction.atomic
+def return_for_correction(submission: Submission, *, reviewer, comment: str) -> Submission:
+    """Send it back. A comment is mandatory — "returned" with no reason is useless."""
+    if not comment or not comment.strip():
+        raise ValueError("A comment is required when returning a submission.")
+
+    obligation = submission.obligation
+    if obligation.status not in constants.AWAITING_REVIEW_STATUSES:
+        raise InvalidTransition(f"{obligation.display_name} is not awaiting review.")
+
+    submission.reviewed_by = reviewer
+    submission.reviewed_at = timezone.now()
+    submission.review_comment = comment.strip()
+    submission.save(update_fields=["reviewed_by", "reviewed_at", "review_comment"])
+
+    obligation.status = constants.STATUS_RETURNED
+    obligation.save(update_fields=["status"])
+    return submission
+
+
+def review_queue():
+    """Submissions waiting for an administrator's decision."""
+    return (
+        Submission.objects.filter(obligation__status__in=constants.AWAITING_REVIEW_STATUSES)
+        .select_related("obligation", "obligation__type", "obligation__educator")
+        .order_by("submitted_at")
+    )
+
+
+def feedback_for(educator):
+    """Returned submissions the teacher still needs to act on."""
+    return (
+        Submission.objects.filter(
+            obligation__educator=educator, obligation__status=constants.STATUS_RETURNED
+        )
+        .select_related("obligation", "obligation__type")
+        .order_by("-reviewed_at")
+    )
