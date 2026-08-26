@@ -1,0 +1,32 @@
+# Runs the Test Generator Django app in its own container on the shared VPS,
+# attached to UZTGBOT's existing Docker network so its Caddy instance can
+# reverse-proxy to it. UZTGBOT's own compose stack is untouched by this file —
+# the only shared-infra change is one additive site block in its Caddyfile.
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    # Bounded on purpose — same reasoning as UZTGBOT's compose file: the
+    # default json-file driver grows without limit.
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+    env_file: [.env]
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+      - ./media:/app/media
+    # Not published. Only Caddy reaches it, over the compose network.
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import socket; socket.create_connection(('localhost',8000),2)\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - uztgbot_default
+
+networks:
+  uztgbot_default:
+    external: true
