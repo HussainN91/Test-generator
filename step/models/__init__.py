@@ -9,14 +9,19 @@ from step.models.roster import (
     School,
     UnresolvedRow,
 )
+from step.models.obligations import AcademicYear, Obligation, ObligationType, Term
 
 __all__ = [
+    "AcademicYear",
     "AliasMapping",
     "District",
     "Educator",
+    "Obligation",
+    "ObligationType",
     "PendingSignup",
     "Region",
     "RosterImport",
     "School",
+    "Term",
     "UnresolvedRow",
 ]
