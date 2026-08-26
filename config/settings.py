@@ -9,6 +9,14 @@ Environment variables (all optional in development):
     TESTGEN_DEBUG        "1"/"0", defaults to "1"
     TESTGEN_ALLOWED_HOSTS  comma-separated
     TESTGEN_DB_PATH      SQLite file location
+    TESTGEN_DB_ENGINE    "sqlite" (default) or "postgres"/"postgresql"
+    TESTGEN_DB_NAME      Postgres database name, when TESTGEN_DB_ENGINE=postgres
+    TESTGEN_DB_USER      Postgres user, when TESTGEN_DB_ENGINE=postgres
+    TESTGEN_DB_PASSWORD  Postgres password, when TESTGEN_DB_ENGINE=postgres
+    TESTGEN_DB_HOST      Postgres host, when TESTGEN_DB_ENGINE=postgres
+    TESTGEN_DB_PORT      Postgres port, when TESTGEN_DB_ENGINE=postgres
+    STEP_ROSTER_MATCH_KEYS  comma-separated identity keys, in priority order
+                            (STEP Platform; see step/identity.py)
 """
 
 import os
@@ -87,13 +95,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.environ.get("TESTGEN_DB_PATH", BASE_DIR / "db.sqlite3"),
-        "OPTIONS": {"init_command": "PRAGMA journal_mode=WAL;"},
+# SQLite is the default so a developer machine, and the existing test suite,
+# need no database server. Production sets TESTGEN_DB_ENGINE=postgres — see
+# the spine spec §8. The cutover is a deployment step, never a code change.
+if os.environ.get("TESTGEN_DB_ENGINE", "sqlite").strip().lower() in {"postgres", "postgresql"}:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("TESTGEN_DB_NAME", "testgen"),
+            "USER": os.environ.get("TESTGEN_DB_USER", "testgen"),
+            "PASSWORD": os.environ.get("TESTGEN_DB_PASSWORD", ""),
+            "HOST": os.environ.get("TESTGEN_DB_HOST", "127.0.0.1"),
+            "PORT": os.environ.get("TESTGEN_DB_PORT", "5432"),
+            "CONN_MAX_AGE": 60,
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.environ.get("TESTGEN_DB_PATH", BASE_DIR / "db.sqlite3"),
+            "OPTIONS": {"init_command": "PRAGMA journal_mode=WAL;"},
+        }
+    }
 
 # --- STEP Platform --------------------------------------------------------
 # Which identifiers match a signup to a roster row, in priority order.

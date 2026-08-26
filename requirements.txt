@@ -5,3 +5,4 @@ Pillow>=10.0             # ImageField for listening picture options
 openpyxl>=3.1        # reads the real content workbook (diagnostics content import, offline)
 gunicorn>=23.0           # WSGI server for the container
 whitenoise>=6.7          # serves STATIC_URL with DEBUG=0, no separate static-file host needed
+psycopg[binary]>=3.2   # Postgres driver; only used when TESTGEN_DB_ENGINE=postgres
