@@ -18,7 +18,7 @@ This plan covers the **backend only**: models, import pipeline, identity, obliga
 
 **Not in this plan, deliberately:** the teacher dashboard, the administrator screens, and any HTML/CSS. Those are specified in spec §7 (design system and interaction model) and require the `frontend-design` skill plus human review of the visual result. They get their own plan. Everything here is verifiable by the test suite alone, which is what makes it safe to execute unattended.
 
-**One documented deviation from the spec.** Spec §8 says slice 1 moves to Postgres. This plan instead makes `DATABASES` env-configurable with SQLite as the default (Task 20). Cutting over unattended on a machine with no running Postgres would break the existing 312-test suite. The cutover becomes a deployment step, not a code step.
+**One documented deviation from the spec.** Spec §8 says slice 1 moves to Postgres. This plan instead makes `DATABASES` env-configurable with SQLite as the default (Task 20). Cutting over unattended on a machine with no running Postgres would break the existing pre-STEP suite. The cutover becomes a deployment step, not a code step.
 
 ---
 
@@ -26,7 +26,7 @@ This plan covers the **backend only**: models, import pipeline, identity, obliga
 
 - Work from `D:\Test generator`, on branch `step-platform-spine`.
 - Interpreter: `.venv\Scripts\python.exe` — always this one.
-- Run the **whole** suite, not just `step`: `.venv\Scripts\python.exe manage.py test -v 2`. The project has 312 passing tests before this plan starts; that number must only ever go up.
+- Run the **whole** suite, not just `step`: `.venv\Scripts\python.exe manage.py test -v 2`. The project had 327 passing tests before this plan started (an earlier draft of this plan and HANDOFF.md both said 312; that figure was already stale, so measure the baseline yourself before starting); that number must only ever go up.
 - Faster iteration on one app: `.venv\Scripts\python.exe manage.py test step -v 2`
 - A single test: `.venv\Scripts\python.exe manage.py test step.tests.test_geography.RegionTests.test_name -v 2`
 - Commit after every task. Never use `--no-verify`.
@@ -318,7 +318,7 @@ Run: `.venv\Scripts\python.exe manage.py test step -v 2`
 Expected: PASS — 4 tests OK
 
 Then run the whole suite: `.venv\Scripts\python.exe manage.py test`
-Expected: 316 tests, OK (312 existing + 4 new)
+Expected: the pre-existing baseline plus 4 new tests, OK
 
 - [ ] **Step 6: Commit**
 
@@ -2073,7 +2073,7 @@ Expected: PASS — 12 tests OK
 - [ ] **Step 5: Run the whole suite**
 
 Run: `.venv\Scripts\python.exe manage.py test`
-Expected: all tests OK, count strictly greater than 312
+Expected: all tests OK, count strictly greater than the baseline you measured
 
 - [ ] **Step 6: Commit**
 
@@ -4440,7 +4440,7 @@ Spec §8 calls for Postgres. This task makes the switch a deployment setting rat
 # step/tests/test_settings.py
 """The database must be switchable without a code change (spec §8).
 
-SQLite stays the default so the existing 312-test suite keeps running on a
+SQLite stays the default so the existing pre-STEP suite keeps running on a
 machine with no Postgres. The cutover is a deployment step.
 """
 
@@ -4542,7 +4542,7 @@ git commit -m "Make the database engine env-configurable, defaulting to SQLite"
 - [ ] **Step 1: Run the full project suite**
 
 Run: `.venv\Scripts\python.exe manage.py test -v 2`
-Expected: OK, with a total strictly greater than 312 and **zero** failures or errors. If any pre-existing test broke, that is a regression introduced by this plan — fix it rather than accepting it.
+Expected: OK, with a total strictly greater than the baseline you measured, and **zero** failures or errors. If any pre-existing test broke, that is a regression introduced by this plan — fix it rather than accepting it.
 
 - [ ] **Step 2: Verify the pipeline end to end against a real database**
 
