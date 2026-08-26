@@ -95,6 +95,17 @@ DATABASES = {
     }
 }
 
+# --- STEP Platform --------------------------------------------------------
+# Which identifiers match a signup to a roster row, in priority order.
+# The client has not yet decided what signup asks for (email + passport, or
+# email + PINFL), so this is configuration rather than schema. Known values:
+# "pinfl", "passport_no", "email".
+STEP_ROSTER_MATCH_KEYS = [
+    k.strip()
+    for k in os.environ.get("STEP_ROSTER_MATCH_KEYS", "email").split(",")
+    if k.strip()
+]
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
