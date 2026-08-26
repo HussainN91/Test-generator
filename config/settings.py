@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "bank",
     "assembly",
     "diagnostics",
+    "step",
 ]
 
 MIDDLEWARE = [

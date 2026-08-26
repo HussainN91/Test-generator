@@ -1,0 +1,123 @@
+"""Vocabulary for the obligation engine.
+
+These values are stored in the database and must not be renamed casually.
+User-facing wording is deliberately NOT defined here — the spec (§7.0) forbids
+showing this vocabulary to users, so display strings live in templates.
+"""
+
+# --- Obligation status (stored) -------------------------------------------
+STATUS_NOT_STARTED = "not_started"
+STATUS_SUBMITTED = "submitted"
+STATUS_UNDER_REVIEW = "under_review"
+STATUS_ACCEPTED = "accepted"
+STATUS_RETURNED = "returned"
+
+OBLIGATION_STATUS_CHOICES = [
+    (STATUS_NOT_STARTED, "Not started"),
+    (STATUS_SUBMITTED, "Submitted"),
+    (STATUS_UNDER_REVIEW, "Under review"),
+    (STATUS_ACCEPTED, "Accepted"),
+    (STATUS_RETURNED, "Returned"),
+]
+
+#: Statuses that mean the teacher has nothing left to do.
+SETTLED_STATUSES = {STATUS_ACCEPTED}
+
+#: Statuses that mean the ball is in an administrator's court.
+AWAITING_REVIEW_STATUSES = {STATUS_SUBMITTED, STATUS_UNDER_REVIEW}
+
+# --- Categories (the sidebar groupings in the client mockup) --------------
+CATEGORY_MONTHLY_REPORTING = "monthly_reporting"
+CATEGORY_CPD_ONLINE = "cpd_online"
+CATEGORY_CPD_OFFLINE = "cpd_offline"
+CATEGORY_ECA = "eca"
+CATEGORY_ASSESSMENTS = "assessments"
+CATEGORY_OTHER = "other"
+
+CATEGORY_CHOICES = [
+    (CATEGORY_MONTHLY_REPORTING, "Monthly Reporting"),
+    (CATEGORY_CPD_ONLINE, "CPD Online"),
+    (CATEGORY_CPD_OFFLINE, "CPD Offline"),
+    (CATEGORY_ECA, "ECA Programme"),
+    (CATEGORY_ASSESSMENTS, "Assessments"),
+    (CATEGORY_OTHER, "Other"),
+]
+
+# --- Cadence and period ---------------------------------------------------
+CADENCE_MONTHLY = "monthly"
+CADENCE_TERMLY = "termly"
+CADENCE_ANNUAL = "annual"
+CADENCE_ONCE = "once"
+
+CADENCE_CHOICES = [
+    (CADENCE_MONTHLY, "Every month"),
+    (CADENCE_TERMLY, "Every term"),
+    (CADENCE_ANNUAL, "Once a year"),
+    (CADENCE_ONCE, "One off"),
+]
+
+PERIOD_MONTH = "month"
+PERIOD_TERM = "term"
+PERIOD_YEAR = "year"
+PERIOD_ONCE = "once"
+
+PERIOD_KIND_CHOICES = [
+    (PERIOD_MONTH, "Month"),
+    (PERIOD_TERM, "Term"),
+    (PERIOD_YEAR, "Year"),
+    (PERIOD_ONCE, "One off"),
+]
+
+CADENCE_TO_PERIOD_KIND = {
+    CADENCE_MONTHLY: PERIOD_MONTH,
+    CADENCE_TERMLY: PERIOD_TERM,
+    CADENCE_ANNUAL: PERIOD_YEAR,
+    CADENCE_ONCE: PERIOD_ONCE,
+}
+
+# --- Evidence requirements (spec §5.7) ------------------------------------
+EVIDENCE_NONE = "none"
+EVIDENCE_LINK = "link"
+EVIDENCE_FILE = "file"
+EVIDENCE_EITHER = "either"
+EVIDENCE_BOTH = "both"
+
+EVIDENCE_SPEC_CHOICES = [
+    (EVIDENCE_NONE, "No attachment required"),
+    (EVIDENCE_LINK, "At least one link"),
+    (EVIDENCE_FILE, "At least one uploaded file"),
+    (EVIDENCE_EITHER, "At least one link or file"),
+    (EVIDENCE_BOTH, "At least one link and one file"),
+]
+
+EVIDENCE_LINK_KIND = "link"
+EVIDENCE_FILE_KIND = "file"
+EVIDENCE_KIND_CHOICES = [
+    (EVIDENCE_LINK_KIND, "Link"),
+    (EVIDENCE_FILE_KIND, "File"),
+]
+
+# --- Scope (spec §5.6: `all` is the only implementation in slice 1) -------
+SCOPE_ALL = "all"
+SCOPE_CHOICES = [(SCOPE_ALL, "Every active educator")]
+
+# --- Roles ----------------------------------------------------------------
+ROLE_EDUCATOR = "Educator"
+ROLE_ADMIN = "Admin"
+ROLE_PROGRAMME_ADMIN = "Programme Admin"
+ROLE_SYSTEM_ADMIN = "System Admin"
+
+ROLE_NAMES = [ROLE_EDUCATOR, ROLE_ADMIN, ROLE_PROGRAMME_ADMIN, ROLE_SYSTEM_ADMIN]
+
+#: Roles that never accrue obligations (spec §5.6).
+STAFF_ROLES = {ROLE_ADMIN, ROLE_PROGRAMME_ADMIN, ROLE_SYSTEM_ADMIN}
+
+# --- Urgency (derived, never stored — spec §5.3) --------------------------
+URGENCY_DONE = "done"
+URGENCY_OVERDUE = "overdue"
+URGENCY_DUE_TODAY = "due_today"
+URGENCY_DUE_SOON = "due_soon"
+URGENCY_SCHEDULED = "scheduled"
+
+#: How many days ahead counts as "due soon" in the teacher's queue.
+DUE_SOON_DAYS = 7
