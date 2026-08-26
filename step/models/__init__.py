@@ -10,18 +10,21 @@ from step.models.roster import (
     UnresolvedRow,
 )
 from step.models.obligations import AcademicYear, Obligation, ObligationType, Term
+from step.models.submissions import Evidence, Submission
 
 __all__ = [
     "AcademicYear",
     "AliasMapping",
     "District",
     "Educator",
+    "Evidence",
     "Obligation",
     "ObligationType",
     "PendingSignup",
     "Region",
     "RosterImport",
     "School",
+    "Submission",
     "Term",
     "UnresolvedRow",
 ]

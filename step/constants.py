@@ -121,3 +121,18 @@ URGENCY_SCHEDULED = "scheduled"
 
 #: How many days ahead counts as "due soon" in the teacher's queue.
 DUE_SOON_DAYS = 7
+
+# --- Self-reported evaluation (spec §5.10) --------------------------------
+# The director never logs in, so these are transcribed by the teacher and
+# verified only by the photographed stamp. Anything rendering them MUST label
+# them as self-reported.
+OUTCOME_SATISFACTORY_OR_BETTER = "satisfactory_or_better"
+OUTCOME_NEEDS_IMPROVEMENT = "needs_improvement"
+
+OUTCOME_CHOICES = [
+    (OUTCOME_SATISFACTORY_OR_BETTER, "Received Satisfactory or Better"),
+    (OUTCOME_NEEDS_IMPROVEMENT, "Received Needs Improvement"),
+]
+
+#: Director star rating, 1-5, as drawn in the client mockup.
+DIRECTOR_RATING_CHOICES = [(n, str(n)) for n in range(1, 6)]
