@@ -23,16 +23,16 @@ theirs.
     <b>This term</b>
     <span>{{ grades|length }} GRADE{{ grades|length|pluralize:"S" }} VISIBLE</span>
     <span>{{ classes_per_grade }} CLASSES &middot; {{ variants_per_class }} PAPERS EACH</span>
-    <span>CEFR B1 &middot; 40 MARKS</span>
-    <span>{% if generation_open %}GENERATION OPEN{% else %}GENERATION CLOSED{% endif %}</span>
+    <span>40 MARKS PER PAPER</span>
+    <span>{% if generation_open %}DOWNLOADS OPEN{% else %}DOWNLOADS CLOSED{% endif %}</span>
   </div>
 </div>
 
 {% if not generation_open %}
   <div class="notice">
     <b>Closed</b>
-    <span>An administrator has closed generation. You can still read every paper on screen, but
-      downloads are refused until it reopens.</span>
+    <span>An administrator has closed downloads. You can still read every paper on screen, but
+      nothing can be downloaded until they reopen.</span>
   </div>
 {% endif %}
 

@@ -265,7 +265,7 @@ def paper_file(request, grade: int, variant: str, kind: str):
     """
     paper = _get_visible_paper(request.user, grade, variant)
     if not GenerationWindow.load().is_open:
-        raise Http404("Generation is currently closed.")
+        raise Http404("Downloads are currently closed.")
 
     if kind in _DOCUMENTS:
         if not docx_available():

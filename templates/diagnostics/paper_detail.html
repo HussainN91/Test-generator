@@ -15,7 +15,7 @@
     <span>G{{ paper.grade }}-{{ paper.variant }}</span>
     <span>RECORDINGS {{ paper.listening_clip_1.number|stringformat:"02d" }} &amp; {{ paper.listening_clip_2.number|stringformat:"02d" }}</span>
     <span>PASSAGE {{ paper.reading_passage.label }}</span>
-    <span>40 MARKS &middot; B1</span>
+    <span>40 MARKS</span>
   </div>
 </div>
 
@@ -29,7 +29,7 @@
     <a class="btn ghost" href="{% url 'diagnostics:paper_file' paper.grade paper.variant 'audio_1' %}">Audio 1</a>
     <a class="btn ghost" href="{% url 'diagnostics:paper_file' paper.grade paper.variant 'audio_2' %}">Audio 2</a>
   {% else %}
-    <span class="stamp mute">Generation closed &mdash; downloads refused</span>
+    <span class="stamp mute">Downloads closed</span>
   {% endif %}
   <span style="flex:1"></span>
   <a class="btn ghost sm" href="{% url 'diagnostics:class_pack' paper.grade class_number %}">Back to class pack</a>

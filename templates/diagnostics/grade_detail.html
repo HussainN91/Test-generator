@@ -27,15 +27,15 @@ of it as "class 2's second paper".
     <b>Grade {{ grade }}</b>
     <span>{{ packs|length }} CLASS PACK{{ packs|length|pluralize:"S" }}</span>
     <span>{{ paper_count }} PAPERS</span>
-    <span>{% if generation_open %}GENERATION OPEN{% else %}GENERATION CLOSED{% endif %}</span>
+    <span>{% if generation_open %}DOWNLOADS OPEN{% else %}DOWNLOADS CLOSED{% endif %}</span>
   </div>
 </div>
 
 {% if not generation_open %}
   <div class="notice">
     <b>Closed</b>
-    <span>An administrator has closed generation. You can still read every paper on screen, but
-      downloads are refused until it reopens.</span>
+    <span>An administrator has closed downloads. You can still read every paper on screen, but
+      nothing can be downloaded until they reopen.</span>
   </div>
 {% endif %}
 

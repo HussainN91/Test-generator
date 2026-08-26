@@ -30,15 +30,15 @@ page -- same columns, same paper names, four rows instead of forty-eight.
     <b>Class {{ class_number }}</b>
     <span>GRADE {{ grade }}</span>
     <span>PAPERS {{ span }}</span>
-    <span>{% if generation_open %}GENERATION OPEN{% else %}GENERATION CLOSED{% endif %}</span>
+    <span>{% if generation_open %}DOWNLOADS OPEN{% else %}DOWNLOADS CLOSED{% endif %}</span>
   </div>
 </div>
 
 {% if not generation_open %}
   <div class="notice">
     <b>Closed</b>
-    <span>An administrator has closed generation. You can still read every paper on screen, but
-      downloads are refused until it reopens.</span>
+    <span>An administrator has closed downloads. You can still read every paper on screen, but
+      nothing can be downloaded until they reopen.</span>
   </div>
 {% endif %}
 
@@ -46,7 +46,7 @@ page -- same columns, same paper names, four rows instead of forty-eight.
   <span class="idx">03</span>
   <h2>Papers</h2>
   <span class="line"></span>
-  <span class="note">{{ papers|length }} PAPER{{ papers|length|pluralize:"S" }} &middot; CEFR B1 &middot; 40 MARKS</span>
+  <span class="note">{{ papers|length }} PAPER{{ papers|length|pluralize:"S" }} &middot; 40 MARKS</span>
 </div>
 
 <table class="reg">
