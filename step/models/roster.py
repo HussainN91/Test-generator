@@ -15,7 +15,13 @@ from step.models.geography import District, Region
 
 class School(models.Model):
     name = models.CharField(max_length=200)
-    district = models.ForeignKey(District, on_delete=models.PROTECT, related_name="schools")
+    # Nullable: a sheet row can carry a school name with a region but no usable
+    # district text (spec §4.2 allows an Educator to hang off a district or
+    # region alone), and the importer must still be able to record the school
+    # rather than dropping it, so it cannot demand a district it doesn't have.
+    district = models.ForeignKey(
+        District, null=True, blank=True, on_delete=models.PROTECT, related_name="schools"
+    )
     external_id = models.CharField(
         max_length=64, blank=True, help_text="The client's own identifier, if the sheet carries one."
     )
