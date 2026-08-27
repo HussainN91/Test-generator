@@ -55,6 +55,13 @@ class ProgressEntry(models.Model):
         related_name="step_progress_entries",
     )
     comment = models.TextField(blank=True)
+
+    #: The month a monthly mark belongs to, stored as that month's first day.
+    #: Null for the three BOY/MOY/EOY checkpoints and for freeform notes —
+    #: neither is monthly, and a null here keeps both out of the monthly
+    #: uniqueness rule below.
+    period = models.DateField(null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -67,6 +74,14 @@ class ProgressEntry(models.Model):
                 fields=["student", "checkpoint"],
                 condition=~models.Q(checkpoint=""),
                 name="one_structured_entry_per_student_checkpoint",
+            ),
+            # One monthly mark per student, per month, per skill — that is
+            # exactly one cell of the gradebook sheet. Checkpoints and notes
+            # carry no period and are untouched by this.
+            models.UniqueConstraint(
+                fields=["student", "period", "skill"],
+                condition=models.Q(period__isnull=False),
+                name="one_monthly_mark_per_student_month_skill",
             ),
         ]
 

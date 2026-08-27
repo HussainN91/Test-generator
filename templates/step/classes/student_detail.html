@@ -8,21 +8,101 @@
   <a href="{% url 'step:class_detail' student.teaching_class.pk %}">{{ student.teaching_class.display_name }}</a><span>/</span>{{ student.full_name }}
 </nav>
 
-<div class="head"><h1>{{ student.full_name }}</h1></div>
+<div class="head">
+  <h1>{{ student.full_name }}</h1>
+  <p>{{ student.teaching_class.display_name }} &middot; Grade {{ student.teaching_class.grade }}</p>
+</div>
+
+<section class="block" aria-labelledby="year-h">
+  <h2 class="block__title" id="year-h">Month by month</h2>
+  <div class="block__body">
+    {% if month_rows %}
+    <div class="sheet-scroll">
+      <table class="gradebook">
+        <caption class="visually-hidden">{{ student.full_name }}'s marks by month and skill</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="gradebook__who">Month</th>
+            {% for key, label in skills %}
+              <th scope="col" class="gradebook__mark">{{ label }}</th>
+            {% endfor %}
+            <th scope="col" class="gradebook__avg">Average</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in month_rows %}
+          <tr{% if not row.marked %} class="is-empty"{% endif %}>
+            <th scope="row" class="gradebook__who">{{ row.month|date:"F Y" }}</th>
+            {% for cell in row.cells %}
+            <td class="gradebook__mark">
+              {% if cell.entry and cell.entry.score is not None %}
+                <span class="num">{{ cell.entry.score }}</span>
+              {% else %}
+                <span class="quiet">—</span>
+              {% endif %}
+            </td>
+            {% endfor %}
+            <td class="gradebook__avg">
+              {% if row.average is not None %}<span class="num">{{ row.average }}</span>{% else %}<span class="quiet">—</span>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="field__hint" style="margin-top:16px">
+      Marks are entered on the class sheet.
+      <a href="{% url 'step:class_detail' student.teaching_class.pk %}">Open {{ student.teaching_class.display_name }}</a>.
+    </p>
+    {% else %}
+    <p>No academic year has been set up yet, so there are no months to show.</p>
+    {% endif %}
+  </div>
+</section>
 
 <div class="columns">
   <div>
-    <section class="block" aria-labelledby="history-h">
-      <h2 class="block__title" id="history-h">History</h2>
+    <section class="block" aria-labelledby="cp-h">
+      <h2 class="block__title" id="cp-h">Diagnostic checkpoints</h2>
       <div class="block__body">
-        {% if entries %}
+        <table class="gradebook">
+          <tbody>
+            {% for row in checkpoint_rows %}
+            <tr>
+              <th scope="row" class="gradebook__who">
+                {{ row.label }}
+                {% if row.entry and row.entry.skill %}
+                  <span class="quiet" style="font-size:13px"> &middot; {{ row.entry.get_skill_display }}</span>
+                {% endif %}
+                {% if row.entry and row.entry.comment %}
+                  <p style="margin:4px 0 0; font-size:14px; font-weight:400">{{ row.entry.comment }}</p>
+                {% endif %}
+              </th>
+              <td class="gradebook__avg">
+                {% if row.entry and row.entry.score is not None %}
+                  <span class="num">{{ row.entry.score }}</span>
+                {% else %}
+                  <span class="quiet">Not scored</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div>
+    <section class="block" aria-labelledby="notes-h">
+      <h2 class="block__title" id="notes-h">Notes</h2>
+      <div class="block__body">
+        {% if notes %}
         <ul class="filed">
-          {% for entry in entries %}
+          {% for entry in notes %}
           <li>
             <div class="filed__what">
-              {% if entry.checkpoint %}{{ entry.get_checkpoint_display }}{% else %}Note{% endif %}
-              {% if entry.skill %} &middot; {{ entry.get_skill_display }}{% endif %}
-              {% if entry.score is not None %} &middot; <span class="num">{{ entry.score }}</span>{% endif %}
+              {% if entry.skill %}{{ entry.get_skill_display }}{% else %}Note{% endif %}
             </div>
             <div class="filed__when">{{ entry.created_at|date:"j F Y" }}</div>
             {% if entry.grammar_point %}<p style="margin:4px 0 0; font-size:13.5px">{{ entry.grammar_point.name }}</p>{% endif %}
@@ -31,7 +111,7 @@
           {% endfor %}
         </ul>
         {% else %}
-        <p>No entries yet.</p>
+        <p>No notes yet.</p>
         {% endif %}
         <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
           <a class="btn btn--primary" href="{% url 'step:note_create' student.pk %}">Add a note</a>

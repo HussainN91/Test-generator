@@ -9,51 +9,150 @@
 
 <div class="head">
   <h1>{{ teaching_class.display_name }}</h1>
-  <p>Grade {{ teaching_class.grade }}</p>
+  <p>Grade {{ teaching_class.grade }} &middot; <span class="num">{{ students|length }}</span> student{{ students|length|pluralize }}</p>
 </div>
 
-<div class="columns">
-  <div>
-    <section class="block" aria-labelledby="roster-h">
-      <h2 class="block__title" id="roster-h">Roster</h2>
-      <div class="block__body">
-        {% if students %}
-        <ul class="filed">
-          {% for student in students %}
-          <li>
-            <div class="filed__what"><a href="{% url 'step:student_detail' student.pk %}">{{ student.full_name }}</a></div>
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <p>No students yet.</p>
-        {% endif %}
-        <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
-          <a class="btn btn--primary" href="{% url 'step:student_create' teaching_class.pk %}">Add a student</a>
-        </div>
+{% if not students %}
+  <section class="block">
+    <div class="block__body">
+      <p>No students yet. Add the class list before you can record marks.</p>
+      <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
+        <a class="btn btn--primary" href="{% url 'step:student_create' teaching_class.pk %}">Add a student</a>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
+{% else %}
 
-  <div>
-    <section class="block" aria-labelledby="checkpoints-h">
-      <h2 class="block__title" id="checkpoints-h">Checkpoints</h2>
-      <div class="block__body" style="font-size:14.5px">
-        {% for row in checkpoints %}
-        <p style="margin-bottom:11px">
-          <strong>{{ row.label }}</strong><br>
-          {% if row.obligation and row.obligation.status == 'accepted' %}
-          <span class="impression impression--seal">Complete</span>
-          {% else %}
-          <span class="num">{{ row.done }}</span> of <span class="num">{{ row.total }}</span> scored
-          {% if row.obligation %}
-          &middot; <a href="{% url 'step:obligation' row.obligation.pk %}">Score it</a>
-          {% endif %}
-          {% endif %}
-        </p>
+<section class="block" aria-labelledby="sheet-h">
+  <h2 class="block__title" id="sheet-h">Monthly marks</h2>
+  <div class="block__body">
+
+    {% if months %}
+    <div class="monthbar">
+      <div class="monthbar__strip" role="tablist" aria-label="Month">
+        {% for m in months %}
+          <a role="tab"
+             class="monthbar__month{% if m == month %} is-open{% endif %}"
+             {% if m == month %}aria-selected="true"{% endif %}
+             href="?month={{ m|date:'Y-m' }}">{{ m|date:"M" }}</a>
         {% endfor %}
       </div>
-    </section>
+      <p class="field__hint" style="margin:12px 0 0">
+        Showing <strong>{{ month|date:"F Y" }}</strong>. A mark is out of 100. Leave a box empty if you have not marked it — an empty box is not a zero.
+      </p>
+    </div>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="form" value="monthly">
+      <input type="hidden" name="month" value="{{ month|date:'Y-m' }}">
+
+      <div class="sheet-scroll">
+        <table class="gradebook">
+          <caption class="visually-hidden">Marks for {{ month|date:"F Y" }}, by student and skill</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="gradebook__who">Student</th>
+              {% for key, label in skills %}
+                <th scope="col" class="gradebook__mark">{{ label }}</th>
+              {% endfor %}
+              <th scope="col" class="gradebook__avg">Average</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in rows %}
+            <tr>
+              <th scope="row" class="gradebook__who">
+                <a href="{% url 'step:student_detail' row.student.pk %}">{{ row.student.full_name }}</a>
+              </th>
+              {% for cell in row.cells %}
+              <td class="gradebook__mark">
+                <input class="cell" type="number" inputmode="numeric" min="0" max="100"
+                       name="m_{{ row.student.pk }}_{{ cell.skill }}"
+                       value="{% if cell.entry and cell.entry.score is not None %}{{ cell.entry.score }}{% endif %}"
+                       aria-label="{{ cell.label }} for {{ row.student.full_name }}">
+              </td>
+              {% endfor %}
+              <td class="gradebook__avg">
+                {% if row.average is not None %}<span class="num">{{ row.average }}</span>{% else %}<span class="quiet">—</span>{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
+        <button class="btn btn--primary" type="submit">Save {{ month|date:"F" }}</button>
+        <a class="btn btn--quiet" href="{% url 'step:student_create' teaching_class.pk %}">Add a student</a>
+      </div>
+    </form>
+    {% else %}
+    <p>No academic year has been set up yet, so there are no months to record against.</p>
+    {% endif %}
   </div>
-</div>
+</section>
+
+<section class="block" aria-labelledby="cp-h">
+  <h2 class="block__title" id="cp-h">Diagnostic checkpoints</h2>
+  <div class="block__body">
+    <p class="field__hint" style="margin:0 0 18px">
+      The three marks the programme asks for. A checkpoint settles itself once every student has a mark, so you do not have to send anything.
+    </p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="form" value="checkpoints">
+
+      <div class="sheet-scroll">
+        <table class="gradebook">
+          <caption class="visually-hidden">Checkpoint marks by student</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="gradebook__who">Student</th>
+              {% for key, label in checkpoint_columns %}
+                <th scope="col" class="gradebook__mark">{{ label }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in rows %}
+            <tr>
+              <th scope="row" class="gradebook__who">
+                <a href="{% url 'step:student_detail' row.student.pk %}">{{ row.student.full_name }}</a>
+              </th>
+              {% for cell in row.checkpoints %}
+              <td class="gradebook__mark">
+                <input class="cell" type="number" inputmode="numeric" min="0" max="100"
+                       name="c_{{ row.student.pk }}_{{ cell.checkpoint }}"
+                       value="{% if cell.entry and cell.entry.score is not None %}{{ cell.entry.score }}{% endif %}"
+                       aria-label="{{ cell.label }} for {{ row.student.full_name }}">
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
+        <button class="btn btn--primary" type="submit">Save checkpoint marks</button>
+      </div>
+    </form>
+
+    <div style="margin-top:26px; border-top:1px solid var(--rule); padding-top:18px; font-size:14.5px">
+      {% for row in checkpoints %}
+      <p style="margin-bottom:9px">
+        <strong>{{ row.label }}</strong> &middot;
+        {% if row.obligation and row.obligation.status == 'accepted' %}
+          <span class="impression impression--seal">Complete</span>
+        {% else %}
+          <span class="num">{{ row.done }}</span> of <span class="num">{{ row.total }}</span> scored
+        {% endif %}
+      </p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 {% endblock %}

@@ -14,41 +14,27 @@
 <div class="columns">
   <div>
     <section class="block" aria-labelledby="create-h">
-      <h2 class="block__title" id="create-h">Which class is this</h2>
+      <h2 class="block__title" id="create-h">What do you call this class</h2>
       <div class="block__body">
         <form method="post" novalidate>
           {% csrf_token %}
 
           <div class="field">
-            <span class="field__label" id="grade-h">Grade</span>
-            <div role="radiogroup" aria-labelledby="grade-h">
-              {% for value in grades %}
-              <label class="choice">
-                <input type="radio" name="grade" value="{{ value }}" {% if form.grade == value|stringformat:"s" %}checked{% endif %}>
-                <span class="choice__text">Grade <span class="num">{{ value }}</span></span>
-              </label>
-              {% endfor %}
-            </div>
+            <label class="field__label" for="display_name">Class name</label>
+            <p class="field__hint" id="name-hint">
+              Type the name you already use for it. For example
+              {% for name in examples %}<code class="eg">{{ name }}</code>{% if not forloop.last %}, {% endif %}{% endfor %}.
+              The grade and the class are read from the name, so there is nothing else to choose.
+            </p>
+            <input class="input input--name" type="text" id="display_name" name="display_name"
+                   value="{{ form.display_name|default:'' }}"
+                   autocomplete="off" autocapitalize="characters" spellcheck="false"
+                   aria-describedby="name-hint name-readout"
+                   data-grades="{{ grades|join:',' }}"
+                   data-letters="{{ slot_letters|join:'' }}">
           </div>
 
-          <div class="field">
-            <span class="field__label" id="slot-h">Class number</span>
-            <p class="field__hint">Matches the class pack number diagnostics already uses for this grade.</p>
-            <div role="radiogroup" aria-labelledby="slot-h">
-              {% for value in slots %}
-              <label class="choice">
-                <input type="radio" name="slot" value="{{ value }}" {% if form.slot == value|stringformat:"s" %}checked{% endif %}>
-                <span class="choice__text">Class <span class="num">{{ value }}</span></span>
-              </label>
-              {% endfor %}
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="field__label" for="display_name">What you call this class</label>
-            <p class="field__hint">For example, 9B.</p>
-            <input class="input" type="text" id="display_name" name="display_name" value="{{ form.display_name|default:'' }}">
-          </div>
+          <p class="readout" id="name-readout" role="status" aria-live="polite" hidden></p>
 
           <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px">
             <button class="btn btn--primary btn--lg" type="submit">Create the class</button>
@@ -58,5 +44,63 @@
       </div>
     </section>
   </div>
+
+  <div>
+    <section class="block" aria-labelledby="why-h">
+      <h2 class="block__title" id="why-h">Why the name matters</h2>
+      <div class="block__body" style="font-size:14.5px">
+        <p>The diagnostic packs are numbered by grade — Class 1 to Class {{ slot_letters|length }}.</p>
+        <p style="margin-top:11px">Naming a class here renames its pack everywhere, so you stop having to remember which numbered pack is which of your classes.</p>
+      </div>
+    </section>
+  </div>
 </div>
+
+<script>
+(function () {
+  var field = document.getElementById("display_name");
+  var readout = document.getElementById("name-readout");
+  if (!field || !readout) { return; }
+
+  var grades = (field.dataset.grades || "").split(",").filter(Boolean);
+  var letters = (field.dataset.letters || "").split("");
+
+  // Mirrors parse_class_name() in step/classes_views.py. The server is still
+  // the authority — this only tells the teacher what will happen before they
+  // commit to it, and the form works with this script absent.
+  function describe(raw) {
+    var text = (raw || "").trim();
+    if (!text) { return null; }
+
+    var match = /^(\d{1,2})\s*[-\s]?\s*([A-Za-z]|[0-9])$/.exec(text);
+    if (!match) { return null; }
+
+    if (grades.indexOf(match[1]) === -1) { return null; }
+
+    var token = match[2];
+    var slot = /[0-9]/.test(token)
+      ? parseInt(token, 10)
+      : token.toUpperCase().charCodeAt(0) - 64;
+    if (slot < 1 || slot > letters.length) { return null; }
+
+    return { grade: match[1], slot: slot, name: text.toUpperCase() };
+  }
+
+  function update() {
+    var parsed = describe(field.value);
+    if (!parsed) {
+      readout.hidden = true;
+      readout.textContent = "";
+      return;
+    }
+    readout.hidden = false;
+    readout.innerHTML =
+      "Grade <b>" + parsed.grade + "</b>, class pack <b>" + parsed.slot + "</b>. " +
+      "Diagnostics will show that pack as <b>" + parsed.name + "</b>.";
+  }
+
+  field.addEventListener("input", update);
+  update();
+})();
+</script>
 {% endblock %}

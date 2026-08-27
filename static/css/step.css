@@ -800,3 +800,113 @@ a:hover { text-decoration-thickness: 2px; }
   .shell { grid-template-columns: 1fr; }
   body { background: #fff; }
 }
+
+/* --------------------------------------------------------------------------
+   Gradebook sheet
+   --------------------------------------------------------------------------
+   A class is a mark sheet, so it is drawn as one: ruled rows, a monospaced
+   figure in every cell, and the marks edited where they are read rather than
+   on a separate errand page. Rules only — no card, no shadow, no radius.
+   -------------------------------------------------------------------------- */
+
+.sheet-scroll { overflow-x: auto; }
+
+.gradebook { width: 100%; border-collapse: collapse; }
+
+.gradebook th,
+.gradebook td { padding: 0; text-align: left; }
+
+.gradebook thead th {
+  font: 600 10px/1 var(--font-ui);
+  letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft);
+  padding: 0 12px 11px; border-bottom: 2px solid var(--ink);
+  white-space: nowrap;
+}
+
+.gradebook tbody th,
+.gradebook tbody td {
+  border-bottom: 1px solid var(--rule);
+  padding: 7px 12px;
+  vertical-align: middle;
+}
+
+.gradebook tbody tr:last-child th,
+.gradebook tbody tr:last-child td { border-bottom: 1px solid var(--rule-firm); }
+
+.gradebook tbody tr:hover th,
+.gradebook tbody tr:hover td { background: var(--wash); }
+
+.gradebook__who {
+  font: 400 16px/1.4 var(--font-text);
+  color: var(--ink); min-width: 190px;
+}
+.gradebook__who a { color: var(--ink); text-decoration-color: var(--rule-firm); }
+.gradebook__who a:hover { text-decoration-color: var(--stamp); color: var(--stamp); }
+
+.gradebook__mark { width: 96px; }
+.gradebook__avg { width: 88px; text-align: right; font-family: var(--font-mono); }
+
+/* The cell is the mark. Underlined like a box on a form, not boxed like a
+   dashboard input — four sides here would make the sheet a grid of cards. */
+.cell {
+  width: 100%; max-width: 74px;
+  font: 500 15px/1 var(--font-mono);
+  color: var(--ink); text-align: center;
+  padding: 9px 6px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-bottom: 2px solid var(--rule-firm);
+}
+.cell:focus { background: #fff; border-color: var(--ink); outline: none; }
+.cell::-webkit-outer-spin-button,
+.cell::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.cell[type="number"] { -moz-appearance: textfield; }
+
+.quiet { color: var(--pencil); }
+
+/* -- month strip ------------------------------------------------------- */
+.monthbar { margin-bottom: 24px; }
+.monthbar__strip {
+  display: flex; flex-wrap: wrap; gap: 0;
+  border-bottom: 2px solid var(--ink);
+}
+.monthbar__month {
+  font: 600 11px/1 var(--font-ui);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-soft); text-decoration: none;
+  padding: 12px 15px; border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+.monthbar__month:hover { color: var(--ink); background: var(--wash); }
+.monthbar__month.is-open {
+  color: var(--stamp); border-bottom-color: var(--stamp); background: var(--stamp-wash);
+}
+
+@media (max-width: 720px) {
+  .gradebook__who { min-width: 150px; font-size: 15px; }
+  .gradebook__mark { width: 78px; }
+}
+
+/* An unmarked month still holds its place in a student's year, but must not
+   compete with the months that have marks in them. */
+.gradebook tr.is-empty th,
+.gradebook tr.is-empty td { color: var(--pencil); }
+
+/* -- class name field -------------------------------------------------- */
+/* The name IS the identifier, so it is typed large and in the figure face
+   the marks use, not as ordinary prose. */
+.input--name {
+  max-width: 260px;
+  font: 500 22px/1.2 var(--font-mono);
+  letter-spacing: .06em; text-transform: uppercase;
+}
+.eg {
+  font: 500 14px/1 var(--font-mono);
+  background: var(--paper-deep); padding: 3px 7px; letter-spacing: .04em;
+}
+.readout {
+  font-size: 15px; color: var(--ink-body);
+  border-left: 3px solid var(--seal); background: var(--seal-wash);
+  padding: 12px 15px; margin: 0 0 26px;
+}
+.readout b { font-family: var(--font-mono); font-weight: 600; }
