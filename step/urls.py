@@ -4,7 +4,7 @@ Paths are readable rather than terse: a teacher who ends up looking at the
 address bar should still recognise where they are.
 """
 
-from django.urls import path
+from django.urls import include, path
 
 from step import views
 
@@ -16,3 +16,5 @@ urlpatterns = [
     path("submissions/", views.submissions, name="submissions"),
     path("feedback/", views.feedback, name="feedback"),
 ]
+
+urlpatterns += [path("admin/", include("step.admin_urls"))]
