@@ -7,12 +7,13 @@ from datetime import date
 from io import StringIO
 
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
 
 from step import constants, roles
-from step.models import Educator, Obligation, ObligationType, Region
+from step.models import Educator, Evidence, Obligation, ObligationType, Region, Submission
 
 
 class AccessControlTests(TestCase):
@@ -113,9 +114,12 @@ class ActionQueueTests(TestCase):
         self.assertEqual(response.context["headline"]["total"], 1)
 
     def test_the_action_queue_wording_is_on_the_page(self):
+        # One obligation -> singular. This assertion originally read "have
+        # not submitted" and passed only because the verb never agreed with
+        # the count at all; see ActionQueueGrammarTests for both cases.
         self._obligation(date(2026, 5, 27))
         response = self.client.get(reverse("step:admin-dashboard") + "?period=2026-05")
-        self.assertContains(response, "have not submitted")
+        self.assertContains(response, "has not submitted")
 
     def test_a_malformed_period_is_a_404_not_a_500(self):
         response = self.client.get(reverse("step:admin-dashboard") + "?period=not-a-month")
@@ -336,3 +340,164 @@ class ActionQueueLinkTests(TestCase):
             reverse("step:admin-teachers") + "?status=outstanding&period=2026-05"
         )
         self.assertContains(directory, "Teacher One")
+
+
+class EvidenceRenderingTests(TestCase):
+    """The review screen must survive every Evidence row the schema allows.
+
+    `Evidence.file` is `blank=True`, so a row may legally carry `kind="file"`
+    and no file at all — `seed_demo` produces exactly that. Django's template
+    engine silences AttributeError and friends, but **not** the ValueError
+    that `FieldFile.url` raises on an empty file, so an unguarded
+    `{{ item.file.url }}` takes the whole page down with a 500.
+
+    The original review tests all built submissions with no evidence, so they
+    rendered the `{% empty %}` branch and never touched the line that breaks.
+    These fixtures render a real row on purpose.
+    """
+
+    def setUp(self):
+        call_command("seed_roles", stdout=StringIO())
+        user = get_user_model().objects.create_user("admin1", password="pw")
+        roles.assign(user, constants.ROLE_ADMIN)
+        self.client.login(username="admin1", password="pw")
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        self.type = ObligationType.objects.create(
+            name_template="Monthly Report", category=constants.CATEGORY_MONTHLY_REPORTING,
+            cadence=constants.CADENCE_MONTHLY, evidence_spec=constants.EVIDENCE_NONE,
+        )
+        self.educator = Educator.objects.create(full_name="Teacher One", region=self.region)
+        self.obligation = Obligation.objects.create(
+            type=self.type, educator=self.educator, period_kind=constants.PERIOD_MONTH,
+            period_start=date(2026, 5, 1), due_date=date(2026, 5, 27),
+            status=constants.STATUS_SUBMITTED,
+        )
+        self.submission = Submission.objects.create(obligation=self.obligation, revision=1)
+
+    def _url(self):
+        return reverse("step:admin-review-detail", args=[self.submission.pk])
+
+    def test_a_file_row_with_no_file_attached_renders_instead_of_500ing(self):
+        """The exact shape `seed_demo` writes, and the one that crashed."""
+        Evidence.objects.create(
+            submission=self.submission, kind=constants.EVIDENCE_FILE_KIND,
+            url="", caption="stamped-report.jpg",
+        )
+        response = self.client.get(self._url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "stamped-report.jpg")
+
+    def test_a_file_row_with_no_file_says_so_rather_than_offering_a_dead_link(self):
+        """A caption alone must not be dressed up as a working download."""
+        Evidence.objects.create(
+            submission=self.submission, kind=constants.EVIDENCE_FILE_KIND,
+            url="", caption="stamped-report.jpg",
+        )
+        response = self.client.get(self._url())
+        self.assertContains(response, "no file was attached")
+
+    def test_a_file_row_with_a_real_file_still_links_to_it(self):
+        Evidence.objects.create(
+            submission=self.submission, kind=constants.EVIDENCE_FILE_KIND,
+            file=SimpleUploadedFile("stamped.jpg", b"jpegbytes"), caption="Stamped page",
+        )
+        response = self.client.get(self._url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Stamped page")
+        self.assertContains(response, "stamped")
+
+    def test_a_link_row_still_links_to_its_url(self):
+        Evidence.objects.create(
+            submission=self.submission, kind=constants.EVIDENCE_LINK_KIND,
+            url="https://drive.example.com/report", caption="Report",
+        )
+        response = self.client.get(self._url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "https://drive.example.com/report")
+
+    def test_returning_without_a_comment_re_renders_even_with_a_fileless_row(self):
+        """The error path re-renders the page, so it hits the same template.
+
+        The pre-existing version of this test used an evidence-free
+        submission, which is why a 500 here went unnoticed.
+        """
+        Evidence.objects.create(
+            submission=self.submission, kind=constants.EVIDENCE_FILE_KIND,
+            url="", caption="stamped-report.jpg",
+        )
+        response = self.client.post(self._url(), {"action": "return", "comment": ""})
+        self.assertEqual(response.status_code, 200)
+        self.obligation.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_SUBMITTED)
+
+
+class DirectoryFilterRobustnessTests(TestCase):
+    """`?region=` arrives from a URL and may be anything at all.
+
+    The neighbouring `?period=` and `?page=` parameters are both defended;
+    `?region=` was not, and a non-numeric value reached `filter(region_id=...)`
+    where it raised ValueError as a 500.
+    """
+
+    def setUp(self):
+        call_command("seed_roles", stdout=StringIO())
+        user = get_user_model().objects.create_user("admin1", password="pw")
+        roles.assign(user, constants.ROLE_ADMIN)
+        self.client.login(username="admin1", password="pw")
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        Educator.objects.create(full_name="Teacher One", region=self.region)
+
+    def test_a_non_numeric_region_is_not_a_500(self):
+        response = self.client.get(reverse("step:admin-teachers") + "?region=abc")
+        self.assertEqual(response.status_code, 200)
+
+    def test_a_non_numeric_region_is_ignored_rather_than_hiding_everyone(self):
+        """A junk filter must not silently read as "nobody matched"."""
+        response = self.client.get(reverse("step:admin-teachers") + "?region=abc")
+        self.assertContains(response, "Teacher One")
+
+    def test_an_unknown_but_numeric_region_still_narrows_to_nothing(self):
+        response = self.client.get(reverse("step:admin-teachers") + "?region=999999")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Teacher One")
+
+    def test_a_real_region_still_filters(self):
+        response = self.client.get(
+            reverse("step:admin-teachers") + f"?region={self.region.pk}"
+        )
+        self.assertContains(response, "Teacher One")
+
+
+class ActionQueueGrammarTests(TestCase):
+    """These sentences reach a ministry-facing screen, so they have to read
+    like English at every count, not just the plural case."""
+
+    def setUp(self):
+        call_command("seed_roles", stdout=StringIO())
+        user = get_user_model().objects.create_user("admin1", password="pw")
+        roles.assign(user, constants.ROLE_ADMIN)
+        self.client.login(username="admin1", password="pw")
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        self.type = ObligationType.objects.create(
+            name_template="Monthly Report", category=constants.CATEGORY_MONTHLY_REPORTING,
+            cadence=constants.CADENCE_MONTHLY, evidence_spec=constants.EVIDENCE_NONE,
+        )
+
+    def _outstanding(self, how_many):
+        for n in range(how_many):
+            Obligation.objects.create(
+                type=self.type,
+                educator=Educator.objects.create(full_name=f"Teacher {n}", region=self.region),
+                period_kind=constants.PERIOD_MONTH, period_start=date(2026, 5, 1),
+                due_date=date(2026, 5, 27),
+            )
+
+    def test_one_teacher_takes_a_singular_verb(self):
+        self._outstanding(1)
+        response = self.client.get(reverse("step:admin-dashboard") + "?period=2026-05")
+        self.assertContains(response, "1 teacher has not submitted")
+
+    def test_several_teachers_take_a_plural_verb(self):
+        self._outstanding(2)
+        response = self.client.get(reverse("step:admin-dashboard") + "?period=2026-05")
+        self.assertContains(response, "2 teachers have not submitted")

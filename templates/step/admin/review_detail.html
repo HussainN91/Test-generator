@@ -16,8 +16,17 @@
 <ul>
   {% for item in evidence %}
   <li>
+    {% comment %}
+      Three branches, not two. `Evidence.file` is blank=True, so a row may
+      legally say kind="file" and carry no file — and `FieldFile.url` raises
+      ValueError on an empty file, which the template engine does not
+      swallow. A two-branch version took the whole page down with a 500.
+      Saying the file is missing also beats rendering a dead link over it.
+    {% endcomment %}
     {% if item.kind == 'link' %}<a href="{{ item.url }}">{{ item.caption|default:item.url }}</a>
-    {% else %}<a href="{{ item.file.url }}">{{ item.caption|default:item.file.name }}</a>{% endif %}
+    {% elif item.file %}<a href="{{ item.file.url }}">{{ item.caption|default:item.file.name }}</a>
+    {% else %}{{ item.caption|default:"Attachment" }}
+      <span class="aside">&mdash; recorded, but no file was attached</span>{% endif %}
   </li>
   {% empty %}
   <li>No evidence was attached.</li>

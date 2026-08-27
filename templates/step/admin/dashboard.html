@@ -7,7 +7,11 @@
   {% if outstanding_count %}
   <p class="entry__title">
     <a href="{% url 'step:admin-teachers' %}?status=outstanding&period={{ period|date:'Y-m' }}">
-      {{ outstanding_count }} teacher{{ outstanding_count|pluralize }} have not submitted for {{ period|date:"F Y" }}
+      {% comment %}
+        The verb agrees too, not just the noun — "1 teacher have not
+        submitted" was reaching a ministry-facing screen.
+      {% endcomment %}
+      {{ outstanding_count }} teacher{{ outstanding_count|pluralize }} {{ outstanding_count|pluralize:"has,have" }} not submitted for {{ period|date:"F Y" }}
     </a>
   </p>
   {% endif %}

@@ -223,7 +223,14 @@ def review_detail(request, pk: int):
 @staff_required
 def teacher_directory(request):
     query = (request.GET.get("q") or "").strip()
-    region_id = request.GET.get("region") or ""
+    # `region` arrives from a URL and may be anything. Passing it straight to
+    # `filter(region_id=...)` raised ValueError — a 500 — on any non-numeric
+    # value. Junk is dropped rather than 404'd, matching how `?page=` already
+    # behaves; `?period=` 404s instead because a silently wrong month under a
+    # ministry figure is a different order of harm from a filter that reset.
+    region_id = (request.GET.get("region") or "").strip()
+    if not region_id.isdigit():
+        region_id = ""
     status = request.GET.get("status") or ""
     period = _current_period(request)
 
@@ -231,7 +238,9 @@ def teacher_directory(request):
     if query:
         educators = educators.filter(full_name__icontains=query)
     if region_id:
-        educators = educators.filter(region_id=region_id)
+        # An unknown-but-numeric id still narrows to nothing, which is honest:
+        # the filter was understood and matched no one.
+        educators = educators.filter(region_id=int(region_id))
     if status == "outstanding":
         outstanding_ids = Obligation.objects.filter(
             period_start=period, status=constants.STATUS_NOT_STARTED
