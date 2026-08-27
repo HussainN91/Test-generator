@@ -230,12 +230,12 @@ def _checkpoint_obligation(request, educator, obligation_obj, today):
             comment = (request.POST.get(f"comment_{student.pk}") or "").strip()
             if not score_raw and not skill and not comment:
                 continue
+            score = int(score_raw) if score_raw.isdigit() else None
+            if score is not None and not (0 <= score <= 100):
+                score = None  # out of range — the "min=0 max=100" on the field is client-side only
             ProgressEntry.objects.update_or_create(
                 student=student, checkpoint=checkpoint,
-                defaults={
-                    "score": int(score_raw) if score_raw.isdigit() else None,
-                    "skill": skill, "comment": comment,
-                },
+                defaults={"score": score, "skill": skill, "comment": comment},
             )
         workflow.sync_checkpoint(teaching_class, checkpoint)
         obligation_obj.refresh_from_db()

@@ -411,3 +411,16 @@ class CheckpointObligationTests(TestCase):
         entry = ProgressEntry.objects.get(student=self.a, checkpoint=constants.CHECKPOINT_BOY)
         self.assertEqual(entry.score, 65)
         self.assertEqual(ProgressEntry.objects.filter(student=self.a).count(), 1)
+
+    def test_an_out_of_range_score_is_not_stored(self):
+        """The 0-100 bound on the input is client-side only (min/max attributes
+        don't stop a direct POST) — found by test-generator-b0 reviewing the
+        committed diff. Rejecting rather than clamping: silently rewriting 150
+        to 100 would misrepresent what was actually submitted."""
+        self.client.post(
+            reverse("step:obligation", args=[self.obligation.pk]),
+            {f"score_{self.a.pk}": "150", f"skill_{self.a.pk}": "", f"comment_{self.a.pk}": "typo"},
+        )
+        entry = ProgressEntry.objects.get(student=self.a, checkpoint=constants.CHECKPOINT_BOY)
+        self.assertIsNone(entry.score)
+        self.assertEqual(entry.comment, "typo")
