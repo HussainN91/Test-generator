@@ -19,6 +19,7 @@ divides by four.
 from __future__ import annotations
 
 from diagnostics.constants import VARIANTS
+from step.models import TeachingClass
 
 #: Classes per grade. Fixed by the school's timetable, not by the bank.
 CLASSES_PER_GRADE = 4
@@ -66,3 +67,17 @@ def variant_span(number: int) -> str:
     already have on paper, not only by the class number."""
     letters = variants_for_class(number)
     return f"{letters[0]}-{letters[-1]}"
+
+
+def display_name_for(grade: int, number: int) -> str:
+    """The teacher's own name for this class pack, if one has been set.
+
+    STEP owns the name (TeachingClass.display_name); diagnostics only reads
+    it, never writes it (classes/gradebook spec, "Diagnostics rename"). Falls
+    back to the positional "Class N" this module always showed, so an
+    unclaimed pack still prints something sensible.
+    """
+    teaching_class = TeachingClass.objects.filter(grade=grade, slot=number).first()
+    if teaching_class:
+        return teaching_class.display_name
+    return f"Class {number}"
