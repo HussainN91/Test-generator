@@ -11,11 +11,12 @@ from functools import wraps
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 
-from step import analytics, constants, roles, workflow
-from step.models import Obligation, Submission
+from step import analytics, constants, presentation, roles, workflow
+from step.models import Educator, Obligation, Region, Submission
 
 
 def staff_required(view):
@@ -217,3 +218,51 @@ def review_detail(request, pk: int):
     }
     context.update(_admin_chrome(request))
     return render(request, "step/admin/review_detail.html", context)
+
+
+@staff_required
+def teacher_directory(request):
+    query = (request.GET.get("q") or "").strip()
+    region_id = request.GET.get("region") or ""
+    status = request.GET.get("status") or ""
+    period = _current_period(request)
+
+    educators = Educator.objects.filter(is_active=True).select_related("region", "school")
+    if query:
+        educators = educators.filter(full_name__icontains=query)
+    if region_id:
+        educators = educators.filter(region_id=region_id)
+    if status == "outstanding":
+        outstanding_ids = Obligation.objects.filter(
+            period_start=period, status=constants.STATUS_NOT_STARTED
+        ).values_list("educator_id", flat=True)
+        educators = educators.filter(id__in=outstanding_ids)
+
+    paginator = Paginator(educators, 50)
+    page = paginator.get_page(request.GET.get("page"))
+
+    context = {
+        "nav": "teachers",
+        "page": page,
+        "query": query,
+        "regions": Region.objects.all(),
+        "selected_region": region_id,
+        "status": status,
+        "period": period,
+    }
+    context.update(_admin_chrome(request))
+    return render(request, "step/admin/teacher_directory.html", context)
+
+
+@staff_required
+def teacher_detail(request, pk: int):
+    educator = get_object_or_404(Educator.objects.select_related("region", "school"), pk=pk)
+    obligations = educator.obligations.select_related("type").order_by("-due_date")
+    context = {
+        "nav": "teachers",
+        "educator": educator,
+        "file_ref": presentation.file_reference(educator),
+        "items": presentation.decorate_all(obligations, date.today()),
+    }
+    context.update(_admin_chrome(request))
+    return render(request, "step/admin/teacher_detail.html", context)

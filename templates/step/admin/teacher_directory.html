@@ -1,0 +1,39 @@
+{% extends "step/base_admin.html" %}
+{% block title %}Teachers — STEP Administration{% endblock %}
+{% block content %}
+<h1>Teachers</h1>
+
+<form method="get">
+  <label for="q">Search by name</label>
+  <input type="text" id="q" name="q" value="{{ query }}">
+  <label for="region">Region</label>
+  <select id="region" name="region">
+    <option value="">All regions</option>
+    {% for r in regions %}
+    <option value="{{ r.pk }}" {% if selected_region == r.pk|stringformat:"s" %}selected{% endif %}>{{ r.name }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn--quiet" type="submit">Filter</button>
+</form>
+
+<div class="register">
+  {% for educator in page %}
+  <a class="entry" href="{% url 'step:admin-teacher-detail' educator.pk %}">
+    <div class="entry__main">
+      <div class="entry__title">{{ educator.full_name }}</div>
+      <div class="entry__cat">{{ educator.region.name }}{% if educator.school %} &middot; {{ educator.school.name }}{% endif %}</div>
+    </div>
+  </a>
+  {% empty %}
+  <p>No teachers match this search.</p>
+  {% endfor %}
+</div>
+
+{% if page.has_other_pages %}
+<nav aria-label="Pages">
+  {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}&q={{ query }}&region={{ selected_region }}">Previous</a>{% endif %}
+  <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a href="?page={{ page.next_page_number }}&q={{ query }}&region={{ selected_region }}">Next</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

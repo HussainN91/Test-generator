@@ -1,0 +1,19 @@
+{% extends "step/base_admin.html" %}
+{% block title %}{{ educator.full_name }} — STEP Administration{% endblock %}
+{% block content %}
+<h1>{{ educator.full_name }}</h1>
+<p class="entry__cat">FILE {{ file_ref }} &middot; {{ educator.region.name }}{% if educator.school %} &middot; {{ educator.school.name }}{% endif %}</p>
+
+<div class="register">
+  {% for item in items %}
+  <div class="entry">
+    <div class="entry__main">
+      <div class="entry__title">{{ item.obligation.display_name }}</div>
+    </div>
+    <div class="entry__status mark--{{ item.urgency }}">{{ item.due_phrase }}</div>
+  </div>
+  {% empty %}
+  <p>This teacher has no obligations on record.</p>
+  {% endfor %}
+</div>
+{% endblock %}

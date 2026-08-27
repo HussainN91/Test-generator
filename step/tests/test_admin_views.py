@@ -239,3 +239,73 @@ class ReviewQueueTests(TestCase):
         self.submission.refresh_from_db()
         self.assertEqual(self.obligation.status, constants.STATUS_RETURNED)
         self.assertEqual(self.submission.review_comment, "Please attach the stamped page.")
+
+
+class TeacherDirectoryTests(TestCase):
+    def setUp(self):
+        call_command("seed_roles", stdout=StringIO())
+        user = get_user_model().objects.create_user("admin1", password="pw")
+        roles.assign(user, constants.ROLE_ADMIN)
+        self.client.login(username="admin1", password="pw")
+        self.samarkand = Region.objects.create(name="Samarkand", code="samarkand")
+        self.tashkent = Region.objects.create(name="Tashkent City", code="tashkent-city")
+        Educator.objects.create(full_name="Maria Santos", region=self.samarkand)
+        Educator.objects.create(full_name="John Okafor", region=self.tashkent)
+
+    def test_the_directory_lists_all_teachers(self):
+        response = self.client.get(reverse("step:admin-teachers"))
+        self.assertContains(response, "Maria Santos")
+        self.assertContains(response, "John Okafor")
+
+    def test_search_narrows_by_name(self):
+        response = self.client.get(reverse("step:admin-teachers") + "?q=Maria")
+        self.assertContains(response, "Maria Santos")
+        self.assertNotContains(response, "John Okafor")
+
+    def test_region_filter_narrows_results(self):
+        response = self.client.get(reverse("step:admin-teachers") + f"?region={self.tashkent.pk}")
+        self.assertContains(response, "John Okafor")
+        self.assertNotContains(response, "Maria Santos")
+
+    def test_the_outstanding_status_filter_only_shows_teachers_with_something_due(self):
+        obligation_type = ObligationType.objects.create(
+            name_template="Monthly Report", category=constants.CATEGORY_MONTHLY_REPORTING,
+            cadence=constants.CADENCE_MONTHLY, evidence_spec=constants.EVIDENCE_NONE,
+        )
+        Obligation.objects.create(
+            type=obligation_type, educator=Educator.objects.get(full_name="Maria Santos"),
+            period_kind=constants.PERIOD_MONTH, period_start=date(2026, 5, 1),
+            due_date=date(2026, 5, 27),
+        )
+        response = self.client.get(
+            reverse("step:admin-teachers") + "?status=outstanding&period=2026-05"
+        )
+        self.assertContains(response, "Maria Santos")
+        self.assertNotContains(response, "John Okafor")
+
+    def test_passport_and_pinfl_never_appear(self):
+        Educator.objects.create(
+            full_name="Secret Person", region=self.samarkand,
+            passport_no="AB1234567", pinfl="12345678901234",
+        )
+        response = self.client.get(reverse("step:admin-teachers"))
+        self.assertNotContains(response, "AB1234567")
+        self.assertNotContains(response, "12345678901234")
+
+    def test_a_teachers_row_links_to_their_file(self):
+        educator = Educator.objects.get(full_name="Maria Santos")
+        response = self.client.get(reverse("step:admin-teachers"))
+        self.assertContains(response, reverse("step:admin-teacher-detail", args=[educator.pk]))
+
+    def test_the_teacher_file_lists_their_obligations_with_teacher_facing_wording(self):
+        obligation_type = ObligationType.objects.create(
+            name_template="Monthly Report", category=constants.CATEGORY_MONTHLY_REPORTING,
+            cadence=constants.CADENCE_MONTHLY, evidence_spec=constants.EVIDENCE_NONE,
+        )
+        educator = Educator.objects.get(full_name="Maria Santos")
+        Obligation.objects.create(
+            type=obligation_type, educator=educator, period_kind=constants.PERIOD_MONTH,
+            period_start=date(2026, 5, 1), due_date=date(2020, 1, 1),
+        )
+        response = self.client.get(reverse("step:admin-teacher-detail", args=[educator.pk]))
+        self.assertContains(response, "late")
