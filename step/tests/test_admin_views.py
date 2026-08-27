@@ -120,3 +120,58 @@ class ActionQueueTests(TestCase):
     def test_a_malformed_period_is_a_404_not_a_500(self):
         response = self.client.get(reverse("step:admin-dashboard") + "?period=not-a-month")
         self.assertEqual(response.status_code, 404)
+
+
+class AnalyticsWidgetsTests(TestCase):
+    def setUp(self):
+        call_command("seed_roles", stdout=StringIO())
+        user = get_user_model().objects.create_user("admin1", password="pw")
+        roles.assign(user, constants.ROLE_ADMIN)
+        self.client.login(username="admin1", password="pw")
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        self.type = ObligationType.objects.create(
+            name_template="Monthly Report", category=constants.CATEGORY_MONTHLY_REPORTING,
+            cadence=constants.CADENCE_MONTHLY, evidence_spec=constants.EVIDENCE_NONE,
+            requires_review=True,
+        )
+        educator = Educator.objects.create(full_name="Teacher One", region=self.region)
+        obligation = Obligation.objects.create(
+            type=self.type, educator=educator, period_kind=constants.PERIOD_MONTH,
+            period_start=date(2026, 5, 1), due_date=date(2026, 5, 27),
+        )
+        self.obligation = obligation
+
+    def test_all_widget_context_keys_are_present(self):
+        response = self.client.get(reverse("step:admin-dashboard") + "?period=2026-05")
+        for key in [
+            "region_bars", "rating_donut", "outcome_donut", "trend_points", "trend_width",
+            "status_rows", "timeliness", "completeness_rate",
+        ]:
+            self.assertIn(key, response.context, f"{key} missing from dashboard context")
+
+    def test_a_region_bar_carries_a_precomputed_percent(self):
+        response = self.client.get(reverse("step:admin-dashboard") + "?period=2026-05")
+        bars = response.context["region_bars"]
+        self.assertEqual(bars[0]["percent"], 100.0)
+
+    def test_self_reported_widgets_are_labelled_on_the_page(self):
+        response = self.client.get(reverse("step:admin-dashboard") + "?period=2026-05")
+        self.assertContains(response, "chart--selfreported")
+
+    def test_donut_segments_have_dasharray_and_dashoffset(self):
+        from step import workflow
+        workflow.submit(
+            self.obligation, user=get_user_model().objects.get(username="admin1"),
+            evidence=[], evaluation={"director_rating": 5},
+        )
+        response = self.client.get(reverse("step:admin-dashboard") + "?period=2026-05")
+        segment = response.context["rating_donut"][0]
+        self.assertIn("dasharray", segment)
+        self.assertIn("dashoffset", segment)
+
+    def test_changing_the_period_changes_the_headline_and_the_widgets_together(self):
+        may = self.client.get(reverse("step:admin-dashboard") + "?period=2026-05")
+        june = self.client.get(reverse("step:admin-dashboard") + "?period=2026-06")
+        self.assertEqual(may.context["headline"]["total"], 1)
+        self.assertEqual(june.context["headline"]["total"], 0)
+        self.assertNotEqual(len(may.context["trend_points"]), 0)

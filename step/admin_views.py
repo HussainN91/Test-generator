@@ -62,6 +62,72 @@ def _current_period(request) -> date:
         raise Http404("That is not a month this dashboard understands.") from exc
 
 
+def _region_bars(rows: list[dict]) -> list[dict]:
+    """`analytics.teachers_by_region()`'s rows, with a 0-100 `percent` of the
+    largest region added — `.bar__fill`'s width is an inline style per the
+    primitive's contract, and that arithmetic belongs here, not in the
+    template."""
+    maximum = rows[0]["count"] if rows else 0
+    return [
+        {**row, "percent": round(row["count"] / maximum * 100, 1) if maximum else 0.0}
+        for row in rows
+    ]
+
+
+def _status_rows(rows: list[dict]) -> list[dict]:
+    """`analytics.status_by_region()`'s rows, with each of the three counts
+    turned into a percentage of that row's own total, for `.stack__seg`
+    widths."""
+    out = []
+    for row in rows:
+        total = row["submitted"] + row["pending"] + row["not_started"]
+        out.append({
+            **row,
+            "submitted_percent": round(row["submitted"] / total * 100, 1) if total else 0.0,
+            "pending_percent": round(row["pending"] / total * 100, 1) if total else 0.0,
+            "not_started_percent": round(row["not_started"] / total * 100, 1) if total else 0.0,
+        })
+    return out
+
+
+def _donut_segments(parts: list[tuple]) -> list[dict]:
+    """`parts` is `[(series_css_class, percent), ...]`. Returns the
+    `stroke-dasharray`/`stroke-dashoffset` pairs the `.donut__seg` primitive
+    needs. The circle's circumference is exactly 100 (r=15.915), so a segment
+    covering `pct` percent of the circle is `dasharray="{pct} {100-pct}"`.
+    Offsets start at 25 (12 o'clock) and chain around the circle — this is
+    test-generator-16's verified contract for static/css/step.css §17, not an
+    independent derivation.
+    """
+    segments = []
+    offset = 25.0
+    for series_class, pct in parts:
+        segments.append({
+            "series": series_class,
+            "dasharray": f"{pct} {100 - pct}",
+            "dashoffset": round(offset, 2),
+        })
+        offset = (offset - pct + 100) % 100
+    return segments
+
+
+def _trend_points(points: list[dict]) -> tuple[str, int]:
+    """`analytics.submission_trend()`'s points, turned into an SVG
+    `points="x,y"` attribute plus the `viewBox` width to pair with it. X is
+    the raw day index (0, 1, 2, ...) and y is inverted (100 - percentage);
+    `preserveAspectRatio="none"` stretches the box to fit its container, so
+    there is no need to scale x to any particular unit.
+    """
+    coords = " ".join(
+        f"{i},{100 - point['cumulative_percent']}" for i, point in enumerate(points)
+    )
+    width = max(len(points) - 1, 1)
+    return coords, width
+
+
+RATING_SERIES = [(5, "s-violet"), (4, "s-teal"), (3, "s-ochre"), (2, "s-umber"), (1, "s-plum")]
+
+
 @staff_required
 def dashboard(request):
     period = _current_period(request)
@@ -72,12 +138,31 @@ def dashboard(request):
     )
     review_count = workflow.review_queue().count()
 
+    rating = analytics.rating_distribution(period)
+    outcome = analytics.outcome_distribution(period)
+    trend_coords, trend_width = _trend_points(analytics.submission_trend(period))
+
     context = {
         "nav": "dashboard",
         "period": period,
         "headline": headline,
         "outstanding_count": outstanding_count,
         "review_count": review_count,
+        "region_bars": _region_bars(analytics.teachers_by_region()),
+        "rating_distribution": rating,
+        "rating_donut": _donut_segments(
+            [(cls, rating["percents"][n]) for n, cls in RATING_SERIES]
+        ),
+        "outcome_distribution": outcome,
+        "outcome_donut": _donut_segments([
+            ("s-teal", outcome["percents"][constants.OUTCOME_SATISFACTORY_OR_BETTER]),
+            ("s-ochre", outcome["percents"][constants.OUTCOME_NEEDS_IMPROVEMENT]),
+        ]),
+        "trend_points": trend_coords,
+        "trend_width": trend_width,
+        "status_rows": _status_rows(analytics.status_by_region(period)),
+        "timeliness": analytics.timeliness(period),
+        "completeness_rate": analytics.completeness_rate(period),
     }
     context.update(_admin_chrome(request))
     return render(request, "step/admin/dashboard.html", context)

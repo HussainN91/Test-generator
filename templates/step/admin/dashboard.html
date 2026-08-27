@@ -41,4 +41,127 @@
     <div class="label">Total for {{ period|date:"F Y" }}</div>
   </div>
 </div>
+
+<details class="widget-toggle">
+  <summary>See the full breakdown</summary>
+
+  <section class="chart">
+    <h2>Teachers by region</h2>
+    <div class="bars">
+      {% for row in region_bars|slice:":8" %}
+      <div class="bar s-teal">
+        <span class="bar__label">{{ row.region }}</span>
+        <span class="bar__track"><span class="bar__fill" style="width:{{ row.percent }}%"></span></span>
+        <span class="bar__value">{{ row.count }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% if region_bars|length > 8 %}
+    <details><summary>Show all {{ region_bars|length }} regions</summary>
+      <div class="bars">
+        {% for row in region_bars|slice:"8:" %}
+        <div class="bar s-teal">
+          <span class="bar__label">{{ row.region }}</span>
+          <span class="bar__track"><span class="bar__fill" style="width:{{ row.percent }}%"></span></span>
+          <span class="bar__value">{{ row.count }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </details>
+    {% endif %}
+  </section>
+
+  <section class="chart chart--selfreported">
+    <h2>Performance overview, by director rating</h2>
+    <div class="donut">
+      <svg class="donut__svg" viewBox="0 0 42 42">
+        <circle class="donut__ring" cx="21" cy="21" r="15.915"/>
+        {% for seg in rating_donut %}
+        <circle class="donut__seg {{ seg.series }}" cx="21" cy="21" r="15.915"
+                stroke-dasharray="{{ seg.dasharray }}" stroke-dashoffset="{{ seg.dashoffset }}"/>
+        {% endfor %}
+      </svg>
+      <div class="donut__centre">
+        <span class="donut__figure">{{ rating_distribution.total }}</span>
+        <span class="donut__caption">rated</span>
+      </div>
+    </div>
+    <ul class="legend">
+      <li class="legend__item s-violet"><span class="legend__swatch"></span>5 star: {{ rating_distribution.counts.5 }}</li>
+      <li class="legend__item s-teal"><span class="legend__swatch"></span>4 star: {{ rating_distribution.counts.4 }}</li>
+      <li class="legend__item s-ochre"><span class="legend__swatch"></span>3 star: {{ rating_distribution.counts.3 }}</li>
+      <li class="legend__item s-umber"><span class="legend__swatch"></span>2 star: {{ rating_distribution.counts.2 }}</li>
+      <li class="legend__item s-plum"><span class="legend__swatch"></span>1 star: {{ rating_distribution.counts.1 }}</li>
+    </ul>
+    <p class="chart__note">transcribed by teachers from the stamped paper.</p>
+  </section>
+
+  <section class="chart chart--selfreported">
+    <h2>Outcome overview</h2>
+    <div class="donut">
+      <svg class="donut__svg" viewBox="0 0 42 42">
+        <circle class="donut__ring" cx="21" cy="21" r="15.915"/>
+        {% for seg in outcome_donut %}
+        <circle class="donut__seg {{ seg.series }}" cx="21" cy="21" r="15.915"
+                stroke-dasharray="{{ seg.dasharray }}" stroke-dashoffset="{{ seg.dashoffset }}"/>
+        {% endfor %}
+      </svg>
+      <div class="donut__centre">
+        <span class="donut__figure">{{ outcome_distribution.total }}</span>
+        <span class="donut__caption">reported</span>
+      </div>
+    </div>
+    <ul class="legend">
+      <li class="legend__item s-teal"><span class="legend__swatch"></span>Satisfactory or better: {{ outcome_distribution.percents.satisfactory_or_better }}%</li>
+      <li class="legend__item s-ochre"><span class="legend__swatch"></span>Needs improvement: {{ outcome_distribution.percents.needs_improvement }}%</li>
+    </ul>
+    <p class="chart__note">transcribed by teachers from the stamped paper.</p>
+  </section>
+
+  <section class="chart">
+    <h2>Submission trend</h2>
+    <div class="trend s-violet">
+      <svg class="trend__svg" viewBox="0 0 {{ trend_width }} 100" preserveAspectRatio="none">
+        <line class="trend__grid" x1="0" y1="25" x2="{{ trend_width }}" y2="25"/>
+        <line class="trend__grid" x1="0" y1="50" x2="{{ trend_width }}" y2="50"/>
+        <line class="trend__grid" x1="0" y1="75" x2="{{ trend_width }}" y2="75"/>
+        <polyline class="trend__line" points="{{ trend_points }}"/>
+      </svg>
+      <div class="trend__axis"><span>{{ period|date:"j F" }}</span><span>{{ period|date:"F" }} end</span></div>
+    </div>
+  </section>
+
+  <section class="chart">
+    <h2>Submissions by status and region</h2>
+    <div class="stack-rows">
+      {% for row in status_rows|slice:":8" %}
+      <div class="stack-row">
+        <span class="bar__label">{{ row.region }}</span>
+        <span class="stack">
+          <span class="stack__seg s-teal" style="width:{{ row.submitted_percent }}%"></span>
+          <span class="stack__seg s-ochre" style="width:{{ row.pending_percent }}%"></span>
+          <span class="stack__seg s-quiet" style="width:{{ row.not_started_percent }}%"></span>
+        </span>
+        <span class="bar__value">{{ row.submitted_percent }}%</span>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="legend">
+      <span class="legend__item s-teal"><span class="legend__swatch"></span>Submitted</span>
+      <span class="legend__item s-ochre"><span class="legend__swatch"></span>Pending</span>
+      <span class="legend__item s-quiet"><span class="legend__swatch"></span>Not started</span>
+    </div>
+  </section>
+
+  <section class="chart">
+    <h2>On-time and late</h2>
+    <div class="record">
+      <div class="record__cell"><div class="record__value">{{ timeliness.on_time_percent }}%</div><div class="label">On time</div></div>
+      <div class="record__cell"><div class="record__value">{{ timeliness.late_percent }}%</div><div class="label">Late</div></div>
+      <div class="record__cell"><div class="record__value">{{ timeliness.average_submission_days }}</div><div class="label">Avg. days to submit</div></div>
+      <div class="record__cell"><div class="record__value">{{ completeness_rate }}%</div><div class="label">Evidence completeness (provisional)</div></div>
+    </div>
+  </section>
+
+</details>
 {% endblock %}
