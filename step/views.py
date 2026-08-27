@@ -75,7 +75,11 @@ def dashboard(request):
     # finished in September when three things are late today.
     items.sort(key=lambda i: (not i["needs_action"], i["obligation"].due_date))
 
-    next_obligation = urgency.next_action(educator, today=today)
+    # Scoped to the open section. An unscoped docket offered a CPD Online item
+    # while the teacher was looking at Monthly Reporting — pointing them out of
+    # the section they had just opened — and unscoped figures contradicted the
+    # list printed directly beneath them.
+    next_obligation = urgency.next_action(educator, today=today, category=active_category or None)
     year = AcademicYear.objects.filter(is_current=True).prefetch_related("terms").first()
 
     terms = []
@@ -85,13 +89,20 @@ def dashboard(request):
 
     deadlines = [i for i in items if i["needs_action"]][:4]
 
+    # The page must announce which section it is showing. Without this every
+    # filter rendered an identical heading, docket and record strip, and only a
+    # list far down the page changed — which reads as a broken link.
+    section_label = dict(constants.CATEGORY_CHOICES).get(active_category, "")
+
     context = {
         "nav": "work",
         "items": items,
         "next_item": presentation.decorate(next_obligation, today) if next_obligation else None,
-        "tiles": urgency.teacher_tiles(educator, today=today),
+        "tiles": urgency.teacher_tiles(educator, today=today, category=active_category or None),
         "this_month": today.strftime("%B %Y"),
         "active_category": active_category,
+        "section_label": section_label,
+        "page_title": section_label or "Academic work",
         "deadlines": deadlines,
         "academic_year": year,
         "terms": terms,

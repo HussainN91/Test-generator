@@ -31,21 +31,36 @@ def urgency_of(obligation, today: date | None = None) -> str:
     return constants.URGENCY_SCHEDULED
 
 
-def outstanding_for(educator):
-    return educator.obligations.filter(
+def outstanding_for(educator, category: str | None = None):
+    queryset = educator.obligations.filter(
         status__in=[constants.STATUS_NOT_STARTED, constants.STATUS_RETURNED]
     ).select_related("type")
+    if category:
+        queryset = queryset.filter(type__category=category)
+    return queryset
 
 
-def next_action(educator, today: date | None = None):
-    """The single most urgent thing, for the "what do I do now" panel (spec §7.1)."""
-    return outstanding_for(educator).order_by("due_date").first()
+def next_action(educator, today: date | None = None, category: str | None = None):
+    """The single most urgent thing, for the "what do I do now" panel (spec §7.1).
+
+    `category` scopes it to one section. Without that, opening Monthly
+    Reporting would offer a CPD Online item as its next action — pointing the
+    teacher out of the section they just opened.
+    """
+    return outstanding_for(educator, category).order_by("due_date").first()
 
 
-def teacher_tiles(educator, today: date | None = None) -> dict:
-    """The four figures across the top of the teacher's home."""
+def teacher_tiles(educator, today: date | None = None, category: str | None = None) -> dict:
+    """The four figures across the top of the teacher's home.
+
+    `category` scopes them to one section, so the figures cannot contradict the
+    list printed directly beneath them.
+    """
     today = today or date.today()
-    obligations = list(educator.obligations.all())
+    queryset = educator.obligations.all()
+    if category:
+        queryset = queryset.filter(type__category=category)
+    obligations = list(queryset)
 
     active = sum(1 for o in obligations if _outstanding(o.status))
     completed = sum(1 for o in obligations if o.status in constants.SETTLED_STATUSES)

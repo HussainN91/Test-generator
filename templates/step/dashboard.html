@@ -1,16 +1,30 @@
 {% extends "step/base.html" %}
 
-{% block title %}Academic Work — STEP{% endblock %}
+{% block title %}{{ page_title }} — STEP{% endblock %}
 
 {% block content %}
 
+{% comment %}
+  Heading, breadcrumb and title all move with the filter. When they did not,
+  every section rendered an identical page above the fold and the whole rail
+  read as broken.
+{% endcomment %}
 <nav class="crumbs" aria-label="Breadcrumb">
-  <a href="{% url 'step:dashboard' %}">Register</a><span>/</span>Academic work
+  <a href="{% url 'step:dashboard' %}">Register</a><span>/</span>
+  {% if section_label %}
+    <a href="{% url 'step:dashboard' %}">Academic work</a><span>/</span>{{ section_label }}
+  {% else %}
+    Academic work
+  {% endif %}
 </nav>
 
 <div class="head">
-  <h1>Academic work</h1>
-  <p>Everything you owe this year, and where each one has got to.</p>
+  <h1>{{ page_title }}</h1>
+  {% if section_label %}
+    <p>One section of your obligations. <a href="{% url 'step:dashboard' %}">Show everything</a>.</p>
+  {% else %}
+    <p>Everything you owe this year, and where each one has got to.</p>
+  {% endif %}
 </div>
 
 {% comment %}
@@ -45,8 +59,16 @@
     <span class="impression impression--seal impression--press">Nothing outstanding</span>
   </div>
   <div class="docket__body">
-    <h2 class="docket__title">You are up to date.</h2>
-    <p class="docket__meta">Everything due so far has been sent. The next one will appear here when it opens.</p>
+    <h2 class="docket__title">
+      {% if section_label %}Nothing to do in {{ section_label }}.{% else %}You are up to date.{% endif %}
+    </h2>
+    <p class="docket__meta">
+      {% if section_label %}
+        Everything in this section has been sent. <a href="{% url 'step:dashboard' %}">Check the other sections</a>.
+      {% else %}
+        Everything due so far has been sent. The next one will appear here when it opens.
+      {% endif %}
+    </p>
   </div>
 </section>
 {% endif %}
@@ -80,7 +102,10 @@
 <div class="columns">
 
   <section class="block" aria-labelledby="reg-h">
-    <h2 class="block__title" id="reg-h">Register of obligations</h2>
+    <h2 class="block__title" id="reg-h">
+      {% if section_label %}{{ section_label }}{% else %}Register of obligations{% endif %}
+      <span class="aside">{{ items|length }} shown</span>
+    </h2>
 
     <div class="tabs">
       <a href="{% url 'step:dashboard' %}" {% if not active_category %}aria-current="true"{% endif %}>All</a>

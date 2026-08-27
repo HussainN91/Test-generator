@@ -90,6 +90,51 @@ class EducatorScreenTests(TestCase):
         self.assertEqual(len(response.context["items"]), 1)
         self.assertEqual(response.context["active_category"], "eca")
 
+    def test_opening_a_section_changes_the_page_not_just_the_list(self):
+        """Every filter used to render an identical heading, docket and record
+        strip, with only a list far down the page changing — which reads as a
+        broken link rather than a filter."""
+        self.make(self.monthly, 3)
+        self.make(self.eca, 6)
+
+        unfiltered = self.client.get(reverse("step:dashboard"))
+        filtered = self.client.get(reverse("step:dashboard"), {"category": "eca"})
+
+        self.assertEqual(unfiltered.context["page_title"], "Academic work")
+        self.assertEqual(filtered.context["page_title"], "ECA Programme")
+        self.assertContains(filtered, "<h1>ECA Programme</h1>", html=False)
+
+    def test_the_docket_offers_something_from_the_open_section(self):
+        """An unscoped docket pointed the teacher out of the section they had
+        just opened."""
+        soonest_overall = self.make(self.monthly, 1)
+        in_section = self.make(self.eca, 9)
+
+        unfiltered = self.client.get(reverse("step:dashboard"))
+        self.assertEqual(unfiltered.context["next_item"]["obligation"], soonest_overall)
+
+        filtered = self.client.get(reverse("step:dashboard"), {"category": "eca"})
+        self.assertEqual(filtered.context["next_item"]["obligation"], in_section)
+
+    def test_a_section_with_nothing_outstanding_offers_no_docket_item(self):
+        self.make(self.monthly, 3)
+        response = self.client.get(reverse("step:dashboard"), {"category": "cpd_offline"})
+        self.assertIsNone(response.context["next_item"])
+        self.assertContains(response, "Nothing to do in CPD Offline")
+
+    def test_the_figures_scope_to_the_open_section(self):
+        """Unscoped figures contradicted the list printed directly beneath."""
+        self.make(self.monthly, 3)
+        self.make(self.monthly, 34)
+        self.make(self.eca, 6)
+
+        unfiltered = self.client.get(reverse("step:dashboard"))
+        self.assertEqual(unfiltered.context["tiles"]["active"], 3)
+
+        filtered = self.client.get(reverse("step:dashboard"), {"category": "eca"})
+        self.assertEqual(filtered.context["tiles"]["active"], 1)
+        self.assertEqual(len(filtered.context["items"]), 1)
+
     def test_the_rail_marks_the_open_category_as_current(self):
         """The highlight must follow the filter.
 
