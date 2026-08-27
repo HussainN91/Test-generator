@@ -14,6 +14,7 @@ which is what makes the urgency design legible in a screenshot.
 from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
@@ -197,7 +198,11 @@ class Command(BaseCommand):
             if done and obligation.status == constants.STATUS_NOT_STARTED:
                 submission = workflow.submit(
                     obligation, user=user,
-                    evidence=[{"kind": constants.EVIDENCE_FILE_KIND, "url": "", "caption": "stamped-report.jpg"}],
+                    evidence=[{
+                        "kind": constants.EVIDENCE_FILE_KIND,
+                        "file": SimpleUploadedFile("stamped-report.jpg", b"demo", content_type="image/jpeg"),
+                        "caption": "stamped-report.jpg",
+                    }],
                     evaluation={
                         "director_rating": 4,
                         "director_name": "John Dela Cruz",

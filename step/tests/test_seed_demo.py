@@ -3,13 +3,16 @@ by name (step.constants.CHECKPOINT_OBLIGATION_NAME_TEMPLATES) — a renamed or
 missing catalogue entry breaks generation silently, so the names are pinned
 here."""
 
+import tempfile
 from io import StringIO
 
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from step import constants
-from step.models import ObligationType
+from step.models import Evidence, ObligationType
+
+MEDIA = tempfile.mkdtemp()
 
 
 class SeedDemoCheckpointTypesTests(TestCase):
@@ -42,3 +45,15 @@ class SeedDemoCheckpointTypesTests(TestCase):
         self.assertEqual(boy.cadence, constants.CADENCE_ANNUAL)
         self.assertEqual(boy.evidence_spec, constants.EVIDENCE_NONE)
         self.assertFalse(boy.requires_review)
+
+    @override_settings(MEDIA_ROOT=MEDIA)
+    def test_the_accepted_monthly_reports_carry_a_real_file_not_an_empty_one(self):
+        """A file-kind Evidence row with no actual file crashes any template
+        that reads evidence.file.url (FieldFile.url raises on an empty file) —
+        found by test-generator-a7 auditing the admin review screen against
+        this command's seed data."""
+        call_command("seed_demo", stdout=StringIO())
+        file_evidence = Evidence.objects.filter(kind=constants.EVIDENCE_FILE_KIND)
+        self.assertGreater(file_evidence.count(), 0)
+        for evidence in file_evidence:
+            self.assertTrue(evidence.file, f"Evidence {evidence.pk} claims kind=file but has no file")
