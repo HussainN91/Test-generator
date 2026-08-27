@@ -15,19 +15,19 @@ page -- same columns, same paper names, four rows instead of forty-eight.
   <span class="sep">/</span>
   <a href="{% url 'diagnostics:grade_detail' grade %}">Grade {{ grade }}</a>
   <span class="sep">/</span>
-  <b>Class {{ class_number }}</b>
+  <b>{{ class_display_name }}</b>
 </p>
 
 <div class="dochead">
   <div>
     <p class="eyebrow">Diagnostics &middot; Grade {{ grade }}</p>
-    <h1 class="doc">Class {{ class_number }}</h1>
+    <h1 class="doc">{{ class_display_name }}</h1>
     <p class="sub">Papers {{ span }} &mdash; this class's pack. Open a paper to read it on screen and
       download the test, the answer key and the audio. Downloading issues that paper and records it
       against your name.</p>
   </div>
   <div class="ref">
-    <b>Class {{ class_number }}</b>
+    <b>{{ class_display_name }}</b>
     <span>GRADE {{ grade }}</span>
     <span>PAPERS {{ span }}</span>
     <span>{% if generation_open %}DOWNLOADS OPEN{% else %}DOWNLOADS CLOSED{% endif %}</span>

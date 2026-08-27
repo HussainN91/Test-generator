@@ -50,7 +50,7 @@ of it as "class 2's second paper".
   {% for pack in packs %}
     <a class="pick" href="{% url 'diagnostics:class_pack' grade pack.number %}">
       <span class="idx">Class {{ pack.number|stringformat:"02d" }}</span>
-      <span class="ttl">Class {{ pack.number }}</span>
+      <span class="ttl">{{ pack.display_name }}</span>
       <span class="span">Papers {{ pack.span }}</span>
       <span class="meta">
         <span>Issued</span>

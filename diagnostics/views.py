@@ -35,6 +35,7 @@ from diagnostics.navigation import (
     CLASS_NUMBERS,
     VARIANTS_PER_CLASS,
     class_for_variant,
+    display_name_for,
     variant_span,
     variants_for_class,
 )
@@ -147,6 +148,7 @@ def grade_detail(request, grade: int):
         packs.append(
             {
                 "number": number,
+                "display_name": display_name_for(grade, number),
                 "span": variant_span(number),
                 "paper_count": len(members),
                 "issued_count": sum(1 for paper in members if paper.issue_count),
@@ -177,6 +179,7 @@ def class_pack(request, grade: int, number: int):
         {
             "grade": grade,
             "class_number": number,
+            "class_display_name": display_name_for(grade, number),
             "span": variant_span(number),
             "papers": _pack_papers(request.user, grade, number),
             "prev_class": number - 1 if number > 1 else None,
