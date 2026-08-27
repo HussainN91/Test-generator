@@ -62,6 +62,15 @@ class ActivityParticipant(models.Model):
 
     class Meta:
         ordering = ["full_name"]
+        constraints = [
+            # student and staff are mutually exclusive: a participant is
+            # sourced from a class Student, from a School's typed-in
+            # SchoolStaff, or just typed with neither set — never both.
+            models.CheckConstraint(
+                condition=~(models.Q(student__isnull=False) & models.Q(staff__isnull=False)),
+                name="step_activity_participant_not_both_student_and_staff",
+            ),
+        ]
 
     def __str__(self) -> str:
         return self.full_name

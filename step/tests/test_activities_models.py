@@ -94,6 +94,34 @@ class ActivityParticipantTests(TestCase):
         self.assertIsNone(participant.student)
         self.assertIsNone(participant.staff)
 
+    def test_a_participant_cannot_be_linked_to_both_student_and_staff(self):
+        """student and staff are mutually exclusive: a name is sourced from
+        one or the other, or neither, never both."""
+        student = Student.objects.create(teaching_class=self.teaching_class, full_name="Aziz Karimov")
+        school = School.objects.create(name="School 12")
+        staff = SchoolStaff.objects.create(school=school, full_name="Dilnoza Yusupova")
+        with self.assertRaises(IntegrityError):
+            ActivityParticipant.objects.create(
+                activity=self.activity, full_name="Aziz Karimov", student=student, staff=staff,
+            )
+
+    def test_a_participant_can_be_linked_to_just_a_student(self):
+        student = Student.objects.create(teaching_class=self.teaching_class, full_name="Aziz Karimov")
+        participant = ActivityParticipant.objects.create(
+            activity=self.activity, full_name="Aziz Karimov", student=student,
+        )
+        self.assertEqual(participant.student, student)
+        self.assertIsNone(participant.staff)
+
+    def test_a_participant_can_be_linked_to_just_staff(self):
+        school = School.objects.create(name="School 12")
+        staff = SchoolStaff.objects.create(school=school, full_name="Dilnoza Yusupova")
+        participant = ActivityParticipant.objects.create(
+            activity=self.activity, full_name="Dilnoza Yusupova", staff=staff,
+        )
+        self.assertIsNone(participant.student)
+        self.assertEqual(participant.staff, staff)
+
 
 class SessionAttendanceTests(TestCase):
     def setUp(self):
