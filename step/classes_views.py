@@ -9,7 +9,7 @@ coordination lands) has to live in the shared file.
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -63,9 +63,10 @@ def class_create(request):
 
         if error is None:
             try:
-                teaching_class = TeachingClass.objects.create(
-                    educator=educator, grade=grade, slot=slot, display_name=display_name
-                )
+                with transaction.atomic():
+                    teaching_class = TeachingClass.objects.create(
+                        educator=educator, grade=grade, slot=slot, display_name=display_name
+                    )
             except IntegrityError:
                 error = f"Grade {grade}, class {slot} already belongs to another teacher."
             else:

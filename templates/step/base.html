@@ -55,6 +55,8 @@
        {% if nav == 'work' and active_category == key %}aria-current="page"{% endif %}>{{ label }}</a>
     {% endfor %}
 
+    <a class="rail__link" href="{% url 'step:class_list' %}" {% if nav == 'classes' %}aria-current="page"{% endif %}>Classes</a>
+
     <div class="rail__heading">Evidence</div>
     <a class="rail__link" href="{% url 'step:submissions' %}" {% if nav == 'submissions' %}aria-current="page"{% endif %}>What I have sent</a>
     <a class="rail__link" href="{% url 'step:feedback' %}" {% if nav == 'feedback' %}aria-current="page"{% endif %}>

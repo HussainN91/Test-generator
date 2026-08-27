@@ -15,7 +15,9 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from step import constants, workflow
-from step.models import Educator, Obligation, ObligationType, Region
+from step.models import (
+    Educator, Obligation, ObligationType, ProgressEntry, Region, Student, TeachingClass,
+)
 
 MEDIA = tempfile.mkdtemp()
 TODAY = date.today()
@@ -337,3 +339,75 @@ class TemplateHygieneTests(TestCase):
             self.assertNotIn("{#", body, f"raw comment leaked on {name}")
             self.assertNotIn("{% comment", body, f"raw comment leaked on {name}")
             self.assertNotIn("endcomment", body, f"raw comment leaked on {name}")
+
+
+@override_settings(MEDIA_ROOT=MEDIA)
+class CheckpointObligationTests(TestCase):
+    def setUp(self):
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        self.user = get_user_model().objects.create_user("maria", password="pw")
+        self.educator = Educator.objects.create(full_name="Maria Santos", region=self.region, user=self.user)
+        self.teaching_class = TeachingClass.objects.create(
+            educator=self.educator, grade=9, slot=1, display_name="9A"
+        )
+        self.a = Student.objects.create(teaching_class=self.teaching_class, full_name="Aziz Karimov")
+        self.b = Student.objects.create(teaching_class=self.teaching_class, full_name="Dilnoza Yusupova")
+
+        self.boy_type = ObligationType.objects.create(
+            name_template="Beginning-of-year diagnostic", category=constants.CATEGORY_ASSESSMENTS,
+            cadence=constants.CADENCE_ANNUAL, evidence_spec=constants.EVIDENCE_NONE,
+            form_slug=constants.FORM_SLUG_ASSESSMENT_CHECKPOINT,
+        )
+        self.obligation = Obligation.objects.create(
+            type=self.boy_type, educator=self.educator, teaching_class=self.teaching_class,
+            period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        self.client.login(username="maria", password="pw")
+
+    def test_the_page_lists_every_student_instead_of_an_uploader(self):
+        response = self.client.get(reverse("step:obligation", args=[self.obligation.pk]))
+        self.assertContains(response, "Aziz Karimov")
+        self.assertContains(response, "Dilnoza Yusupova")
+        self.assertNotContains(response, 'name="link"')
+
+    def test_scoring_every_student_settles_the_obligation(self):
+        self.client.post(
+            reverse("step:obligation", args=[self.obligation.pk]),
+            {
+                f"score_{self.a.pk}": "80", f"skill_{self.a.pk}": constants.SKILL_READING,
+                f"comment_{self.a.pk}": "",
+                f"score_{self.b.pk}": "74", f"skill_{self.b.pk}": constants.SKILL_READING,
+                f"comment_{self.b.pk}": "",
+            },
+        )
+        self.obligation.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_ACCEPTED)
+        self.assertEqual(ProgressEntry.objects.filter(checkpoint=constants.CHECKPOINT_BOY).count(), 2)
+
+    def test_scoring_only_some_students_leaves_it_not_started(self):
+        self.client.post(
+            reverse("step:obligation", args=[self.obligation.pk]),
+            {f"score_{self.a.pk}": "80", f"skill_{self.a.pk}": constants.SKILL_READING, f"comment_{self.a.pk}": ""},
+        )
+        self.obligation.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_NOT_STARTED)
+
+    def test_a_blank_row_creates_no_entry(self):
+        self.client.post(
+            reverse("step:obligation", args=[self.obligation.pk]),
+            {f"score_{self.a.pk}": "", f"skill_{self.a.pk}": "", f"comment_{self.a.pk}": ""},
+        )
+        self.assertEqual(ProgressEntry.objects.count(), 0)
+
+    def test_resubmitting_updates_rather_than_duplicates(self):
+        self.client.post(
+            reverse("step:obligation", args=[self.obligation.pk]),
+            {f"score_{self.a.pk}": "60", f"skill_{self.a.pk}": "", f"comment_{self.a.pk}": ""},
+        )
+        self.client.post(
+            reverse("step:obligation", args=[self.obligation.pk]),
+            {f"score_{self.a.pk}": "65", f"skill_{self.a.pk}": "", f"comment_{self.a.pk}": ""},
+        )
+        entry = ProgressEntry.objects.get(student=self.a, checkpoint=constants.CHECKPOINT_BOY)
+        self.assertEqual(entry.score, 65)
+        self.assertEqual(ProgressEntry.objects.filter(student=self.a).count(), 1)

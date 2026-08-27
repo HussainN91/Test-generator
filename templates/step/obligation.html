@@ -41,6 +41,43 @@
 <div class="columns">
   <div>
 
+  {% if teaching_class %}
+  {% if can_submit %}
+  <section class="block" aria-labelledby="do-h">
+    <h2 class="block__title" id="do-h">Score {{ teaching_class.display_name }}</h2>
+    <div class="block__body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% for row in rows %}
+        <div class="field" style="border-top:1px solid var(--rule-firm); padding-top:16px; margin-top:16px">
+          <span class="field__label">{{ row.student.full_name }}</span>
+          <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start">
+            <label>Score
+              <input class="input" type="number" min="0" max="100" name="score_{{ row.student.pk }}"
+                     value="{{ row.entry.score|default_if_none:'' }}" style="width:80px">
+            </label>
+            <label>Skill
+              <select name="skill_{{ row.student.pk }}">
+                <option value="">&mdash;</option>
+                {% for value, label in skill_choices %}
+                <option value="{{ value }}" {% if row.entry.skill == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </label>
+          </div>
+          <textarea class="textarea" name="comment_{{ row.student.pk }}" placeholder="Comment"
+                    style="margin-top:8px; min-height:50px">{{ row.entry.comment|default:'' }}</textarea>
+        </div>
+        {% endfor %}
+        <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
+          <button class="btn btn--primary btn--lg" type="submit">Save scores</button>
+          <a class="btn btn--quiet" href="{% url 'step:dashboard' %}">Back without saving</a>
+        </div>
+      </form>
+    </div>
+  </section>
+  {% endif %}
+  {% else %}
   {% if can_submit %}
   <section class="block" aria-labelledby="do-h">
     <h2 class="block__title" id="do-h">What to do</h2>
@@ -138,6 +175,7 @@
       </form>
     </div>
   </section>
+  {% endif %}
   {% endif %}
 
   {% if history %}

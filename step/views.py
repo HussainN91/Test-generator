@@ -19,7 +19,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
 from step import constants, presentation, urgency, workflow
-from step.models import AcademicYear, Educator, Obligation, Submission
+from step.models import AcademicYear, Educator, Obligation, ProgressEntry, Submission
 
 
 def _educator(request) -> Educator:
@@ -118,10 +118,13 @@ def obligation(request, pk: int):
     today = date.today()
 
     obligation_obj = get_object_or_404(
-        Obligation.objects.select_related("type", "educator"),
+        Obligation.objects.select_related("type", "educator", "teaching_class"),
         pk=pk,
         educator=educator,
     )
+
+    if obligation_obj.type.form_slug == constants.FORM_SLUG_ASSESSMENT_CHECKPOINT:
+        return _checkpoint_obligation(request, educator, obligation_obj, today)
 
     if request.method == "POST":
         return _handle_submit(request, educator, obligation_obj)
@@ -207,6 +210,60 @@ def _handle_submit(request, educator, obligation_obj):
     else:
         messages.success(request, "Thank you — that has been sent for checking.")
     return redirect("step:obligation", pk=obligation_obj.pk)
+
+
+def _checkpoint_obligation(request, educator, obligation_obj, today):
+    """The roster-scoring form for a checkpoint obligation.
+
+    No evidence, no Submission row (classes/gradebook spec, "Auto-completion")
+    — each POST here writes ProgressEntry rows directly and asks
+    workflow.sync_checkpoint to settle the obligation once every student has
+    one.
+    """
+    teaching_class = obligation_obj.teaching_class
+    checkpoint = constants.NAME_TEMPLATE_TO_CHECKPOINT[obligation_obj.type.name_template]
+
+    if request.method == "POST":
+        for student in teaching_class.students.all():
+            score_raw = (request.POST.get(f"score_{student.pk}") or "").strip()
+            skill = request.POST.get(f"skill_{student.pk}") or ""
+            comment = (request.POST.get(f"comment_{student.pk}") or "").strip()
+            if not score_raw and not skill and not comment:
+                continue
+            ProgressEntry.objects.update_or_create(
+                student=student, checkpoint=checkpoint,
+                defaults={
+                    "score": int(score_raw) if score_raw.isdigit() else None,
+                    "skill": skill, "comment": comment,
+                },
+            )
+        workflow.sync_checkpoint(teaching_class, checkpoint)
+        obligation_obj.refresh_from_db()
+        if obligation_obj.status == constants.STATUS_ACCEPTED:
+            messages.success(request, "Thank you — every student is scored. Nothing further to do.")
+        else:
+            messages.success(request, "Saved. Come back to finish scoring the rest of the class.")
+        return redirect("step:obligation", pk=obligation_obj.pk)
+
+    existing = {
+        entry.student_id: entry
+        for entry in ProgressEntry.objects.filter(student__teaching_class=teaching_class, checkpoint=checkpoint)
+    }
+    rows = [
+        {"student": student, "entry": existing.get(student.pk)}
+        for student in teaching_class.students.all()
+    ]
+
+    context = {
+        "nav": "work",
+        "item": presentation.decorate(obligation_obj, today),
+        "teaching_class": teaching_class,
+        "rows": rows,
+        "skill_choices": constants.SKILL_CHOICES,
+        "can_submit": obligation_obj.status != constants.STATUS_ACCEPTED,
+    }
+    context.update(_chrome(educator))
+    return render(request, "step/obligation.html", context)
 
 
 @login_required

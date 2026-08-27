@@ -15,6 +15,7 @@ urlpatterns = [
     path("work/<int:pk>/", views.obligation, name="obligation"),
     path("submissions/", views.submissions, name="submissions"),
     path("feedback/", views.feedback, name="feedback"),
+    path("classes/", include("step.classes_urls")),
 ]
 
 
