@@ -8,11 +8,10 @@ rem  Leave the black window open while you are using it; closing that
 rem  window is what stops the server.
 rem
 rem  NOTE ON WHAT THIS OPENS
-rem  The STEP teacher and administrator screens are not built yet. This
-rem  launcher therefore opens the ADMIN area, which is currently the
-rem  only way to see the roster, obligation types, submissions and
-rem  review queue. When the real screens exist, change LANDING below
-rem  from "admin/" to "" and this file keeps working unchanged.
+rem  This opens the teacher screens. The administrator screens are not
+rem  built yet; until they are, use the admin area at /admin/ to review
+rem  submissions and manage the roster. Change LANDING below to swap
+rem  which page opens on start-up.
 rem
 rem  This launcher must stay in the project folder, next to manage.py.
 rem  It is self-contained: if the .venv folder is missing or broken
@@ -28,7 +27,7 @@ rem ===================================================================
 cd /d "%~dp0"
 
 set "PORT=8000"
-set "LANDING=admin/"
+set "LANDING=step/"
 set "BASE=http://127.0.0.1:%PORT%/"
 set "URL=%BASE%%LANDING%"
 set "PYTHON=%~dp0.venv\Scripts\python.exe"
@@ -170,8 +169,8 @@ echo(
 echo   Chrome will open on its own in a few seconds.
 echo   If it does not, go to:  %URL%
 echo(
-echo   Sign in with your admin account. The teacher and administrator
-echo   screens are not built yet - for now this opens the admin area.
+echo   Sign in to see your obligations. Administrator screens are not
+echo   built yet - use /admin/ for review and roster work.
 echo(
 echo   ** Keep this window open while you are using the website. **
 echo      Closing it, or pressing Ctrl+C, shuts it down.
