@@ -11,7 +11,9 @@ from django.db import IntegrityError
 from django.test import TestCase
 
 from step import constants
-from step.models import AcademicYear, Educator, Obligation, ObligationType, Region, Term
+from step.models import (
+    AcademicYear, Educator, Obligation, ObligationType, Region, TeachingClass, Term,
+)
 
 
 class TermTests(TestCase):
@@ -117,3 +119,74 @@ class ObligationTests(TestCase):
             period_label="Term 1", due_date=date(2025, 11, 25),
         )
         self.assertEqual(obligation.display_name, "ECA Programme Plan - Term 1")
+
+
+class TeachingClassObligationTests(TestCase):
+    def setUp(self):
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        self.educator = Educator.objects.create(full_name="Maria Santos", region=self.region)
+        self.type = ObligationType.objects.create(
+            name_template="Beginning-of-year diagnostic", category=constants.CATEGORY_ASSESSMENTS,
+            cadence=constants.CADENCE_ANNUAL, evidence_spec=constants.EVIDENCE_NONE,
+            form_slug=constants.FORM_SLUG_ASSESSMENT_CHECKPOINT,
+        )
+
+    def test_a_checkpoint_obligation_carries_its_teaching_class(self):
+        teaching_class = TeachingClass.objects.create(
+            educator=self.educator, grade=9, slot=1, display_name="9A"
+        )
+        obligation = Obligation.objects.create(
+            type=self.type, educator=self.educator, teaching_class=teaching_class,
+            period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        self.assertEqual(obligation.teaching_class, teaching_class)
+
+    def test_an_ordinary_obligation_still_has_no_teaching_class(self):
+        obligation = Obligation.objects.create(
+            type=self.type, educator=self.educator,
+            period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        self.assertIsNone(obligation.teaching_class)
+
+    def test_two_classes_can_share_a_period_start_for_the_same_type(self):
+        a = TeachingClass.objects.create(educator=self.educator, grade=9, slot=1, display_name="9A")
+        b = TeachingClass.objects.create(educator=self.educator, grade=9, slot=2, display_name="9B")
+        Obligation.objects.create(
+            type=self.type, educator=self.educator, teaching_class=a,
+            period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        Obligation.objects.create(
+            type=self.type, educator=self.educator, teaching_class=b,
+            period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        self.assertEqual(Obligation.objects.filter(type=self.type).count(), 2)
+
+    def test_the_same_class_and_period_cannot_repeat(self):
+        teaching_class = TeachingClass.objects.create(
+            educator=self.educator, grade=9, slot=1, display_name="9A"
+        )
+        Obligation.objects.create(
+            type=self.type, educator=self.educator, teaching_class=teaching_class,
+            period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        with self.assertRaises(IntegrityError):
+            Obligation.objects.create(
+                type=self.type, educator=self.educator, teaching_class=teaching_class,
+                period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+            )
+
+    def test_the_pre_existing_no_class_uniqueness_guarantee_still_holds(self):
+        """Pins the exact regression test-generator-b0 identified: before this
+        change, (type, educator, period_start) alone was unique. It must stay
+        that way for every obligation with no teaching_class — otherwise a
+        retried generation run can silently double up (step/generation.py's
+        idempotency docstring)."""
+        Obligation.objects.create(
+            type=self.type, educator=self.educator,
+            period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        with self.assertRaises(IntegrityError):
+            Obligation.objects.create(
+                type=self.type, educator=self.educator,
+                period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+            )

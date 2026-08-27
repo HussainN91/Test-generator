@@ -12,6 +12,7 @@ Status is stored. Urgency is not — see `step/urgency.py` and spec §5.3.
 from django.db import models
 
 from step import constants
+from step.models.classes import TeachingClass
 from step.models.roster import Educator
 from step.scheduling import period_end as _period_end
 
@@ -98,6 +99,9 @@ class Obligation(models.Model):
 
     type = models.ForeignKey(ObligationType, on_delete=models.PROTECT, related_name="obligations")
     educator = models.ForeignKey(Educator, on_delete=models.CASCADE, related_name="obligations")
+    teaching_class = models.ForeignKey(
+        TeachingClass, null=True, blank=True, on_delete=models.CASCADE, related_name="obligations"
+    )
 
     period_kind = models.CharField(max_length=16, choices=constants.PERIOD_KIND_CHOICES)
     period_start = models.DateField()
@@ -118,8 +122,23 @@ class Obligation(models.Model):
     class Meta:
         ordering = ["due_date", "type__category"]
         constraints = [
+            # Split rather than a single constraint over (type, educator,
+            # teaching_class, period_start): SQL treats NULL as distinct from
+            # NULL in a unique index, so a single constraint including the
+            # nullable teaching_class would silently drop the existing
+            # (type, educator, period_start) guarantee for every ordinary
+            # obligation (teaching_class always NULL) — the exact case
+            # step/generation.py's idempotency docstring relies on. Each half
+            # keeps its own guarantee intact.
             models.UniqueConstraint(
-                fields=["type", "educator", "period_start"], name="step_obligation_unique_per_period"
+                fields=["type", "educator", "period_start"],
+                condition=models.Q(teaching_class__isnull=True),
+                name="step_obligation_unique_per_period_no_class",
+            ),
+            models.UniqueConstraint(
+                fields=["type", "educator", "teaching_class", "period_start"],
+                condition=models.Q(teaching_class__isnull=False),
+                name="step_obligation_unique_per_period_per_class",
             ),
         ]
         indexes = [
