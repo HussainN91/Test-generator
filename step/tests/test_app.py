@@ -25,3 +25,19 @@ class ConstantsTests(TestCase):
 
     def test_not_started_is_the_initial_status(self):
         self.assertEqual(constants.STATUS_NOT_STARTED, "not_started")
+
+
+class ClassesGradebookConstantsTests(TestCase):
+    def test_checkpoint_and_skill_values_are_distinct(self):
+        checkpoints = [v for v, _ in constants.CHECKPOINT_CHOICES]
+        self.assertEqual(len(checkpoints), len(set(checkpoints)))
+        skills = [v for v, _ in constants.SKILL_CHOICES]
+        self.assertEqual(len(skills), len(set(skills)))
+
+    def test_every_checkpoint_maps_to_an_obligation_type_name(self):
+        checkpoints = {v for v, _ in constants.CHECKPOINT_CHOICES}
+        self.assertEqual(set(constants.CHECKPOINT_OBLIGATION_NAME_TEMPLATES), checkpoints)
+
+    def test_the_reverse_lookup_is_the_exact_inverse(self):
+        for checkpoint, template in constants.CHECKPOINT_OBLIGATION_NAME_TEMPLATES.items():
+            self.assertEqual(constants.NAME_TEMPLATE_TO_CHECKPOINT[template], checkpoint)

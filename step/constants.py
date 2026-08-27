@@ -136,3 +136,49 @@ OUTCOME_CHOICES = [
 
 #: Director star rating, 1-5, as drawn in the client mockup.
 DIRECTOR_RATING_CHOICES = [(n, str(n)) for n in range(1, 6)]
+
+# --- Classes & Gradebook (2026-08-27 classes/gradebook spec) --------------
+# Supersedes the two generic "assessments" types from the platform spine
+# spec §9 — see the classes/gradebook spec's header note.
+CHECKPOINT_BOY = "boy"
+CHECKPOINT_MOY = "moy"
+CHECKPOINT_EOY = "eoy"
+
+CHECKPOINT_CHOICES = [
+    (CHECKPOINT_BOY, "Beginning of year"),
+    (CHECKPOINT_MOY, "Mid year"),
+    (CHECKPOINT_EOY, "End of year"),
+]
+
+SKILL_READING = "reading"
+SKILL_WRITING = "writing"
+SKILL_LISTENING = "listening"
+SKILL_SPEAKING = "speaking"
+
+SKILL_CHOICES = [
+    (SKILL_READING, "Reading"),
+    (SKILL_WRITING, "Writing"),
+    (SKILL_LISTENING, "Listening"),
+    (SKILL_SPEAKING, "Speaking"),
+]
+
+#: The bespoke obligation form this vertical uses (ObligationType.form_slug).
+FORM_SLUG_ASSESSMENT_CHECKPOINT = "assessment_checkpoint"
+
+#: Grades and class-pack slots this programme serves. Slot count matches
+#: diagnostics' CLASSES_PER_GRADE (diagnostics/navigation.py) but is not
+#: imported from there — step stays decoupled from diagnostics; the
+#: dependency runs the other way (diagnostics reads step.TeachingClass).
+TEACHING_GRADES = (9, 10, 11)
+TEACHING_SLOTS_PER_GRADE = 4
+
+#: A ProgressEntry.checkpoint has no obligation-type FK of its own (the model
+#: only needs a short code), so this is the one place that ties a checkpoint
+#: to the ObligationType.name_template generated for it (see step/generation.py
+#: and seed_demo.py's catalogue).
+CHECKPOINT_OBLIGATION_NAME_TEMPLATES = {
+    CHECKPOINT_BOY: "Beginning-of-year diagnostic",
+    CHECKPOINT_MOY: "Mid-year diagnostic",
+    CHECKPOINT_EOY: "End-of-year diagnostic",
+}
+NAME_TEMPLATE_TO_CHECKPOINT = {v: k for k, v in CHECKPOINT_OBLIGATION_NAME_TEMPLATES.items()}
