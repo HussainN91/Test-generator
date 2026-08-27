@@ -1,0 +1,34 @@
+{% extends "step/base_admin.html" %}
+{% block title %}{{ submission.obligation.display_name }} — STEP Administration{% endblock %}
+{% block content %}
+<h1>{{ submission.obligation.display_name }}</h1>
+<p class="entry__cat">{{ submission.obligation.educator.full_name }} &middot; {{ submission.obligation.educator.region.name }}</p>
+
+{% if submission.note %}<p>{{ submission.note }}</p>{% endif %}
+
+{% if is_monthly_report %}
+<p class="chart__note">Self-reported — transcribed by the teacher from the stamped paper.</p>
+{% if submission.director_rating %}<p>Director rating: {{ submission.director_rating }} / 5</p>{% endif %}
+{% if submission.outcome %}<p>Outcome: {{ submission.get_outcome_display }}</p>{% endif %}
+{% endif %}
+
+<h2>Evidence</h2>
+<ul>
+  {% for item in evidence %}
+  <li>
+    {% if item.kind == 'link' %}<a href="{{ item.url }}">{{ item.caption|default:item.url }}</a>
+    {% else %}<a href="{{ item.file.url }}">{{ item.caption|default:item.file.name }}</a>{% endif %}
+  </li>
+  {% empty %}
+  <li>No evidence was attached.</li>
+  {% endfor %}
+</ul>
+
+<form method="post">
+  {% csrf_token %}
+  <button class="btn btn--primary" type="submit" name="action" value="accept">Accept</button>
+  <label for="comment">Comment (required to return)</label>
+  <textarea id="comment" name="comment"></textarea>
+  <button class="btn btn--quiet" type="submit" name="action" value="return">Return for correction</button>
+</form>
+{% endblock %}

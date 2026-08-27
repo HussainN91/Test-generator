@@ -9,12 +9,13 @@ allowed to query and to shape context for a template, and nothing else.
 from datetime import date
 from functools import wraps
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseForbidden
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from step import analytics, constants, roles, workflow
-from step.models import Obligation
+from step.models import Obligation, Submission
 
 
 def staff_required(view):
@@ -166,3 +167,53 @@ def dashboard(request):
     }
     context.update(_admin_chrome(request))
     return render(request, "step/admin/dashboard.html", context)
+
+
+@staff_required
+def review_queue(request):
+    context = {"nav": "review", "rows": workflow.review_queue()}
+    context.update(_admin_chrome(request))
+    return render(request, "step/admin/review_queue.html", context)
+
+
+@staff_required
+def review_detail(request, pk: int):
+    submission = get_object_or_404(
+        Submission.objects.select_related("obligation", "obligation__type", "obligation__educator"),
+        pk=pk,
+    )
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "accept":
+            workflow.accept(submission, reviewer=request.user)
+            messages.success(request, "Accepted.")
+            return redirect("step:admin-review-queue")
+        if action == "return":
+            comment = (request.POST.get("comment") or "").strip()
+            try:
+                workflow.return_for_correction(submission, reviewer=request.user, comment=comment)
+            except ValueError:
+                messages.error(
+                    request, "Please explain what needs correcting before returning this."
+                )
+                context = {
+                    "nav": "review", "submission": submission,
+                    "evidence": submission.evidence.all(),
+                    "is_monthly_report": (
+                        submission.obligation.type.category == constants.CATEGORY_MONTHLY_REPORTING
+                    ),
+                }
+                context.update(_admin_chrome(request))
+                return render(request, "step/admin/review_detail.html", context)
+            messages.success(request, "Returned to the teacher.")
+            return redirect("step:admin-review-queue")
+
+    context = {
+        "nav": "review",
+        "submission": submission,
+        "evidence": submission.evidence.all(),
+        "is_monthly_report": submission.obligation.type.category == constants.CATEGORY_MONTHLY_REPORTING,
+    }
+    context.update(_admin_chrome(request))
+    return render(request, "step/admin/review_detail.html", context)

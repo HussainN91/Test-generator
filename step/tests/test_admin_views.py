@@ -175,3 +175,67 @@ class AnalyticsWidgetsTests(TestCase):
         self.assertEqual(may.context["headline"]["total"], 1)
         self.assertEqual(june.context["headline"]["total"], 0)
         self.assertNotEqual(len(may.context["trend_points"]), 0)
+
+
+class ReviewQueueTests(TestCase):
+    def setUp(self):
+        call_command("seed_roles", stdout=StringIO())
+        user = get_user_model().objects.create_user("admin1", password="pw")
+        roles.assign(user, constants.ROLE_ADMIN)
+        self.client.login(username="admin1", password="pw")
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        self.type = ObligationType.objects.create(
+            name_template="Monthly Report", category=constants.CATEGORY_MONTHLY_REPORTING,
+            cadence=constants.CADENCE_MONTHLY, evidence_spec=constants.EVIDENCE_NONE,
+        )
+        self.educator = Educator.objects.create(full_name="Teacher One", region=self.region)
+        self.obligation = Obligation.objects.create(
+            type=self.type, educator=self.educator, period_kind=constants.PERIOD_MONTH,
+            period_start=date(2026, 5, 1), due_date=date(2026, 5, 27),
+            status=constants.STATUS_SUBMITTED,
+        )
+        from step.models import Submission
+        self.submission = Submission.objects.create(obligation=self.obligation, revision=1)
+
+    def test_the_queue_lists_waiting_submissions(self):
+        response = self.client.get(reverse("step:admin-review-queue"))
+        self.assertContains(response, "Teacher One")
+
+    def test_an_empty_queue_says_so_plainly(self):
+        self.submission.delete()
+        self.obligation.status = constants.STATUS_ACCEPTED
+        self.obligation.save()
+        response = self.client.get(reverse("step:admin-review-queue"))
+        self.assertContains(response, "Nothing is waiting")
+
+    def test_review_detail_shows_the_evidence_and_the_two_actions(self):
+        response = self.client.get(reverse("step:admin-review-detail", args=[self.submission.pk]))
+        self.assertContains(response, "Accept")
+        self.assertContains(response, "Return")
+
+    def test_accepting_marks_the_obligation_accepted(self):
+        self.client.post(
+            reverse("step:admin-review-detail", args=[self.submission.pk]),
+            {"action": "accept"},
+        )
+        self.obligation.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_ACCEPTED)
+
+    def test_returning_without_a_comment_shows_a_plain_language_error_not_a_500(self):
+        response = self.client.post(
+            reverse("step:admin-review-detail", args=[self.submission.pk]),
+            {"action": "return", "comment": ""},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.obligation.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_SUBMITTED)
+
+    def test_returning_with_a_comment_sends_it_back_to_the_teacher(self):
+        self.client.post(
+            reverse("step:admin-review-detail", args=[self.submission.pk]),
+            {"action": "return", "comment": "Please attach the stamped page."},
+        )
+        self.obligation.refresh_from_db()
+        self.submission.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_RETURNED)
+        self.assertEqual(self.submission.review_comment, "Please attach the stamped page.")

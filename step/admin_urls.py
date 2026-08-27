@@ -11,6 +11,7 @@ from step import admin_views
 
 urlpatterns = [
     path("admin/", admin_views.dashboard, name="admin-dashboard"),
-    path("admin/review/", admin_views.dashboard, name="admin-review-queue"),
+    path("admin/review/", admin_views.review_queue, name="admin-review-queue"),
+    path("admin/review/<int:pk>/", admin_views.review_detail, name="admin-review-detail"),
     path("admin/teachers/", admin_views.dashboard, name="admin-teachers"),
 ]

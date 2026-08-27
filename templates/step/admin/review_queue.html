@@ -1,0 +1,20 @@
+{% extends "step/base_admin.html" %}
+{% block title %}Review queue — STEP Administration{% endblock %}
+{% block content %}
+<h1>Review queue</h1>
+{% if rows %}
+<div class="register">
+  {% for submission in rows %}
+  <a class="entry" href="{% url 'step:admin-review-detail' submission.pk %}">
+    <div class="entry__main">
+      <div class="entry__title">{{ submission.obligation.display_name }}</div>
+      <div class="entry__cat">{{ submission.obligation.educator.full_name }}</div>
+    </div>
+    <div class="entry__due">Sent {{ submission.submitted_at|date:"j F" }}</div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<p>Nothing is waiting for review right now.</p>
+{% endif %}
+{% endblock %}
