@@ -1,0 +1,55 @@
+{% extends "step/base.html" %}
+
+{% block title %}My Submissions — STEP Platform{% endblock %}
+
+{% block content %}
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'step:dashboard' %}">Dashboard</a><span>/</span>My Submissions
+</nav>
+
+<div class="page-head">
+  <h1>My Submissions</h1>
+  <p>Everything you have sent in, newest first. Nothing here is ever deleted &mdash; if something was sent back and you fixed it, both versions are kept.</p>
+</div>
+
+<section class="panel">
+  {% if rows %}
+  <ul class="rows stagger">
+    {% for submission in rows %}
+    <li style="--i:{{ forloop.counter0 }}">
+      <a class="row {% if submission.review_comment %}row--overdue{% elif submission.reviewed_at %}row--done{% endif %}"
+         href="{% url 'step:obligation' submission.obligation.pk %}">
+        <div class="row__main">
+          <div class="row__title">
+            {{ submission.obligation.display_name }}
+            {% if submission.revision > 1 %}<span style="color:var(--text-muted); font-weight:400">&middot; attempt {{ submission.revision }}</span>{% endif %}
+          </div>
+          <div class="row__cat">
+            {{ submission.obligation.type.get_category_display }} &middot;
+            sent {{ submission.submitted_at|date:"j M Y" }}
+          </div>
+        </div>
+        <div class="row__right">
+          {% if submission.review_comment %}
+            <span class="status status--overdue">Sent back</span>
+          {% elif submission.reviewed_at %}
+            <span class="status status--done">Accepted</span>
+          {% else %}
+            <span class="status status--review">With reviewer</span>
+          {% endif %}
+        </div>
+        <svg class="row__chev" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-chev"/></svg>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="empty">
+    <p class="empty__title">You haven&rsquo;t sent anything yet</p>
+    <p>When you complete something from <a href="{% url 'step:dashboard' %}">Academic Work</a>, it will be listed here.</p>
+  </div>
+  {% endif %}
+</section>
+
+{% endblock %}

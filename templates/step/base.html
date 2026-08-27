@@ -1,0 +1,205 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}STEP Platform{% endblock %}</title>
+
+{% comment %} Two faces, both with real fallbacks. Instrument Serif carries the display
+   voice; Public Sans is a government typeface drawn for exactly this job —
+   long stretches of obligatory text read under time pressure. {% endcomment %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'css/step.css' %}">
+</head>
+<body>
+
+{% comment %} ---------------------------------------------------------------------------
+   Icon sprite. Inline rather than a font or an external file: no extra
+   request, no flash of missing glyphs, and it inherits currentColor.
+   Stroke-based, 1.6px, to sit with Public Sans rather than shout over it.
+   --------------------------------------------------------------------------- {% endcomment %}
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="i-home" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9.5 10 3.5l7 6V16a1 1 0 0 1-1 1h-3v-5H7v5H4a1 1 0 0 1-1-1z"/>
+    </g>
+    <g id="i-clipboard" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7.5 3.5h5M6 4.5H4.5v12h11v-12H14M7 3h6v2H7z"/><path d="M7.5 9h5M7.5 12.5h3"/>
+    </g>
+    <g id="i-report" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4.5 16.5v-5M8 16.5v-9M11.5 16.5v-6M15 16.5v-11"/>
+    </g>
+    <g id="i-screen" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="14" height="9.5" rx="1"/><path d="M7 17h6M10 13.5V17"/>
+    </g>
+    <g id="i-people" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="8" cy="7" r="2.6"/><path d="M3.2 16c0-2.6 2.1-4.3 4.8-4.3s4.8 1.7 4.8 4.3"/><path d="M13.4 5.2a2.4 2.4 0 0 1 0 4.5M14.6 15.6c0-1.6-.5-2.9-1.4-3.7"/>
+    </g>
+    <g id="i-check-doc" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15.5 8.5V4.5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h4"/><path d="M7 7h6M7 10h4"/><path d="m11.5 14 2 2 3.5-3.8"/>
+    </g>
+    <g id="i-book" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4.5h4.5A1.5 1.5 0 0 1 10 6v10a1.3 1.3 0 0 0-1.3-1.3H4zM16 4.5h-4.5A1.5 1.5 0 0 0 10 6v10a1.3 1.3 0 0 1 1.3-1.3H16z"/>
+    </g>
+    <g id="i-inbox" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 11.5 5 4.5h10l2 7v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 11.5h3.5l1 2h5l1-2H17"/>
+    </g>
+    <g id="i-chat" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 12a1.5 1.5 0 0 1-1.5 1.5H7L3.5 17V5A1.5 1.5 0 0 1 5 3.5h10.5A1.5 1.5 0 0 1 17 5z"/>
+    </g>
+    <g id="i-drive" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7.5 3.5h5l4.5 8-2.5 4.5h-9L3 11.5z"/><path d="M7.5 3.5 3 11.5M12.5 3.5 17 11.5M5.5 16 10 8"/>
+    </g>
+    <g id="i-calendar" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3.5" y="4.5" width="13" height="12" rx="1.2"/><path d="M3.5 8h13M7 3v3M13 3v3"/>
+    </g>
+    <g id="i-bell" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 3.5a4.5 4.5 0 0 0-4.5 4.5c0 3.5-1.5 4.5-1.5 4.5h12s-1.5-1-1.5-4.5A4.5 4.5 0 0 0 10 3.5"/><path d="M8.6 15.5a1.6 1.6 0 0 0 2.8 0"/>
+    </g>
+    <g id="i-help" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="10" cy="10" r="7"/><path d="M8 8a2 2 0 1 1 2.6 1.9c-.4.15-.6.5-.6.9v.45"/><path d="M10 13.6v.4"/>
+    </g>
+    <g id="i-search" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+      <circle cx="8.5" cy="8.5" r="5"/><path d="m12.5 12.5 4 4"/>
+    </g>
+    <g id="i-chev" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m8 5 5 5-5 5"/>
+    </g>
+    <g id="i-info" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="10" cy="10" r="7.2"/><path d="M10 9v4.5M10 6.6v.4"/>
+    </g>
+    <g id="i-alert" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 3.2 17.5 16H2.5z"/><path d="M10 8v3.6M10 13.8v.4"/>
+    </g>
+    <g id="i-tick" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="10" cy="10" r="7.2"/><path d="m6.8 10.2 2.2 2.2 4.4-4.6"/>
+    </g>
+  </defs>
+</svg>
+
+<a class="skip-link" href="#main">Skip to the main content</a>
+
+<div class="shell">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand__mark" aria-hidden="true">S</div>
+      <div class="brand__text">
+        <div class="brand__name">STEP Platform</div>
+        <div class="brand__sub">International Educator</div>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Sections">
+      <a class="nav__link" href="{% url 'step:dashboard' %}" {% if nav == 'dashboard' %}aria-current="page"{% endif %}>
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-home"/></svg>
+        Dashboard
+      </a>
+
+      <div class="nav__heading">Academic work</div>
+
+      <a class="nav__link" href="{% url 'step:dashboard' %}" {% if nav == 'work' %}aria-current="page"{% endif %}>
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-clipboard"/></svg>
+        Academic Work
+      </a>
+      {% comment %} These four are filters over the same queue rather than separate pages:
+         one list the teacher already understands, narrowed — not five places to
+         learn. {% endcomment %}
+      <a class="nav__link" href="{% url 'step:dashboard' %}?category=monthly_reporting">
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-report"/></svg>
+        Monthly Reporting
+      </a>
+      <a class="nav__link" href="{% url 'step:dashboard' %}?category=cpd_online">
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-screen"/></svg>
+        CPD Online
+      </a>
+      <a class="nav__link" href="{% url 'step:dashboard' %}?category=cpd_offline">
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-people"/></svg>
+        CPD Offline
+      </a>
+      <a class="nav__link" href="{% url 'step:dashboard' %}?category=eca">
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-people"/></svg>
+        ECA Programme
+      </a>
+      <a class="nav__link" href="{% url 'step:dashboard' %}?category=assessments">
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-check-doc"/></svg>
+        Assessments
+      </a>
+
+      <div class="nav__heading">Evidence</div>
+
+      <a class="nav__link" href="{% url 'step:submissions' %}" {% if nav == 'submissions' %}aria-current="page"{% endif %}>
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-inbox"/></svg>
+        My Submissions
+      </a>
+      <a class="nav__link" href="{% url 'step:feedback' %}" {% if nav == 'feedback' %}aria-current="page"{% endif %}>
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-chat"/></svg>
+        Feedback &amp; Correction
+        {% if returned_count %}<span class="nav__count">{{ returned_count }}</span>{% endif %}
+      </a>
+
+      <div class="nav__heading">Resources</div>
+
+      {% comment %} Marked plainly rather than left as dead links. Telling someone a thing
+         does not exist yet is kinder than letting them hunt for it. {% endcomment %}
+      <span class="nav__link nav__link--pending">
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-drive"/></svg>
+        Resource Library
+        <span class="nav__soon">Soon</span>
+      </span>
+      <span class="nav__link nav__link--pending">
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-calendar"/></svg>
+        Calendar
+        <span class="nav__soon">Soon</span>
+      </span>
+      <span class="nav__link nav__link--pending">
+        <svg class="nav__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-help"/></svg>
+        Help &amp; Support
+        <span class="nav__soon">Soon</span>
+      </span>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="search">
+        <svg class="search__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-search"/></svg>
+        <label class="visually-hidden" for="q">Search</label>
+        <input id="q" type="search" placeholder="Search is not available yet" disabled>
+      </div>
+
+      <div class="topbar__user">
+        <div class="avatar" aria-hidden="true">{{ user_initials|default:"?" }}</div>
+        <div>
+          <div class="topbar__name">{{ educator.full_name|default:request.user.get_username }}</div>
+          <div class="topbar__role">{{ user_role|default:"Educator" }}</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content" id="main">
+      {% comment %} Confirmations and errors sit at the top of the content, in words that
+         say what happened or what to do — never a bare validation code. {% endcomment %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="notice notice--{% if message.tags == 'error' %}bad{% elif message.tags == 'success' %}good{% else %}info{% endif %}"
+             style="margin-bottom:22px" role="status">
+          <svg class="notice__icon" viewBox="0 0 20 20" aria-hidden="true">
+            <use href="{% if message.tags == 'error' %}#i-alert{% elif message.tags == 'success' %}#i-tick{% else %}#i-info{% endif %}"/>
+          </svg>
+          <div>{{ message }}</div>
+        </div>
+        {% endfor %}
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+</div>
+
+</body>
+</html>

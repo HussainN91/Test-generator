@@ -19,11 +19,20 @@ class InvalidTransition(Exception):
     """The requested change is not legal from the current status."""
 
 
+def _count(number: int, singular: str, plural: str) -> str:
+    """Real pluralisation. "1 file(s)" is the kind of thing that tells a reader
+    a machine wrote the sentence, and this service is used by people who are
+    already unsure of themselves."""
+    if number == 1:
+        return f"a {singular}"
+    return f"{number} {plural}"
+
+
 def _check_evidence(obligation_type, evidence_items):
     """Raise EvidenceRequired unless the items satisfy the type.
 
     Messages are written for a person, not a developer: they say what to do
-    next, per spec §7.1.
+    next, in the same words the button uses, per spec §7.1.
     """
     spec = obligation_type.evidence_spec
     if spec == constants.EVIDENCE_NONE:
@@ -34,14 +43,22 @@ def _check_evidence(obligation_type, evidence_items):
     minimum = obligation_type.min_count
 
     if spec == constants.EVIDENCE_LINK and len(links) < minimum:
-        raise EvidenceRequired(f"Please add {minimum} link(s) before submitting.")
+        raise EvidenceRequired(
+            f"Please add {_count(minimum, 'link', 'links')} to your work before sending this in."
+        )
     if spec == constants.EVIDENCE_FILE and len(files) < minimum:
-        raise EvidenceRequired(f"Please attach {minimum} file(s) before submitting.")
+        raise EvidenceRequired(
+            f"Please attach {_count(minimum, 'file', 'files')} before sending this in. "
+            "A photo taken on your phone is fine."
+        )
     if spec == constants.EVIDENCE_EITHER and len(evidence_items) < minimum:
-        raise EvidenceRequired(f"Please add {minimum} link(s) or file(s) before submitting.")
+        raise EvidenceRequired(
+            "Please add a link to your work, or attach a file, before sending this in."
+        )
     if spec == constants.EVIDENCE_BOTH and (len(links) < minimum or len(files) < minimum):
         raise EvidenceRequired(
-            f"Please add {minimum} link(s) and attach {minimum} file(s) before submitting."
+            "Please add a link to your work and attach a file. Both are needed before "
+            "you can send this in."
         )
 
 

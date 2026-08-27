@@ -22,4 +22,5 @@ urlpatterns = [
     path("batch/<int:pk>/docx/", assembly_views.batch_docx, name="batch_docx"),
     path("coverage/", bank_views.coverage, name="coverage"),
     path("diagnostics/", include("diagnostics.urls")),
+    path("step/", include("step.urls")),
 ]
