@@ -9,9 +9,10 @@ logs, and these are regulated identifiers (spec §4.4).
 from django.contrib import admin
 
 from step.models import (
-    AcademicYear, AliasMapping, District, Educator, Evidence, Obligation,
-    ObligationType, PendingSignup, ProgressEntry, Region, RosterImport,
-    School, Student, Submission, TeachingClass, Term, UnresolvedRow,
+    AcademicYear, Activity, ActivityParticipant, ActivityPlan, AliasMapping,
+    District, Educator, Evidence, Obligation, ObligationType, PendingSignup,
+    ProgressEntry, Region, RosterImport, School, SchoolStaff, Session,
+    SessionAttendance, Student, Submission, TeachingClass, Term, UnresolvedRow,
 )
 
 
@@ -153,3 +154,62 @@ class ProgressEntryAdmin(admin.ModelAdmin):
     list_filter = ("checkpoint", "skill")
     search_fields = ("student__full_name", "comment")
     readonly_fields = ("created_at",)
+
+
+@admin.register(SchoolStaff)
+class SchoolStaffAdmin(admin.ModelAdmin):
+    list_display = ("full_name", "school", "created_at")
+    list_filter = ("school",)
+    search_fields = ("full_name",)
+    readonly_fields = ("created_at",)
+
+
+class SessionInline(admin.TabularInline):
+    model = Session
+    extra = 0
+
+
+class ActivityParticipantInline(admin.TabularInline):
+    model = ActivityParticipant
+    extra = 0
+
+
+@admin.register(Activity)
+class ActivityAdmin(admin.ModelAdmin):
+    list_display = ("title", "kind", "educator", "school", "started_on", "archived_on")
+    list_filter = ("kind", "school")
+    search_fields = ("title", "educator__full_name")
+    inlines = [ActivityParticipantInline, SessionInline]
+
+
+@admin.register(ActivityParticipant)
+class ActivityParticipantAdmin(admin.ModelAdmin):
+    list_display = ("full_name", "activity", "student", "staff")
+    list_filter = ("activity",)
+    search_fields = ("full_name",)
+
+
+class SessionAttendanceInline(admin.TabularInline):
+    model = SessionAttendance
+    extra = 0
+
+
+@admin.register(Session)
+class SessionAdmin(admin.ModelAdmin):
+    list_display = ("activity", "scheduled_for", "held_on", "status", "recorded_at")
+    list_filter = ("status", "activity")
+    inlines = [SessionAttendanceInline]
+    readonly_fields = ("recorded_at",)
+
+
+@admin.register(SessionAttendance)
+class SessionAttendanceAdmin(admin.ModelAdmin):
+    list_display = ("session", "participant")
+    list_filter = ("session__activity",)
+
+
+@admin.register(ActivityPlan)
+class ActivityPlanAdmin(admin.ModelAdmin):
+    list_display = ("activity", "period", "created_at", "updated_at")
+    list_filter = ("activity",)
+    readonly_fields = ("created_at", "updated_at")
