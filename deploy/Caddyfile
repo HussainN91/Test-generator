@@ -1,0 +1,29 @@
+# Caddy config for the Test Generator stack. Mounted read-only at
+# /etc/caddy/Caddyfile by docker-compose.yml.
+#
+# TESTGEN_DOMAIN comes from .env — the same file the Django container reads,
+# so the hostname is declared in exactly one place. It must also appear in
+# TESTGEN_ALLOWED_HOSTS, and as https://<domain> in TESTGEN_CSRF_TRUSTED_ORIGINS.
+{$TESTGEN_DOMAIN} {
+	encode zstd gzip
+
+	# "testgen" is the compose service name; Docker's embedded DNS resolves it
+	# on this project's default network. UZTGBOT's Caddy had to name the full
+	# container (test-generator-testgen-1) because it proxied across projects
+	# on a shared network. Same stack now, so the short alias works.
+	reverse_proxy testgen:8000
+
+	# To stdout rather than a file inside the volume: docker-compose.yml already
+	# caps and rotates this service's json-file logs, so `docker compose logs`
+	# is one place to look and nothing grows unbounded inside /data.
+	log {
+		output stdout
+		format json
+	}
+}
+
+# Carried over from UZTGBOT's Caddyfile. Dropping it would leave www dead —
+# and Caddy already holds a valid certificate for that name.
+www.{$TESTGEN_DOMAIN} {
+	redir https://{$TESTGEN_DOMAIN}{uri} permanent
+}

@@ -215,6 +215,7 @@ Set these before running with `TESTGEN_DEBUG=0`:
 
 | Variable | Purpose |
 |---|---|
+| `TESTGEN_DOMAIN` | the public hostname; Caddy uses it as the site address, so TLS is issued for it |
 | `TESTGEN_SECRET_KEY` | required — startup fails without it when DEBUG is off |
 | `TESTGEN_DEBUG` | `0` in production |
 | `TESTGEN_ALLOWED_HOSTS` | comma-separated hostnames |
@@ -225,6 +226,9 @@ Set these before running with `TESTGEN_DEBUG=0`:
 Secure cookies, `X-Frame-Options: DENY` and nosniff switch on automatically when
 `TESTGEN_DEBUG=0`. With `TESTGEN_SSL=1` as well, `manage.py check --deploy`
 reports zero issues.
+
+The server runs this as a Docker stack — app plus its own Caddy, no shared
+proxy. See [deploy/README.md](deploy/README.md) for the update procedure.
 
 ---
 

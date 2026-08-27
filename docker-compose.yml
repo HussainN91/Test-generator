@@ -1,21 +1,15 @@
-# Runs the Test Generator Django app in its own container on the shared VPS,
-# attached to UZTGBOT's existing Docker network so its Caddy instance can
-# reverse-proxy to it. UZTGBOT's own compose stack is untouched by this file —
-# the only shared-infra change is one additive site block in its Caddyfile.
+# Runs the Test Generator Django app and the Caddy reverse proxy that fronts
+# it, as one self-contained stack. Nothing outside this file is required:
+# the network is this project's own default network, and Caddy's config lives
+# in deploy/Caddyfile alongside it.
 #
-# Service is named "testgen", not "web": UZTGBOT's own compose project also
-# has a service called "web" on this same external network, and Compose
-# registers a network alias per service name. Two containers both claiming
-# the "web" alias on a shared network makes Docker's embedded DNS round-robin
-# between them — UZTGBOT's Caddyfile already does `reverse_proxy web:8080`,
-# so that collision would have intermittently misrouted the live bot's
-# traffic into this container. "testgen" avoids it entirely.
+# This stack previously attached to UZTGBOT's external network and borrowed
+# that project's Caddy. UZTGBOT has been retired, so both are now owned here.
 services:
   testgen:
     build: .
     restart: unless-stopped
-    # Bounded on purpose — same reasoning as UZTGBOT's compose file: the
-    # default json-file driver grows without limit.
+    # Bounded on purpose — the default json-file driver grows without limit.
     logging:
       driver: json-file
       options: { max-size: "10m", max-file: "5" }
@@ -32,9 +26,30 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
-    networks:
-      - uztgbot_default
 
-networks:
-  uztgbot_default:
-    external: true
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+    # Reads TESTGEN_DOMAIN, which deploy/Caddyfile substitutes as the site
+    # address. Same .env the app uses, so the hostname is declared once.
+    env_file: [.env]
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - testgen
+
+volumes:
+  # Holds the Let's Encrypt account and issued certificates. Named, not a bind
+  # mount, and never delete it casually: losing it forces reissue, and LE rate
+  # limits duplicate certificates to 5 per week.
+  caddy_data:
+  caddy_config:
