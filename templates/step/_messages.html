@@ -1,0 +1,16 @@
+{% comment %}
+  Confirmations and errors, at the top of the sheet.
+
+  Wording is the point: the heading says what happened in the user's terms, and
+  the message itself is an instruction rather than a rule name. Django's message
+  tags are translated here so no view has to think about presentation, and so
+  the teacher and administrator shells cannot word the same states differently.
+{% endcomment %}
+{% if messages %}
+  {% for message in messages %}
+  <div class="note note--{% if message.tags == 'error' %}bad{% elif message.tags == 'success' %}good{% else %}warn{% endif %}" role="status">
+    <strong>{% if message.tags == 'error' %}Not sent{% elif message.tags == 'success' %}Recorded{% else %}Note{% endif %}</strong>
+    {{ message }}
+  </div>
+  {% endfor %}
+{% endif %}

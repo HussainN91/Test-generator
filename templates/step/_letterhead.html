@@ -1,0 +1,34 @@
+{% comment %}
+  The letterhead. Shared by every STEP base template.
+
+  It replaces the top application bar entirely (UI contract §5.1) — that single
+  substitution is what stops the interface reading as an app.
+
+  Parameterised by context so an administrator's shell can use it too:
+
+    lh_who    who is signed in          (falls back to the educator's name)
+    lh_where  their place in the world  (falls back to school and region)
+    lh_ref    the file reference        (falls back to the educator's)
+
+  Any base template that sets none of these gets the teacher letterhead, which
+  is why templates/step/base.html passes nothing.
+{% endcomment %}
+<header class="letterhead">
+  <div class="letterhead__org">
+    <div class="letterhead__name">STEP</div>
+    <div class="letterhead__sub">International Educator Programme &middot; Uzbekistan</div>
+  </div>
+  <div class="letterhead__holder">
+    <div class="letterhead__who">
+      {% if lh_who %}{{ lh_who }}{% else %}{{ educator.full_name|default:request.user.get_username }}{% endif %}
+    </div>
+    <div class="letterhead__where">
+      {% if lh_where %}{{ lh_where }}{% else %}{% if educator.school %}{{ educator.school.name }}{% endif %}{% if educator.school and educator.region %} &middot; {% endif %}{% if educator.region %}{{ educator.region.name }}{% endif %}{% endif %}
+    </div>
+    {% if lh_ref %}
+      <div class="letterhead__ref">{{ lh_ref }}</div>
+    {% elif file_ref %}
+      <div class="letterhead__ref">FILE {{ file_ref }}</div>
+    {% endif %}
+  </div>
+</header>

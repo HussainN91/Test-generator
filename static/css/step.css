@@ -573,7 +573,168 @@ a:hover { text-decoration-thickness: 2px; }
 .filed__when { font-family: var(--font-mono); font-size: 12px; color: var(--pencil); }
 
 /* --------------------------------------------------------------------------
-   17. Responsive
+   17. Charts
+   --------------------------------------------------------------------------
+   Built for the administration screens (owned by another session; this
+   stylesheet stays the single source so the two cannot drift).
+
+   THE RULE THAT MATTERS ON A CHART-HEAVY SCREEN: colour sits on the CATEGORY,
+   never the STATUS. --stamp and --seal mean late and accepted, exclusively.
+   A red chart series would read as "these are late" no matter what its legend
+   said. Series colours come from the five category inks and nothing else.
+
+   Marks are flat rectangles and flat strokes: no rounded caps, no gradients,
+   no shadows. A chart on a form is drawn with a ruler.
+
+   Donut and trend are SVG rather than conic-gradient or a CSS hack, because
+   gradients are forbidden here and because SVG is the only honest way to draw
+   an arc you can label.
+   -------------------------------------------------------------------------- */
+
+.chart { margin-bottom: 12px; }
+.chart__note {
+  font-family: var(--font-ui); font-size: 12px; color: var(--pencil);
+  margin-top: 12px;
+}
+
+/* Series inks. Applied to a chart element or any ancestor of one. */
+.s-violet { --series: var(--ink-violet); }
+.s-teal   { --series: var(--ink-teal); }
+.s-ochre  { --series: var(--ink-ochre); }
+.s-umber  { --series: var(--ink-umber); }
+.s-plum   { --series: var(--ink-plum); }
+.s-ink    { --series: var(--ink); }
+.s-quiet  { --series: var(--rule-firm); }
+
+/* --- 17.1 Horizontal bar row ------------------------------------------- */
+/* The widest widget (teachers by region), so it sets the proportions for the
+   rest: a fixed label column, an elastic track, a fixed figure column. Fixed
+   columns are what stop bars from starting at ragged x-positions. */
+
+.bars { --bars-label: 168px; --bars-value: 62px; }
+
+.bar {
+  display: grid;
+  grid-template-columns: var(--bars-label) minmax(0, 1fr) var(--bars-value);
+  align-items: center; gap: 14px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.bars .bar:last-child { border-bottom: 0; }
+
+.bar__label {
+  font-size: 14px; color: var(--ink-body);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.bar__track {
+  position: relative; height: 16px;
+  border-left: 1px solid var(--rule-firm);   /* the baseline every bar starts at */
+}
+.bar__fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--series, var(--ink));
+  min-width: 1px;
+}
+.bar__value {
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+  color: var(--ink); text-align: right;
+}
+
+/* --- 17.2 Stacked bar --------------------------------------------------- */
+/* Segments are separated by a hairline of paper rather than a border, so the
+   bar still reads as one object. */
+
+.stack { display: flex; height: 22px; border: 1px solid var(--rule-firm); background: var(--wash); }
+.stack__seg { background: var(--series, var(--ink)); border-right: 1px solid var(--paper); min-width: 0; }
+.stack__seg:last-child { border-right: 0; }
+
+/* A stacked bar per region, sharing the bar-row column grid. */
+.stack-row {
+  display: grid;
+  grid-template-columns: var(--bars-label, 168px) minmax(0, 1fr) var(--bars-value, 62px);
+  align-items: center; gap: 14px;
+  padding: 7px 0; border-bottom: 1px solid var(--rule);
+}
+.stack-rows .stack-row:last-child { border-bottom: 0; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 14px; }
+.legend__item {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-ui); font-size: 12px; color: var(--ink-soft);
+}
+.legend__swatch {
+  width: 13px; height: 13px; flex: none;
+  background: var(--series, var(--ink));
+  border: 1px solid rgba(0, 0, 0, .18);
+}
+
+/* --- 17.3 Donut --------------------------------------------------------- */
+/* Markup contract (segments drawn with stroke-dasharray, in order):
+     <div class="donut">
+       <svg viewBox="0 0 42 42" class="donut__svg">
+         <circle class="donut__ring" cx="21" cy="21" r="15.915"/>
+         <circle class="donut__seg s-violet" cx="21" cy="21" r="15.915"
+                 stroke-dasharray="35 65" stroke-dashoffset="25"/>
+         ...
+       </svg>
+       <div class="donut__centre"><span class="donut__figure">2,012</span>
+            <span class="donut__caption">reports</span></div>
+     </div>
+   r=15.915 makes the circumference 100, so dasharray values ARE percentages
+   and no arithmetic is needed in the template. */
+
+.donut { position: relative; width: 100%; max-width: 210px; margin: 0 auto; }
+.donut__svg { display: block; width: 100%; height: auto; transform: rotate(-90deg); }
+.donut__ring { fill: none; stroke: var(--rule); stroke-width: 5; }
+.donut__seg {
+  fill: none; stroke: var(--series, var(--ink)); stroke-width: 5;
+  stroke-linecap: butt;   /* square ends: this is drawn, not styled */
+}
+.donut__centre {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; pointer-events: none;
+}
+.donut__figure { font-family: var(--font-mono); font-size: 23px; font-weight: 700; color: var(--ink); line-height: 1; }
+.donut__caption {
+  font-family: var(--font-ui); font-size: 10px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--pencil); margin-top: 5px;
+}
+
+/* --- 17.4 Trend line ---------------------------------------------------- */
+/* Markup contract: an SVG with preserveAspectRatio="none" and a viewBox in
+   data units, so the template can emit raw values without scaling them.
+   vector-effect keeps the stroke 1.5px however the box is stretched. */
+
+.trend { width: 100%; }
+.trend__svg { display: block; width: 100%; height: 168px; border-bottom: 1px solid var(--rule-firm); }
+.trend__grid { stroke: var(--rule); stroke-width: 1; stroke-dasharray: 2 3; vector-effect: non-scaling-stroke; }
+.trend__line {
+  fill: none; stroke: var(--series, var(--ink)); stroke-width: 1.5;
+  vector-effect: non-scaling-stroke; stroke-linejoin: miter; stroke-linecap: butt;
+}
+.trend__dot { fill: var(--series, var(--ink)); }
+.trend__axis {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-mono); font-size: 11px; color: var(--pencil); margin-top: 7px;
+}
+
+/* --- 17.5 Self-reported chart label ------------------------------------- */
+/* The two rating charts carry teacher-transcribed data and reach a ministry
+   (spine spec §5.10). Presented unlabelled they read as verified assessment.
+   This is a correctness requirement, not a caption. */
+.chart--selfreported .chart__note::before {
+  content: "Self-reported \2014 ";
+  font-weight: 700; color: var(--ink-soft);
+}
+
+@media (max-width: 620px) {
+  .bars { --bars-label: 104px; --bars-value: 48px; }
+  .bar__label { font-size: 13px; }
+}
+
+/* --------------------------------------------------------------------------
+   18. Responsive
    -------------------------------------------------------------------------- */
 
 @media (max-width: 1080px) {

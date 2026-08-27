@@ -31,19 +31,7 @@
   stops the interface reading as an app (UI contract §5.1). The file reference
   is real, not decoration.
 {% endcomment %}
-<header class="letterhead">
-  <div class="letterhead__org">
-    <div class="letterhead__name">STEP</div>
-    <div class="letterhead__sub">International Educator Programme &middot; Uzbekistan</div>
-  </div>
-  <div class="letterhead__holder">
-    <div class="letterhead__who">{{ educator.full_name|default:request.user.get_username }}</div>
-    <div class="letterhead__where">
-      {% if educator.school %}{{ educator.school.name }}{% endif %}{% if educator.school and educator.region %} &middot; {% endif %}{% if educator.region %}{{ educator.region.name }}{% endif %}
-    </div>
-    {% if file_ref %}<div class="letterhead__ref">FILE {{ file_ref }}</div>{% endif %}
-  </div>
-</header>
+{% include "step/_letterhead.html" %}
 
 <div class="shell">
 
@@ -85,14 +73,7 @@
   </nav>
 
   <main class="sheet" id="sheet">
-    {% if messages %}
-      {% for message in messages %}
-      <div class="note note--{% if message.tags == 'error' %}bad{% elif message.tags == 'success' %}good{% else %}warn{% endif %}" role="status">
-        <strong>{% if message.tags == 'error' %}Not sent{% elif message.tags == 'success' %}Recorded{% else %}Note{% endif %}</strong>
-        {{ message }}
-      </div>
-      {% endfor %}
-    {% endif %}
+    {% include "step/_messages.html" %}
 
     {% block content %}{% endblock %}
   </main>
