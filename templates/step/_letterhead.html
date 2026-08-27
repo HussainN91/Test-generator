@@ -31,4 +31,11 @@
       <div class="letterhead__ref">FILE {{ file_ref }}</div>
     {% endif %}
   </div>
+  {% comment %}
+    A door to the paper-generation tool this platform grew out of. Same
+    Django project, same session, so a signed-in STEP user lands straight in
+    it — no second login. Opens in a new tab: it is a genuinely separate
+    application with its own screens, not a STEP page.
+  {% endcomment %}
+  <a class="letterhead__tool" href="{% url 'builder' %}" target="_blank" rel="noopener">Test Generator &#8599;</a>
 </header>
