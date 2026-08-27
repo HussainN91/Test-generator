@@ -35,10 +35,15 @@ def _educator(request) -> Educator:
 
 
 def _chrome(educator) -> dict:
-    """Context every screen's shell needs."""
+    """Context every screen's shell needs.
+
+    `file_ref` is a real reference, not decoration: the letterhead (UI contract
+    §5.1) shows it the way an official file would, and it is what a teacher
+    would quote if they rang someone about their record.
+    """
     return {
         "educator": educator,
-        "user_initials": presentation.initials(educator.full_name),
+        "file_ref": presentation.file_reference(educator),
         "returned_count": educator.obligations.filter(
             status=constants.STATUS_RETURNED
         ).count(),

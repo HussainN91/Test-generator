@@ -1,88 +1,88 @@
 {% extends "step/base.html" %}
 
-{% block title %}Academic Work — STEP Platform{% endblock %}
+{% block title %}Academic Work — STEP{% endblock %}
 
 {% block content %}
 
 <nav class="crumbs" aria-label="Breadcrumb">
-  <a href="{% url 'step:dashboard' %}">Dashboard</a><span>/</span>Academic Work
+  <a href="{% url 'step:dashboard' %}">Register</a><span>/</span>Academic work
 </nav>
 
-<div class="page-head">
-  <h1>Academic Work</h1>
+<div class="head">
+  <h1>Academic work</h1>
   <p>Everything you owe this year, and where each one has got to.</p>
 </div>
 
-{% comment %} ---------------------------------------------------------------------------
-   The "next thing" panel.
-
-   This is the one element the whole screen is built around (spine spec §7.1):
-   a teacher arriving here should learn what to do next without reading
-   anything else. One obligation, one deadline in words, one button.
-   --------------------------------------------------------------------------- {% endcomment %}
+{% comment %}
+  The docket. The one unmissable element (UI contract §5.3): a teacher arriving
+  here learns what to do next without reading anything else. It carries this
+  screen's single stamp impression.
+{% endcomment %}
 {% if next_item %}
-<section class="next" aria-labelledby="next-h">
-  <div class="next__body">
-    <p class="next__eyebrow" id="next-h">Do this next</p>
-    <h2 class="next__title">{{ next_item.obligation.display_name }}</h2>
-    <p class="next__when {% if next_item.urgency == 'overdue' %}next__when--late{% endif %}">
-      <strong>{{ next_item.due_phrase }}</strong>
-    </p>
-    <p class="next__meta">{{ next_item.obligation.type.get_category_display }} &middot; due {{ next_item.obligation.due_date|date:"l j F" }}</p>
+<section class="docket" aria-labelledby="docket-h">
+  <div class="docket__mark">
+    <span class="impression impression--press">Action required</span>
   </div>
-  <div class="next__action">
-    <a class="btn btn--onink btn--lg" href="{% url 'step:obligation' next_item.obligation.pk %}">
-      {% if next_item.obligation.status == 'returned' %}Correct and resend{% else %}Open and complete{% endif %}
+  <div class="docket__body">
+    <h2 class="docket__title" id="docket-h">{{ next_item.obligation.display_name }}</h2>
+    <p class="docket__when {% if next_item.urgency == 'overdue' %}docket__when--late{% endif %}">
+      {{ next_item.due_phrase }}
+    </p>
+    <p class="docket__meta">
+      {{ next_item.obligation.type.get_category_display }} &middot;
+      due <span class="num">{{ next_item.obligation.due_date|date:"j F Y" }}</span>
+    </p>
+  </div>
+  <div class="docket__action">
+    <a class="btn btn--primary btn--lg" href="{% url 'step:obligation' next_item.obligation.pk %}">
+      {% if next_item.obligation.status == 'returned' %}Put it right{% else %}Open this{% endif %}
     </a>
   </div>
 </section>
 {% else %}
-<section class="next next--clear">
-  <div class="next__body">
-    <p class="next__eyebrow">Nothing outstanding</p>
-    <h2 class="next__title">You&rsquo;re all caught up.</h2>
-    <p class="next__meta">Everything due so far has been submitted. We&rsquo;ll show the next one here when it opens.</p>
+<section class="docket docket--clear">
+  <div class="docket__mark">
+    <span class="impression impression--seal impression--press">Nothing outstanding</span>
+  </div>
+  <div class="docket__body">
+    <h2 class="docket__title">You are up to date.</h2>
+    <p class="docket__meta">Everything due so far has been sent. The next one will appear here when it opens.</p>
   </div>
 </section>
 {% endif %}
 
-{# --- Four figures. No icons in coloured squares; the accent is a rule. --- #}
-<div class="tiles stagger">
-  <div class="tile tile--total" style="--i:0">
-    <div class="tile__label">Still to do</div>
-    <div class="tile__value">{{ tiles.active }}</div>
-    <div class="tile__note">across the year</div>
+{% comment %} The record strip — the boxes at the head of a form (§5.2). {% endcomment %}
+<div class="record">
+  <div class="record__cell">
+    <div class="record__label">Outstanding</div>
+    <div class="record__value">{{ tiles.active }}</div>
+    <div class="record__note">across the year</div>
   </div>
-  <div class="tile tile--due" style="--i:1">
-    <div class="tile__label">Due this month</div>
-    <div class="tile__value">{{ tiles.due_this_month }}</div>
-    <div class="tile__note">{{ this_month }}</div>
+  <div class="record__cell record__cell--late">
+    <div class="record__label">Due this month</div>
+    <div class="record__value">{{ tiles.due_this_month }}</div>
+    <div class="record__note">{{ this_month }}</div>
   </div>
-  <div class="tile tile--done" style="--i:2">
-    <div class="tile__label">Completed</div>
-    <div class="tile__value">{{ tiles.completed }}</div>
-    <div class="tile__note">this year</div>
+  <div class="record__cell record__cell--done">
+    <div class="record__label">Completed</div>
+    <div class="record__value">{{ tiles.completed }}</div>
+    <div class="record__note">this year</div>
   </div>
-  <div class="tile" style="--i:3">
-    <div class="tile__label">Progress</div>
-    <div class="tile__value">{{ tiles.progress_percent }}%</div>
-    <div class="meter" role="img" aria-label="{{ tiles.progress_percent }} per cent of this year's obligations completed">
-      <div class="meter__fill" style="width: {{ tiles.progress_percent }}%"></div>
+  <div class="record__cell">
+    <div class="record__label">Progress</div>
+    <div class="record__value">{{ tiles.progress_percent }}%</div>
+    <div class="gauge" role="img" aria-label="{{ tiles.progress_percent }} per cent of this year's obligations completed">
+      <div class="gauge__fill" style="width: {{ tiles.progress_percent }}%"></div>
     </div>
   </div>
 </div>
 
 <div class="columns">
 
-  <!-- ---------------------------------------------------------------- -->
-  <!-- The queue                                                         -->
-  <!-- ---------------------------------------------------------------- -->
-  <section class="panel" aria-labelledby="queue-h">
-    <div class="panel__head">
-      <h2 id="queue-h">My obligations</h2>
-    </div>
+  <section class="block" aria-labelledby="reg-h">
+    <h2 class="block__title" id="reg-h">Register of obligations</h2>
 
-    <div class="filters">
+    <div class="tabs">
       <a href="{% url 'step:dashboard' %}" {% if not active_category %}aria-current="true"{% endif %}>All</a>
       {% for key, label in categories %}
         <a href="?category={{ key }}" {% if active_category == key %}aria-current="true"{% endif %}>{{ label }}</a>
@@ -90,97 +90,86 @@
     </div>
 
     {% if items %}
-    <ul class="rows stagger">
+    <ul class="register">
       {% for item in items %}
-      <li style="--i:{{ forloop.counter0 }}">
-        <a class="row row--{{ item.urgency }}" href="{% url 'step:obligation' item.obligation.pk %}">
-          <div class="row__main">
-            <div class="row__title">{{ item.obligation.display_name }}</div>
-            <div class="row__cat">{{ item.obligation.type.get_category_display }}</div>
-          </div>
-          <div class="row__right">
-            <div class="row__due">{{ item.obligation.due_date|date:"j M Y" }}</div>
-            {# Rule 1: the status is a word. The colour only reinforces it. #}
-            <span class="status status--{{ item.urgency }}">{{ item.urgency_label }}</span>
-          </div>
-          <svg class="row__chev" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-chev"/></svg>
+      <li>
+        <a class="entry" href="{% url 'step:obligation' item.obligation.pk %}">
+          <span class="entry__main">
+            <span class="entry__title">{{ item.obligation.display_name }}</span>
+            <span class="entry__cat">{{ item.obligation.type.get_category_display }}</span>
+          </span>
+          <span class="entry__due">{{ item.obligation.due_date|date:"j M Y" }}</span>
+          {% comment %} Status is a word. Colour and rule only reinforce it. {% endcomment %}
+          <span class="entry__status"><span class="mark mark--{{ item.urgency }}">{{ item.urgency_label }}</span></span>
         </a>
       </li>
       {% endfor %}
     </ul>
     {% else %}
     <div class="empty">
-      <p class="empty__title">Nothing here yet</p>
+      <p class="empty__title">Nothing entered here</p>
       <p>
         {% if active_category %}
-          You have no obligations in this section. <a href="{% url 'step:dashboard' %}">Show all</a>.
+          You have nothing in this section. <a href="{% url 'step:dashboard' %}">Show everything</a>.
         {% else %}
-          When your obligations for this term are set up, they will appear here.
+          When your obligations for this term are set up, they will be listed here.
         {% endif %}
       </p>
     </div>
     {% endif %}
   </section>
 
-  <!-- ---------------------------------------------------------------- -->
-  <!-- Side rail                                                         -->
-  <!-- ---------------------------------------------------------------- -->
-  <div style="display:grid; gap:22px">
-
-    <section class="panel" aria-labelledby="dl-h">
-      <div class="panel__head"><h2 id="dl-h">Next deadlines</h2></div>
-      <div class="panel__body">
+  <div>
+    <section class="block" aria-labelledby="diary-h">
+      <h2 class="block__title" id="diary-h">Next deadlines</h2>
+      <div class="block__body">
         {% if deadlines %}
           {% for item in deadlines %}
-          <div class="deadline">
-            <div class="datechip" aria-hidden="true">
-              <div class="datechip__m">{{ item.obligation.due_date|date:"M" }}</div>
-              <div class="datechip__d">{{ item.obligation.due_date|date:"j" }}</div>
+          <div class="diary">
+            <div class="diary__date" aria-hidden="true">
+              <div class="diary__m">{{ item.obligation.due_date|date:"M" }}</div>
+              <div class="diary__d">{{ item.obligation.due_date|date:"j" }}</div>
             </div>
-            <div class="deadline__body">
-              <div class="deadline__title">{{ item.obligation.display_name }}</div>
-              <div class="deadline__cat">{{ item.obligation.type.get_category_display }}</div>
+            <div class="diary__body">
+              <div class="diary__title">{{ item.obligation.display_name }}</div>
+              <div class="diary__cat">{{ item.urgency_label }}</div>
             </div>
-            <span class="status status--{{ item.urgency }}">{{ item.urgency_label }}</span>
           </div>
           {% endfor %}
         {% else %}
-          <p style="color:var(--text-muted); font-size:14px">No deadlines coming up.</p>
+          <p style="color:var(--pencil); font-size:14px">Nothing coming up.</p>
         {% endif %}
       </div>
     </section>
 
-    <section class="panel" aria-labelledby="terms-h">
-      <div class="panel__head">
-        <h2 id="terms-h">Term schedule</h2>
-        {% if academic_year %}<span style="margin-left:auto; font-size:12.5px; color:var(--text-muted)">{{ academic_year.label }}</span>{% endif %}
-      </div>
-      <div class="panel__body">
+    <section class="block" aria-labelledby="terms-h">
+      <h2 class="block__title" id="terms-h">
+        Term schedule
+        {% if academic_year %}<span class="aside num">{{ academic_year.label }}</span>{% endif %}
+      </h2>
+      <div class="block__body">
         {% if terms %}
         <ul class="terms">
           {% for term in terms %}
           <li>
             <div class="term {% if term.is_current %}term--current{% endif %}">
               <span class="term__name">{{ term.name }}</span>
-              <span class="term__range">{{ term.start|date:"M Y" }} &ndash; {{ term.end|date:"M Y" }}</span>
+              <span class="term__range">{{ term.start|date:"M Y" }}&ndash;{{ term.end|date:"M Y" }}</span>
             </div>
           </li>
           {% endfor %}
         </ul>
         {% else %}
-        <p style="color:var(--text-muted); font-size:14px">The academic year has not been set up yet.</p>
+        <p style="color:var(--pencil); font-size:14px">The academic year has not been set up yet.</p>
         {% endif %}
       </div>
     </section>
 
-    <div class="notice notice--info">
-      <svg class="notice__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-info"/></svg>
-      <div>
-        <strong>Where your files live</strong>
-        Your resources stay in Google Drive. STEP keeps track of what you owe, what you have sent, and what came back.
-      </div>
+    <div class="note">
+      <strong>Where your files live</strong>
+      Your resources stay in Google Drive. STEP keeps the record of what you owe, what you
+      have sent, and what came back.
     </div>
-
   </div>
 </div>
 

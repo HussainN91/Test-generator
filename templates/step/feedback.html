@@ -1,54 +1,53 @@
 {% extends "step/base.html" %}
 
-{% block title %}Feedback &amp; Correction — STEP Platform{% endblock %}
+{% block title %}Sent back to me — STEP{% endblock %}
 
 {% block content %}
 
 <nav class="crumbs" aria-label="Breadcrumb">
-  <a href="{% url 'step:dashboard' %}">Dashboard</a><span>/</span>Feedback &amp; Correction
+  <a href="{% url 'step:dashboard' %}">Register</a><span>/</span>Sent back to me
 </nav>
 
-<div class="page-head">
-  <h1>Feedback &amp; Correction</h1>
-  <p>Things that were sent back to you, and what needs changing. This page is empty when there is nothing to fix &mdash; which is the normal state.</p>
+<div class="head">
+  <h1>Sent back to me</h1>
+  <p>Work a reviewer returned, and what needs changing. This page is empty when there is
+  nothing to fix &mdash; which is the normal state.</p>
 </div>
 
 {% if rows %}
-<div class="stagger" style="display:grid; gap:16px; max-width:840px">
+<div style="max-width:820px">
   {% for submission in rows %}
-  <section class="panel" style="--i:{{ forloop.counter0 }}">
-    <div class="panel__head">
-      <h2>{{ submission.obligation.display_name }}</h2>
-      <span class="status status--overdue" style="margin-left:auto">Needs correction</span>
-    </div>
-    <div class="panel__body">
-      <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px">
+  <section class="block">
+    <h2 class="block__title">
+      {{ submission.obligation.display_name }}
+      <span class="aside"><span class="mark mark--overdue">Needs correction</span></span>
+    </h2>
+    <div class="block__body">
+      <p class="filed__when" style="margin-bottom:12px">
         {{ submission.obligation.type.get_category_display }} &middot;
-        you sent this {{ submission.submitted_at|date:"j F Y" }}
-        {% if submission.reviewed_at %}&middot; sent back {{ submission.reviewed_at|date:"j F Y" }}{% endif %}
+        sent {{ submission.submitted_at|date:"j F Y" }}{% if submission.reviewed_at %} &middot;
+        returned {{ submission.reviewed_at|date:"j F Y" }}{% endif %}
       </p>
 
-      <div class="notice notice--warn" style="margin-bottom:18px">
-        <svg class="notice__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-alert"/></svg>
-        <div>
-          <strong>What needs changing</strong>
-          <p style="margin:4px 0 0">{{ submission.review_comment }}</p>
-        </div>
+      <div class="note note--warn">
+        <strong>What needs changing</strong>
+        {{ submission.review_comment }}
       </div>
 
       <div class="actions">
         <a class="btn btn--primary" href="{% url 'step:obligation' submission.obligation.pk %}">Put this right</a>
-        <span style="font-size:13px; color:var(--text-muted)">Your earlier version is kept either way.</span>
+        <span style="font-size:14px; color:var(--pencil)">Your earlier version is kept either way.</span>
       </div>
     </div>
   </section>
   {% endfor %}
 </div>
 {% else %}
-<section class="panel">
+<section class="block">
   <div class="empty">
     <p class="empty__title">Nothing needs correcting</p>
-    <p>Nothing you have sent has come back. If something does, it will appear here and we will show a count in the menu.</p>
+    <p>Nothing you have sent has come back. If something does, it will be listed here and
+    counted in the menu.</p>
   </div>
 </section>
 {% endif %}

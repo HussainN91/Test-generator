@@ -73,7 +73,7 @@ class EducatorScreenTests(TestCase):
         self.make(self.monthly, -2, status=constants.STATUS_ACCEPTED)
         response = self.client.get(reverse("step:dashboard"))
         self.assertIsNone(response.context["next_item"])
-        self.assertContains(response, "caught up")
+        self.assertContains(response, "up to date")
 
     def test_outstanding_work_sorts_above_finished_work(self):
         self.make(self.monthly, -40, status=constants.STATUS_ACCEPTED)
@@ -232,7 +232,7 @@ class EducatorScreenTests(TestCase):
 
     def test_submissions_page_is_empty_before_anything_is_sent(self):
         response = self.client.get(reverse("step:submissions"))
-        self.assertContains(response, "sent anything yet")
+        self.assertContains(response, "Nothing sent yet")
 
 
 @override_settings(MEDIA_ROOT=MEDIA)

@@ -113,3 +113,16 @@ def initials(name: str) -> str:
     if len(parts) == 1:
         return parts[0][:2].upper()
     return (parts[0][0] + parts[-1][0]).upper()
+
+
+def file_reference(educator) -> str:
+    """The reference shown on the letterhead, e.g. STEP/TAS-CITY/000412.
+
+    Derived rather than stored: it must never become a second identifier that
+    can drift from the roster row it describes. Deliberately carries no personal
+    identifier — passport numbers and PINFL must never reach a URL or a page
+    heading (spine spec §4.4).
+    """
+    region = getattr(educator, "region", None)
+    code = (region.code if region else "unassigned").upper()
+    return f"STEP/{code}/{educator.pk:06d}"

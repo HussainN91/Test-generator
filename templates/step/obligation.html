@@ -1,63 +1,52 @@
 {% extends "step/base.html" %}
 
-{% block title %}{{ item.obligation.display_name }} — STEP Platform{% endblock %}
+{% block title %}{{ item.obligation.display_name }} — STEP{% endblock %}
 
 {% block content %}
 
 <nav class="crumbs" aria-label="Breadcrumb">
-  <a href="{% url 'step:dashboard' %}">Dashboard</a><span>/</span>
-  <a href="{% url 'step:dashboard' %}">Academic Work</a><span>/</span>{{ item.obligation.type.get_category_display }}
+  <a href="{% url 'step:dashboard' %}">Register</a><span>/</span>
+  <a href="{% url 'step:dashboard' %}">Academic work</a><span>/</span>{{ item.obligation.type.get_category_display }}
 </nav>
 
-<div class="page-head">
+<div class="head">
   <h1>{{ item.obligation.display_name }}</h1>
   <p>
-    <span class="status status--{{ item.urgency }}">{{ item.urgency_label }}</span>
-    &nbsp;{{ item.due_phrase }} &middot; due {{ item.obligation.due_date|date:"l j F Y" }}
+    <span class="mark mark--{{ item.urgency }}">{{ item.urgency_label }}</span>
+    &nbsp;&mdash;&nbsp;{{ item.due_phrase }}, due
+    <span class="num">{{ item.obligation.due_date|date:"j F Y" }}</span>
   </p>
 </div>
 
-{# --- Anything that came back from a reviewer outranks the form. ---------- #}
+{% comment %}
+  Anything a reviewer sent back outranks the form. At most one impression per
+  screen region (§5.4), so the state notices below use a marginal rule instead.
+{% endcomment %}
 {% if item.obligation.status == 'returned' and latest.review_comment %}
-<div class="notice notice--warn" style="margin-bottom:22px">
-  <svg class="notice__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-alert"/></svg>
-  <div>
-    <strong>This was sent back to you</strong>
-    <p style="margin:4px 0 0">{{ latest.review_comment }}</p>
-    <p style="margin:8px 0 0; font-size:13px; opacity:.85">
-      Put it right below and send it again. Your earlier version is kept.
-    </p>
-  </div>
+<div class="note note--warn">
+  <strong>Sent back to you</strong>
+  <p style="margin:0 0 6px">{{ latest.review_comment }}</p>
+  <p style="margin:0; font-size:13.5px">Put it right below and send it again. Your earlier version is kept.</p>
 </div>
-{% endif %}
-
-{% if item.obligation.status == 'accepted' %}
-<div class="notice notice--good" style="margin-bottom:22px">
-  <svg class="notice__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-tick"/></svg>
-  <div>
-    <strong>Complete</strong>
-    There is nothing further to do here.
-  </div>
-</div>
+{% elif item.obligation.status == 'accepted' %}
+<div style="margin-bottom:26px"><span class="impression impression--seal">Accepted</span></div>
 {% elif item.obligation.status == 'submitted' or item.obligation.status == 'under_review' %}
-<div class="notice notice--info" style="margin-bottom:22px">
-  <svg class="notice__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-info"/></svg>
-  <div>
-    <strong>Sent</strong>
-    Someone will check this. You do not need to do anything else for now — we will tell you if it comes back.
-  </div>
+<div class="note">
+  <strong>With the reviewer</strong>
+  Someone will check this. Nothing further is needed from you for now &mdash; we will tell you
+  if it comes back.
 </div>
 {% endif %}
 
 <div class="columns">
-  <div style="display:grid; gap:22px">
+  <div>
 
   {% if can_submit %}
-  <section class="panel" aria-labelledby="do-h">
-    <div class="panel__head"><h2 id="do-h">What to do</h2></div>
-    <div class="panel__body">
+  <section class="block" aria-labelledby="do-h">
+    <h2 class="block__title" id="do-h">What to do</h2>
+    <div class="block__body">
 
-      <p style="max-width:var(--measure); margin-bottom:20px">{{ instruction }}</p>
+      <p style="max-width:var(--measure); margin-bottom:22px">{{ instruction }}</p>
 
       <form method="post" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
@@ -66,8 +55,7 @@
         <div class="field">
           <label class="field__label" for="link">Link to your work</label>
           <p class="field__hint">Paste the Google Drive or Google Forms address. Make sure it is shared, or nobody can open it.</p>
-          <input class="input" type="url" id="link" name="link" inputmode="url"
-                 placeholder="https://drive.google.com/...">
+          <input class="input" type="url" id="link" name="link" inputmode="url" placeholder="https://drive.google.com/...">
         </div>
         {% endif %}
 
@@ -76,23 +64,24 @@
           <label class="field__label" for="file">Attach a file</label>
           <p class="field__hint">A photo taken on your phone is fine. PDFs and images both work.</p>
           <div class="filedrop">
-            <input type="file" id="file" name="file" multiple
-                   accept="image/*,application/pdf" capture="environment">
+            <input type="file" id="file" name="file" multiple accept="image/*,application/pdf" capture="environment">
           </div>
         </div>
         {% endif %}
 
         {% if is_monthly_report %}
-        {% comment %} ---------------------------------------------------------------
-           The director never signs in (spine spec §5.10), so these fields are
-           transcribed by the teacher from the stamped paper. They are marked
-           self-reported here and everywhere they are later charted.
-           --------------------------------------------------------------- {% endcomment %}
-        <div style="border-top:1px solid var(--rule); margin:26px 0 22px; padding-top:22px">
-          <h3 style="font-size:15px; margin-bottom:3px">From your director&rsquo;s stamped report</h3>
-          <p class="field__hint" style="margin-bottom:18px">
+        {% comment %}
+          The director never signs in (spine spec §5.10), so these are transcribed
+          by the teacher from the stamped paper. Marked self-reported here and
+          everywhere they are later charted.
+        {% endcomment %}
+        <div style="border-top:1px solid var(--rule-firm); margin:28px 0 24px; padding-top:22px">
+          <h3 style="font-family:var(--font-ui); font-size:12px; letter-spacing:.11em; text-transform:uppercase; margin-bottom:5px">
+            From the stamped report
+          </h3>
+          <p class="field__hint" style="margin-bottom:20px">
             Copy these across from the page your director signed and stamped.
-            <span class="selfreported" style="margin-left:4px">Entered by you</span>
+            <span class="selfreported">Entered by you</span>
           </p>
 
           <div class="field">
@@ -102,9 +91,7 @@
               {% for value, label in rating_choices %}
               <label class="choice">
                 <input type="radio" name="director_rating" value="{{ value }}">
-                <span>
-                  <span class="choice__text">{{ label }} out of 5</span>
-                </span>
+                <span class="choice__text"><span class="num">{{ label }}</span> out of 5</span>
               </label>
               {% endfor %}
             </div>
@@ -139,10 +126,10 @@
         <div class="field">
           <label class="field__label" for="note">Anything you want to add</label>
           <p class="field__hint">Optional. Only if something needs explaining.</p>
-          <textarea class="textarea" id="note" name="note" style="min-height:80px"></textarea>
+          <textarea class="textarea" id="note" name="note" style="min-height:78px"></textarea>
         </div>
 
-        <div class="actions" style="border-top:1px solid var(--rule); padding-top:20px">
+        <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px">
           <button class="btn btn--primary btn--lg" type="submit">
             {% if item.obligation.status == 'returned' %}Send it again{% else %}Send this in{% endif %}
           </button>
@@ -154,24 +141,25 @@
   {% endif %}
 
   {% if history %}
-  <section class="panel" aria-labelledby="hist-h">
-    <div class="panel__head"><h2 id="hist-h">What you sent</h2></div>
-    <div class="panel__body">
-      <ul class="timeline">
+  <section class="block" aria-labelledby="hist-h">
+    <h2 class="block__title" id="hist-h">What you have sent</h2>
+    <div class="block__body">
+      <ul class="filed">
         {% for submission in history %}
         <li class="{% if submission.reviewed_at and not submission.review_comment %}is-good{% elif submission.review_comment %}is-bad{% endif %}">
-          <div class="timeline__what">
-            Sent {{ submission.submitted_at|date:"j F Y" }}
-            {% if submission.revision > 1 %}<span style="color:var(--text-muted); font-weight:400">&middot; attempt {{ submission.revision }}</span>{% endif %}
+          <div class="filed__what">
+            Sent <span class="num">{{ submission.submitted_at|date:"j F Y" }}</span>
+            {% if submission.revision > 1 %}<span style="color:var(--pencil); font-weight:400">&middot; attempt {{ submission.revision }}</span>{% endif %}
           </div>
-          <div class="timeline__when">{{ submission.submitted_at|date:"g:i a" }}</div>
+          <div class="filed__when">{{ submission.submitted_at|date:"H:i" }}</div>
 
           {% if submission.evidence.all %}
-          <ul style="list-style:none; padding:0; margin:8px 0 0; font-size:13.5px">
+          <ul style="list-style:none; padding:0; margin:7px 0 0; font-size:14px">
             {% for evidence in submission.evidence.all %}
-            <li style="margin-bottom:3px">
+            <li style="margin-bottom:2px">
               {% if evidence.url %}<a href="{{ evidence.url }}" rel="noopener noreferrer" target="_blank">{{ evidence.caption|default:evidence.url }}</a>
               {% elif evidence.file %}<a href="{{ evidence.file.url }}">{{ evidence.caption|default:"Attached file" }}</a>
+              {% else %}<span style="color:var(--pencil)">{{ evidence.caption }}</span>
               {% endif %}
             </li>
             {% endfor %}
@@ -179,19 +167,17 @@
           {% endif %}
 
           {% if submission.director_rating or submission.outcome %}
-          <p style="margin:8px 0 0; font-size:13.5px; color:var(--text-muted)">
-            {% if submission.director_rating %}Director rating: {{ submission.director_rating }} of 5{% endif %}
+          <p style="margin:7px 0 0; font-size:14px; color:var(--ink-soft)">
+            {% if submission.director_rating %}Rating <span class="num">{{ submission.director_rating }}</span> of 5{% endif %}
             {% if submission.outcome %}{% if submission.director_rating %} &middot; {% endif %}{{ submission.get_outcome_display }}{% endif %}
-            <span class="selfreported" style="margin-left:6px">Entered by teacher</span>
+            <span class="selfreported">Entered by teacher</span>
           </p>
           {% endif %}
 
           {% if submission.review_comment %}
-          <p style="margin:8px 0 0; padding:9px 12px; background:var(--clay-soft); border-radius:var(--r-sm); font-size:13.5px; color:var(--clay)">
-            Sent back: {{ submission.review_comment }}
-          </p>
+          <p style="margin:7px 0 0; font-size:14px; color:var(--stamp)">Sent back: {{ submission.review_comment }}</p>
           {% elif submission.reviewed_at %}
-          <p style="margin:8px 0 0; font-size:13.5px; color:var(--jade); font-weight:600">Accepted</p>
+          <p style="margin:7px 0 0; font-size:14px; color:var(--seal); font-weight:700">Accepted</p>
           {% endif %}
         </li>
         {% endfor %}
@@ -202,25 +188,23 @@
 
   </div>
 
-  <div style="display:grid; gap:22px">
-    <section class="panel">
-      <div class="panel__head"><h2>Details</h2></div>
-      <div class="panel__body" style="font-size:14px">
-        <p style="margin-bottom:10px"><strong>Section</strong><br>{{ item.obligation.type.get_category_display }}</p>
-        <p style="margin-bottom:10px"><strong>Period</strong><br>{{ item.obligation.period_display }}</p>
-        <p style="margin-bottom:10px"><strong>Deadline</strong><br>{{ item.obligation.due_date|date:"l j F Y" }}</p>
+  <div>
+    <section class="block">
+      <h2 class="block__title">Particulars</h2>
+      <div class="block__body" style="font-size:14.5px">
+        <p style="margin-bottom:11px"><strong>Section</strong><br>{{ item.obligation.type.get_category_display }}</p>
+        <p style="margin-bottom:11px"><strong>Period</strong><br>{{ item.obligation.period_display }}</p>
+        <p style="margin-bottom:11px"><strong>Deadline</strong><br><span class="num">{{ item.obligation.due_date|date:"j F Y" }}</span></p>
         {% if item.obligation.type.description %}
         <p style="margin:0"><strong>About this</strong><br>{{ item.obligation.type.description }}</p>
         {% endif %}
       </div>
     </section>
 
-    <div class="notice notice--info">
-      <svg class="notice__icon" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-info"/></svg>
-      <div>
-        <strong>Nothing is lost</strong>
-        Every version you send is kept. If something comes back, your earlier attempt stays on record.
-      </div>
+    <div class="note">
+      <strong>Nothing is lost</strong>
+      Every version you send is kept. If something comes back, your earlier attempt stays on
+      the record.
     </div>
   </div>
 </div>
