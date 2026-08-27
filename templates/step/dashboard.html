@@ -93,7 +93,7 @@
     <ul class="register">
       {% for item in items %}
       <li>
-        <a class="entry" href="{% url 'step:obligation' item.obligation.pk %}">
+        <a class="entry entry--{{ item.obligation.type.category }}" href="{% url 'step:obligation' item.obligation.pk %}">
           <span class="entry__main">
             <span class="entry__title">{{ item.obligation.display_name }}</span>
             <span class="entry__cat">{{ item.obligation.type.get_category_display }}</span>

@@ -19,7 +19,7 @@
   <ul class="register">
     {% for submission in rows %}
     <li>
-      <a class="entry" href="{% url 'step:obligation' submission.obligation.pk %}">
+      <a class="entry entry--{{ submission.obligation.type.category }}" href="{% url 'step:obligation' submission.obligation.pk %}">
         <span class="entry__main">
           <span class="entry__title">
             {{ submission.obligation.display_name }}

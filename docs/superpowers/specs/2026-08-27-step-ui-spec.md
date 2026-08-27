@@ -41,51 +41,88 @@ same paper stock, different letterhead.
 
 ## 2. Colour
 
-No blue anywhere. The palette is paper, ink, and the two colours a marker actually uses.
+No dashboard blue anywhere. The palette is paper, ink, the two colours a marker uses, and a
+set of stationery inks.
 
 ```css
---paper:      #EDE7DA;  /* buff manila — the sheet */
---paper-deep: #E3DBC9;  /* the folder tab: nav rail, table headers */
---wash:       #F5F1E7;  /* inset areas, input fields */
+/* Paper — light and clean. An earlier pass ran muddy and the whole page read as drab. */
+--paper:      #F4EFE3;
+--paper-deep: #EBE4D4;  /* the folder tab: nav rail */
+--surface:    #FCFAF4;  /* raised sheets: docket, record strip, rows on hover */
+--wash:       #F8F4EA;
 
---ink:        #1A1714;  /* warm near-black — all text, all rules */
---ink-soft:   #4C443A;  /* secondary text */
---pencil:     #7A6F5F;  /* annotations, hints, metadata */
---rule:       #C6BBA5;  /* hairlines */
---rule-firm:  #8C806C;  /* structural rules */
+--ink:        #171310;  /* headings, rules */
+--ink-body:   #302822;  /* body copy */
+--ink-soft:   #554B41;
+--pencil:     #857868;  /* annotations, hints, metadata */
+--rule:       #DDD3C0;  /* hairlines */
+--rule-firm:  #B5A992;  /* structural rules */
 
---stamp:      #9B2C1E;  /* stamp red — late, returned, required */
---stamp-wash: #EDD9D2;
---seal:       #2F5D3A;  /* green ink — accepted, complete */
---seal-wash:  #DCE7DA;
+--stamp:      #A62F1C;  /* stamp red — late, returned, required */
+--seal:       #2C6B4C;  /* green ink — accepted, complete */
 ```
 
-`--stamp` and `--seal` appear **only** where a marker would use them. A screen showing
-neither is normal and correct.
+`--stamp` and `--seal` appear **only** where a marker would use them, and carry status and
+nothing else.
+
+**Stationery inks.** Six hues so the register has life. Every one is plausible in a pen or a
+stamp pad; none is a dashboard blue.
+
+```css
+--ink-violet: #5F4B8B;  /* carbon-copy purple */
+--ink-teal:   #1F6A6E;
+--ink-ochre:  #8E6A18;
+--ink-umber:  #8A5330;
+--ink-plum:   #6E3B57;
+```
+
+**Colour sits on the category, never on the status.** Each obligation section gets one ink,
+applied to its category label. Status keeps `--stamp` / `--seal` / ink alone. Because the two
+never share a hue, they can never be confused — which is what makes it safe to have colour
+at all.
 
 ---
 
 ## 3. Typography
 
-The **PT superfamily** — "Public Types", commissioned as state typefaces for government
-communication, with full Cyrillic. Three faces, three jobs, one family, so the system
-coheres without being bland. Cyrillic coverage is a real requirement: school, district and
-director names will arrive in it.
+Three faces, three jobs, all with full Cyrillic — school, district and director names will
+arrive in it.
 
 ```css
---font-text:  "PT Serif", Georgia, serif;         /* headings, prose, the paper itself */
---font-ui:    "PT Sans", "Segoe UI", sans-serif;  /* labels, nav, buttons */
---font-mono:  "PT Mono", ui-monospace, monospace; /* figures, dates, references */
+--font-text: "Literata", Georgia, serif;          /* headings, prose, the paper itself */
+--font-ui:   "Commissioner", "Segoe UI", sans-serif; /* labels, nav, buttons */
+--font-mono: "PT Mono", ui-monospace, monospace;  /* figures, dates, references */
 ```
+
+Literata was drawn for long-form reading, so it stays comfortable at the sizes this
+interface uses and is simply better looking than the state workhorses it replaced.
+Commissioner is humanist and legible at the small sizes labels live at. PT Mono stays
+because figures on a form should look typed.
 
 **Rules:**
 
-- Every **figure, date and reference** is set in `--font-mono` with `tabular-nums`. Numbers
-  in a form are typed, not typeset.
-- Labels and status words are `--font-ui`, **uppercase**, `letter-spacing: .08em`, bold.
-- Body copy and headings are `--font-text`. Headings are *not* enormous — a form's heading
-  is authoritative because of its rule, not its size. Page title caps at 30px.
-- No font weight below 400. No thin/light anything.
+- Every **figure, date and reference** is `--font-mono` with `tabular-nums`.
+- **Uppercase is reserved for small labels only** — the `.label` idiom, and the equivalents
+  on nav headings, field labels, buttons and status marks. Nothing at reading size is ever
+  uppercase. Uppercase letterspacing at volume is what made the first pass read as harsh.
+- Body copy and headings are `--font-text`. Page title 42px at weight 400 — large and
+  light, not heavy; a form's heading is authoritative because of its rule, not its weight.
+- No font weight below 400.
+
+---
+
+## 3a. Space
+
+The first pass was cramped, which is most of what made it ugly. Minimums:
+
+| | |
+|---|---|
+| Body | 17px / 1.62 |
+| Sheet padding | 38px 44px 96px |
+| Between blocks | 44px |
+| Register row | 19px vertical |
+| Record cell | 20px 22px |
+| Column gap | 56px |
 
 ---
 
@@ -100,8 +137,8 @@ director names will arrive in it.
 1px dotted --rule      soft grouping
 ```
 
-**Proportions are deliberately not the defaults.** Nav rail is `212px`, not the ~260px
-every dashboard uses. There is no 64px top bar at all.
+**Proportions are deliberately not the defaults.** Nav rail is `236px`. There is no top
+application bar at all.
 
 **The grain.** A single low-opacity SVG noise layer over the page ground. It must be
 subtle enough that removing it is only noticeable side by side.
@@ -130,7 +167,7 @@ The one unmissable element (spine spec §7.1). A block bounded top and bottom by
 rules, carrying:
 
 - an **`ACTION REQUIRED` stamp impression**, rotated `-3deg`, in `--stamp`;
-- the obligation set in `--font-text` at 28px;
+- the obligation set in `--font-text` at 33px, weight 400;
 - the deadline in plain words — *"4 days late"*, never a date to subtract;
 - one square, ink-filled button.
 
@@ -190,10 +227,13 @@ The redesign is done when all of the following hold, checked against the running
 
 1. `grep -c "border-radius" static/css/step.css` returns only `0`-valued declarations.
 2. No `box-shadow` and no `linear-gradient` in the stylesheet.
-3. No blue channel-dominant colour token exists.
-4. The computed body font-family resolves to PT Serif, and figures to PT Mono.
+3. No dashboard-blue token exists. The carbon-copy violet `#5F4B8B` is blue-dominant by a
+   naive channel test and is permitted; a naive scan will flag it, so check the hue, not the
+   channel.
+4. The computed body font-family resolves to Literata, labels to Commissioner, figures to
+   PT Mono.
 5. No element with all four borders that contains other content (no cards).
-6. The nav rail computes to 212px; there is no element functioning as a top app bar.
+6. The nav rail computes to 236px; there is no element functioning as a top app bar.
 7. At most two stamp impressions render on any single screen.
 8. The phone layout produces no horizontal overflow at 375px.
 9. Every status in the DOM carries a word, not only a colour class.

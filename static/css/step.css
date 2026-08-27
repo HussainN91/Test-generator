@@ -1,23 +1,29 @@
 /* ==========================================================================
-   STEP Platform — "Dossier & Stamp"
+   STEP Platform — "Dossier & Stamp", refined
    --------------------------------------------------------------------------
    Contract: docs/superpowers/specs/2026-08-27-step-ui-spec.md
 
-   The true subject of this system is a wet rubber stamp on a sheet of paper.
-   A teacher fills a report, a director signs and stamps it by hand, the
-   teacher photographs the stamp, an administrator files it. That is a paper
-   process with a database bolted on, so this is official stationery — not a
-   dashboard.
+   The subject of this system is a wet rubber stamp on a sheet of paper, so
+   this is official stationery — not a dashboard. The first pass of this
+   stylesheet held that line but was drab: muddy contrast, monotone ink,
+   cramped spacing, and uppercase letterspacing at a volume that reads as
+   harsh rather than characterful.
 
-   FORBIDDEN, without exception (§1 of the contract):
+   This pass keeps every structural rule and fixes the beauty:
+
+     · cleaner, lighter paper and a much fainter grain
+     · a full set of stationery INKS — violet, teal, ochre, umber, plum —
+       so the register has life without a single dashboard colour
+     · a proper type scale with air, on faces chosen to be read and admired
+       rather than merely endured
+     · uppercase reserved for small labels only
+
+   STILL FORBIDDEN, without exception:
      · cards / four-sided bordered panels     · border-radius above 0
      · box-shadow                             · gradients
      · blue as an accent                      · icons in coloured squares
      · a navy rail against white content      · four equal stat cards
      · a separate top application bar
-
-   Structure is carried by four rule weights and nothing else. Colour is paper,
-   ink, and the two colours a marker actually uses.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -25,30 +31,40 @@
    -------------------------------------------------------------------------- */
 
 :root {
-  /* Paper */
-  --paper:      #EDE7DA;
-  --paper-deep: #E3DBC9;
-  --wash:       #F5F1E7;
+  /* Paper — lighter and cleaner than the first pass, which was muddy. */
+  --paper:      #F4EFE3;
+  --paper-deep: #EBE4D4;
+  --surface:    #FCFAF4;
+  --wash:       #F8F4EA;
 
   /* Ink */
-  --ink:        #1A1714;
-  --ink-soft:   #4C443A;
-  --pencil:     #7A6F5F;
-  --rule:       #C6BBA5;
-  --rule-firm:  #8C806C;
+  --ink:        #171310;
+  --ink-body:   #302822;
+  --ink-soft:   #554B41;
+  --pencil:     #857868;
+  --rule:       #DDD3C0;
+  --rule-firm:  #B5A992;
 
-  /* The only two coloured inks. They appear only where a marker would use them. */
-  --stamp:      #9B2C1E;
-  --stamp-wash: #EDD9D2;
-  --seal:       #2F5D3A;
-  --seal-wash:  #DCE7DA;
+  /* The marker's two colours. */
+  --stamp:      #A62F1C;
+  --stamp-wash: #F4E3DD;
+  --seal:       #2C6B4C;
+  --seal-wash:  #E1EFE5;
 
-  --font-text: "PT Serif", Georgia, "Times New Roman", serif;
-  --font-ui:   "PT Sans", "Segoe UI", Tahoma, sans-serif;
-  --font-mono: "PT Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  /* Stationery inks. Six hues so the register has life — every one plausible
+     in a pen or a stamp pad, and not one of them a dashboard blue. */
+  --ink-violet: #5F4B8B;   /* carbon-copy purple */
+  --ink-teal:   #1F6A6E;
+  --ink-ochre:  #8E6A18;
+  --ink-umber:  #8A5330;
+  --ink-plum:   #6E3B57;
 
-  --rail:    212px;   /* deliberately not the ~260px every dashboard uses */
-  --measure: 66ch;
+  --font-text: "Literata", Georgia, "Times New Roman", serif;
+  --font-ui:   "Commissioner", "Segoe UI", Tahoma, sans-serif;
+  --font-mono: "PT Mono", ui-monospace, Consolas, monospace;
+
+  --rail:    236px;
+  --measure: 64ch;
 }
 
 /* --------------------------------------------------------------------------
@@ -62,24 +78,24 @@ html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   font-family: var(--font-text);
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.62;
+  color: var(--ink-body);
   background-color: var(--paper);
   font-variant-numeric: tabular-nums;
 }
 
-/* The grain. One low-opacity noise layer over the ground; subtle enough that
-   its absence is only noticeable side by side. */
+/* The grain, at less than half its previous strength. It should be felt, not
+   seen; at 30% it was fogging the whole page. */
 body::before {
   content: "";
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  opacity: .30;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.5'/></svg>");
+  opacity: .13;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='.5'/></svg>");
 }
 .shell, .letterhead { position: relative; z-index: 1; }
 
-h1, h2, h3, h4 { margin: 0; font-weight: 700; line-height: 1.18; }
+h1, h2, h3, h4 { margin: 0; line-height: 1.2; color: var(--ink); }
 p { margin: 0 0 1em; }
 p:last-child { margin-bottom: 0; }
 
@@ -101,186 +117,193 @@ a:hover { text-decoration-thickness: 2px; }
 }
 .skip-link:focus { top: 10px; }
 
-/* Every figure, date and reference is typed, not typeset. */
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 
+/* One label style, used everywhere a label is needed. Uppercase lives HERE and
+   nowhere else — that restraint is what stopped the page reading as harsh. */
+.label {
+  font-family: var(--font-ui); font-size: 11px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+}
+
 /* --------------------------------------------------------------------------
-   3. Letterhead — replaces the top application bar entirely (§5.1)
+   3. Letterhead
    -------------------------------------------------------------------------- */
 
 .letterhead {
-  border-bottom: 2px solid var(--ink);
-  background: var(--paper);
-  padding: 14px 30px 12px;
-  display: flex; align-items: flex-end; gap: 26px; flex-wrap: wrap;
+  background: var(--surface);
+  border-bottom: 1px solid var(--ink);
+  padding: 20px 40px 17px;
+  display: flex; align-items: flex-end; gap: 30px; flex-wrap: wrap;
+  position: relative;
+}
+/* The classic stationery double rule: a firm line, a gap, a hairline. */
+.letterhead::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -4px;
+  height: 1px; background: var(--rule-firm);
 }
 
 .letterhead__org { flex: 1 1 260px; }
 .letterhead__name {
-  font-family: var(--font-ui); font-weight: 700;
-  font-size: 19px; letter-spacing: .16em; text-transform: uppercase;
-  line-height: 1;
+  font-family: var(--font-text); font-weight: 600;
+  font-size: 27px; letter-spacing: .18em; text-transform: uppercase;
+  line-height: 1; color: var(--ink);
 }
 .letterhead__sub {
-  font-family: var(--font-ui); font-size: 12px; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--pencil); margin-top: 5px;
+  font-family: var(--font-ui); font-size: 11.5px; font-weight: 500;
+  letter-spacing: .13em; text-transform: uppercase;
+  color: var(--pencil); margin-top: 8px;
 }
 
 .letterhead__holder { text-align: right; }
-.letterhead__who { font-weight: 700; font-size: 15px; }
-.letterhead__where { font-size: 13px; color: var(--ink-soft); }
+.letterhead__who { font-size: 17px; font-weight: 600; color: var(--ink); }
+.letterhead__where { font-size: 14px; color: var(--ink-soft); }
 .letterhead__ref {
-  font-family: var(--font-mono); font-size: 11.5px; color: var(--pencil);
-  margin-top: 3px; letter-spacing: .02em;
+  font-family: var(--font-mono); font-size: 11px; color: var(--pencil);
+  margin-top: 5px; letter-spacing: .04em;
 }
 
 /* --------------------------------------------------------------------------
-   4. Shell and nav rail
+   4. Shell and rail
    -------------------------------------------------------------------------- */
 
 .shell { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); }
 
 .rail {
   background: var(--paper-deep);
-  border-right: 2px solid var(--ink);
-  padding: 20px 0 40px;
-  min-height: calc(100vh - 76px);
+  border-right: 1px solid var(--rule-firm);
+  padding: 26px 0 48px;
+  min-height: calc(100vh - 84px);
 }
 
 .rail__heading {
   font-family: var(--font-ui); font-size: 10px; font-weight: 700;
-  letter-spacing: .16em; text-transform: uppercase; color: var(--pencil);
-  padding: 20px 16px 6px;
-  border-bottom: 1px dotted var(--rule-firm);
-  margin: 0 0 4px;
+  letter-spacing: .17em; text-transform: uppercase; color: var(--pencil);
+  padding: 26px 22px 9px;
 }
 .rail__heading:first-child { padding-top: 0; }
 
 .rail__link {
   display: flex; align-items: center; gap: 9px;
-  font-family: var(--font-ui); font-size: 14px;
-  padding: 7px 16px;
-  color: var(--ink); text-decoration: none;
+  font-family: var(--font-ui); font-size: 14.5px; font-weight: 500;
+  padding: 9px 22px;
+  color: var(--ink-body); text-decoration: none;
   border-left: 3px solid transparent;
 }
-.rail__link:hover { background: var(--wash); }
+.rail__link:hover { background: var(--wash); color: var(--ink); }
 
-/* Current page: a filled tab with an ink edge — a folder divider, not a pill. */
 .rail__link[aria-current="page"] {
-  background: var(--paper);
+  background: var(--surface);
   border-left-color: var(--stamp);
-  font-weight: 700;
+  font-weight: 700; color: var(--ink);
 }
 
 .rail__link--pending { color: var(--pencil); cursor: default; }
-.rail__link--pending:hover { background: none; }
+.rail__link--pending:hover { background: none; color: var(--pencil); }
 
 .rail__soon {
-  margin-left: auto; font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
-  border: 1px dotted var(--rule-firm); padding: 1px 4px; color: var(--pencil);
+  margin-left: auto; font-size: 9px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  border: 1px solid var(--rule-firm); padding: 1px 5px; color: var(--pencil);
 }
 
 .rail__count {
   margin-left: auto;
   font-family: var(--font-mono); font-size: 11px; font-weight: 700;
-  background: var(--stamp); color: var(--paper);
-  padding: 1px 6px;
+  background: var(--stamp); color: var(--surface);
+  padding: 2px 7px;
 }
 
 /* --------------------------------------------------------------------------
    5. Sheet
    -------------------------------------------------------------------------- */
 
-.sheet { padding: 26px 30px 80px; max-width: 1180px; }
+.sheet { padding: 38px 44px 96px; max-width: 1240px; }
 
 .crumbs {
-  font-family: var(--font-ui); font-size: 11.5px; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--pencil); margin-bottom: 16px;
+  font-family: var(--font-ui); font-size: 11px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--pencil); margin-bottom: 22px;
 }
 .crumbs a { color: var(--pencil); }
-.crumbs span { padding: 0 6px; }
+.crumbs span { padding: 0 7px; }
 
-.head { border-bottom: 2px solid var(--ink); padding-bottom: 12px; margin-bottom: 24px; }
-.head h1 { font-size: 30px; font-weight: 700; letter-spacing: -.01em; }
-.head p { margin-top: 6px; color: var(--ink-soft); max-width: var(--measure); font-size: 15px; }
+.head { border-bottom: 1px solid var(--ink); padding-bottom: 18px; margin-bottom: 36px; }
+.head h1 {
+  font-size: 42px; font-weight: 400; letter-spacing: -.018em; line-height: 1.08;
+}
+.head p { margin-top: 12px; color: var(--ink-soft); max-width: var(--measure); font-size: 17px; }
 
-/* A titled region. Bounded top and bottom only — never a four-sided box. */
-.block { margin-bottom: 30px; }
+.block { margin-bottom: 44px; }
 .block__title {
-  font-family: var(--font-ui); font-size: 11.5px; font-weight: 700;
-  letter-spacing: .14em; text-transform: uppercase;
-  padding-bottom: 6px; border-bottom: 1px solid var(--rule-firm);
-  margin-bottom: 0;
+  font-family: var(--font-ui); font-size: 11px; font-weight: 700;
+  letter-spacing: .15em; text-transform: uppercase; color: var(--ink-soft);
+  padding-bottom: 9px; border-bottom: 1px solid var(--rule-firm);
   display: flex; align-items: baseline; gap: 12px;
 }
-.block__title .aside { margin-left: auto; font-weight: 400; color: var(--pencil); letter-spacing: .06em; }
-.block__body { padding: 16px 0 0; }
+.block__title .aside { margin-left: auto; font-weight: 500; color: var(--pencil); letter-spacing: .07em; }
+.block__body { padding: 20px 0 0; }
 
-.columns { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 40px; align-items: start; }
+.columns { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 56px; align-items: start; }
 
 /* --------------------------------------------------------------------------
-   6. Stamp impression — the signature device (§5.4)
+   6. Stamp impression — the signature device
    -------------------------------------------------------------------------- */
 
-/* At most two per screen. Overused it becomes decoration and the whole thing
-   collapses into pastiche. The rotation is what makes it read as pressed by a
-   hand, so the angle is never 0 and never repeated on one screen. */
 .impression {
   display: inline-block;
   font-family: var(--font-ui); font-weight: 700;
-  font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+  font-size: 12.5px; letter-spacing: .2em; text-transform: uppercase;
   color: var(--stamp);
   border: 2px solid currentColor;
-  box-shadow: none;
-  padding: 6px 12px 5px;
+  padding: 9px 15px 8px;
   position: relative;
   transform: rotate(-3deg);
-  opacity: .92;
+  opacity: .9;
 }
-/* The inner rule of a double-ruled stamp. */
 .impression::before {
-  content: ""; position: absolute; inset: 2px;
-  border: 1px solid currentColor; opacity: .55;
+  content: ""; position: absolute; inset: 3px;
+  border: 1px solid currentColor; opacity: .5;
 }
 .impression--seal { color: var(--seal); transform: rotate(2deg); }
-.impression--sm { font-size: 10.5px; padding: 4px 9px 3px; letter-spacing: .14em; }
 
 /* No fill mode, deliberately. With `both` the stamp stays stuck at the opening
-   frame — 6% too large — whenever the animation never plays, which happens in a
-   backgrounded tab. The resting state must be correct on its own; the press is
-   an enhancement on top of it, never a prerequisite. */
+   frame — 6% too large — whenever the animation never plays, which happens in
+   a backgrounded tab. The resting state must be correct on its own. */
 @keyframes press {
   from { opacity: 0; transform: rotate(-3deg) scale(1.06); }
-  to   { opacity: .92; transform: rotate(-3deg) scale(1); }
+  to   { opacity: .9;  transform: rotate(-3deg) scale(1); }
 }
-.impression--press { animation: press .26s ease-out; }
-.impression--seal.impression--press { animation-name: press-seal; }
 @keyframes press-seal {
   from { opacity: 0; transform: rotate(2deg) scale(1.06); }
-  to   { opacity: .92; transform: rotate(2deg) scale(1); }
+  to   { opacity: .9;  transform: rotate(2deg) scale(1); }
 }
+.impression--press { animation: press .3s ease-out; }
+.impression--seal.impression--press { animation-name: press-seal; }
 
 /* --------------------------------------------------------------------------
-   7. The docket — the one unmissable element (§5.3)
+   7. The docket
    -------------------------------------------------------------------------- */
 
 .docket {
-  border-top: 2px solid var(--ink);
-  border-bottom: 2px solid var(--ink);
-  padding: 22px 0 24px;
-  margin-bottom: 30px;
-  display: flex; gap: 34px; align-items: flex-start; flex-wrap: wrap;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  background: var(--surface);
+  padding: 32px 34px 34px;
+  margin-bottom: 44px;
+  display: flex; gap: 38px; align-items: flex-start; flex-wrap: wrap;
 }
-.docket__mark { flex: none; padding-top: 4px; }
+.docket__mark { flex: none; padding-top: 8px; }
 .docket__body { flex: 1 1 340px; }
-.docket__title { font-size: 28px; font-weight: 700; line-height: 1.14; margin: 0 0 10px; }
-.docket__when {
-  font-family: var(--font-ui); font-size: 16px; font-weight: 700;
+.docket__title {
+  font-size: 33px; font-weight: 400; line-height: 1.14;
+  letter-spacing: -.014em; margin: 0 0 14px;
 }
+.docket__when { font-family: var(--font-ui); font-size: 17px; font-weight: 700; color: var(--ink); }
 .docket__when--late { color: var(--stamp); }
 .docket__meta {
-  font-family: var(--font-ui); font-size: 12px; letter-spacing: .08em;
-  text-transform: uppercase; color: var(--pencil); margin-top: 6px;
+  font-family: var(--font-ui); font-size: 12px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--pencil); margin-top: 9px;
 }
 .docket__action { flex: none; align-self: center; }
 
@@ -288,162 +311,173 @@ a:hover { text-decoration-thickness: 2px; }
 .docket--clear .docket__title { color: var(--seal); }
 
 /* --------------------------------------------------------------------------
-   8. Record strip — replaces four stat cards (§5.2)
+   8. Record strip
    -------------------------------------------------------------------------- */
 
 .record {
   display: grid; grid-template-columns: repeat(4, 1fr);
-  border: 1px solid var(--rule-firm);
-  margin-bottom: 30px;
-  background: var(--wash);
+  border-top: 1px solid var(--rule-firm);
+  border-bottom: 1px solid var(--rule-firm);
+  margin-bottom: 44px;
+  background: var(--surface);
 }
-.record__cell { padding: 12px 16px 13px; border-left: 1px solid var(--rule); }
+.record__cell { padding: 20px 22px 21px; border-left: 1px solid var(--rule); }
 .record__cell:first-child { border-left: 0; }
 .record__label {
   font-family: var(--font-ui); font-size: 10px; font-weight: 700;
-  letter-spacing: .13em; text-transform: uppercase; color: var(--pencil);
-  margin-bottom: 7px;
+  letter-spacing: .15em; text-transform: uppercase; color: var(--pencil);
+  margin-bottom: 12px;
 }
 .record__value {
-  font-family: var(--font-mono); font-size: 30px; line-height: 1; font-weight: 700;
+  font-family: var(--font-mono); font-size: 34px; line-height: 1; font-weight: 700;
+  color: var(--ink);
 }
 .record__note {
-  font-family: var(--font-ui); font-size: 11.5px; color: var(--pencil); margin-top: 5px;
+  font-family: var(--font-ui); font-size: 12.5px; color: var(--pencil); margin-top: 9px;
 }
 .record__cell--late .record__value { color: var(--stamp); }
 .record__cell--done .record__value { color: var(--seal); }
 
-/* A ruled bar, not a rounded meter. */
-.gauge { height: 8px; border: 1px solid var(--rule-firm); margin-top: 9px; }
+.gauge { height: 9px; border: 1px solid var(--rule-firm); margin-top: 13px; }
 .gauge__fill { height: 100%; background: var(--ink); }
 
 /* --------------------------------------------------------------------------
-   9. Register — the obligation list, ruled like a ledger
+   9. Register
    -------------------------------------------------------------------------- */
 
 .tabs {
-  display: flex; gap: 0; flex-wrap: wrap;
-  border-bottom: 1px solid var(--rule-firm); margin-bottom: 0;
+  display: flex; flex-wrap: wrap;
+  border-bottom: 1px solid var(--rule-firm);
 }
 .tabs a {
-  font-family: var(--font-ui); font-size: 12px; font-weight: 700;
-  letter-spacing: .08em; text-transform: uppercase;
+  font-family: var(--font-ui); font-size: 14px; font-weight: 500;
   color: var(--pencil); text-decoration: none;
-  padding: 8px 13px; border-bottom: 3px solid transparent; margin-bottom: -1px;
+  padding: 11px 15px; border-bottom: 2px solid transparent; margin-bottom: -1px;
 }
 .tabs a:hover { color: var(--ink); }
-.tabs a[aria-current="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.tabs a[aria-current="true"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--ink); }
 
 .register { list-style: none; margin: 0; padding: 0; }
 
 .entry {
-  display: flex; align-items: baseline; gap: 18px;
-  padding: 13px 4px 12px;
+  display: flex; align-items: baseline; gap: 22px;
+  padding: 19px 8px 18px;
   border-bottom: 1px solid var(--rule);
   text-decoration: none; color: inherit;
 }
 .register li:last-child .entry { border-bottom: 1px solid var(--rule-firm); }
-.entry:hover { background: var(--wash); }
+.entry:hover { background: var(--surface); }
 
 .entry__main { flex: 1; min-width: 0; }
-/* Both are spans (they sit inside an anchor), so they need explicit block
-   display or the category runs on from the title. */
-.entry__title { display: block; font-size: 16px; font-weight: 700; }
+/* Both are spans inside an anchor, so they need explicit block display or the
+   category runs on from the title. */
+.entry__title { display: block; font-size: 18px; font-weight: 600; color: var(--ink); }
 .entry__cat {
   display: block;
-  font-family: var(--font-ui); font-size: 11px; letter-spacing: .09em;
-  text-transform: uppercase; color: var(--pencil); margin-top: 2px;
+  font-family: var(--font-ui); font-size: 11px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--pencil); margin-top: 4px;
 }
+
+/* Each section gets its own ink. This is where the register's life comes from,
+   and none of the six is a dashboard blue. Colour sits on the CATEGORY, never
+   on the status, so the two can never be confused. */
+.entry--monthly_reporting .entry__cat { color: var(--ink-violet); }
+.entry--cpd_online       .entry__cat { color: var(--ink-teal); }
+.entry--cpd_offline      .entry__cat { color: var(--ink-ochre); }
+.entry--eca              .entry__cat { color: var(--ink-umber); }
+.entry--assessments      .entry__cat { color: var(--ink-plum); }
+.entry--other            .entry__cat { color: var(--pencil); }
+
 .entry__due {
-  font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft);
+  font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft);
   white-space: nowrap; flex: none;
 }
-.entry__status { flex: none; min-width: 132px; text-align: right; }
+.entry__status { flex: none; min-width: 148px; text-align: right; }
 
 /* --------------------------------------------------------------------------
-   10. Status marks — always a word (§5.5)
+   10. Status marks — always a word
    -------------------------------------------------------------------------- */
 
 .mark {
-  font-family: var(--font-ui); font-size: 11.5px; font-weight: 700;
+  font-family: var(--font-ui); font-size: 12px; font-weight: 700;
   letter-spacing: .1em; text-transform: uppercase;
   white-space: nowrap;
 }
-.mark--overdue,
-.mark--due_today   { color: var(--stamp); }
+.mark--overdue, .mark--due_today { color: var(--stamp); }
 .mark--overdue     { text-decoration: line-through; text-decoration-thickness: 2px; }
 .mark--due_soon    { color: var(--ink); border-bottom: 1px dotted currentColor; }
-.mark--scheduled   { color: var(--pencil); }
+.mark--scheduled   { color: var(--pencil); font-weight: 500; }
 .mark--review      { color: var(--ink-soft); border-bottom: 1px dotted currentColor; }
 .mark--done        { color: var(--seal); }
 .mark--done::after { content: " \2713"; }
 
 /* --------------------------------------------------------------------------
-   11. Buttons — square, ruled, ink-filled
+   11. Buttons
    -------------------------------------------------------------------------- */
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   font-family: var(--font-ui); font-size: 14px; font-weight: 700;
-  letter-spacing: .09em; text-transform: uppercase;
-  padding: 12px 26px;
-  border: 2px solid var(--ink);
-  background: var(--paper); color: var(--ink);
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 14px 30px;
+  border: 1px solid var(--ink);
+  background: var(--surface); color: var(--ink);
   text-decoration: none; cursor: pointer;
 }
-.btn:hover { background: var(--ink); color: var(--paper); }
+.btn:hover { background: var(--ink); color: var(--surface); }
 
-.btn--primary { background: var(--ink); color: var(--paper); }
+.btn--primary { background: var(--ink); color: var(--surface); }
 .btn--primary:hover { background: var(--stamp); border-color: var(--stamp); }
 
 .btn--quiet {
   border-color: transparent; background: none; color: var(--ink-soft);
-  padding: 12px 12px; text-decoration: underline;
+  padding: 14px 10px; text-decoration: underline; letter-spacing: .06em;
 }
 .btn--quiet:hover { background: none; color: var(--ink); }
 
-.btn--lg { font-size: 15px; padding: 14px 30px; }
+.btn--lg { font-size: 15px; padding: 16px 34px; }
 .btn[disabled] { opacity: .45; pointer-events: none; }
 
-.actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.actions { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
 
 /* --------------------------------------------------------------------------
    12. Side rail content
    -------------------------------------------------------------------------- */
 
-.diary { display: flex; gap: 13px; padding: 11px 0; border-bottom: 1px dotted var(--rule-firm); }
+.diary { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--rule); }
 .diary:last-child { border-bottom: 0; }
 .diary__date {
-  flex: none; width: 40px; text-align: center;
-  border: 1px solid var(--rule-firm); background: var(--wash);
+  flex: none; width: 46px; text-align: center;
+  border: 1px solid var(--rule-firm); background: var(--surface);
 }
 .diary__m {
   font-family: var(--font-ui); font-size: 9px; font-weight: 700;
-  letter-spacing: .1em; text-transform: uppercase;
-  border-bottom: 1px solid var(--rule-firm); padding: 2px 0; color: var(--pencil);
+  letter-spacing: .12em; text-transform: uppercase;
+  border-bottom: 1px solid var(--rule-firm); padding: 3px 0; color: var(--pencil);
 }
-.diary__d { font-family: var(--font-mono); font-size: 16px; font-weight: 700; padding: 3px 0; }
+.diary__d { font-family: var(--font-mono); font-size: 18px; font-weight: 700; padding: 5px 0; color: var(--ink); }
 .diary__body { min-width: 0; flex: 1; }
-.diary__title { font-size: 14px; font-weight: 700; line-height: 1.25; }
+.diary__title { font-size: 15px; font-weight: 600; line-height: 1.34; color: var(--ink); }
 .diary__cat {
-  font-family: var(--font-ui); font-size: 10.5px; letter-spacing: .08em;
-  text-transform: uppercase; color: var(--pencil); margin-top: 2px;
+  font-family: var(--font-ui); font-size: 10.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--pencil); margin-top: 4px;
 }
 
 .terms { list-style: none; margin: 0; padding: 0; }
 .term {
-  display: flex; align-items: baseline; gap: 10px;
-  padding: 8px 0; border-bottom: 1px dotted var(--rule);
-  font-family: var(--font-ui); font-size: 13px;
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 11px 0; border-bottom: 1px solid var(--rule);
+  font-family: var(--font-ui); font-size: 13.5px;
 }
 .terms li:last-child .term { border-bottom: 0; }
 .term__name {
   flex: none; font-weight: 700; font-size: 10.5px;
-  letter-spacing: .1em; text-transform: uppercase;
-  border: 1px solid var(--rule-firm); padding: 2px 7px; color: var(--ink-soft);
+  letter-spacing: .12em; text-transform: uppercase;
+  border: 1px solid var(--rule-firm); padding: 3px 9px; color: var(--ink-soft);
 }
-.term--current .term__name { background: var(--ink); border-color: var(--ink); color: var(--paper); }
-.term__range { color: var(--pencil); font-family: var(--font-mono); font-size: 11.5px; }
+.term--current .term__name { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.term__range { color: var(--pencil); font-family: var(--font-mono); font-size: 12px; }
 .term--current .term__range { color: var(--ink); }
 
 /* --------------------------------------------------------------------------
@@ -451,60 +485,61 @@ a:hover { text-decoration-thickness: 2px; }
    -------------------------------------------------------------------------- */
 
 .note {
-  border-left: 3px solid var(--rule-firm);
-  padding: 11px 0 11px 15px;
-  font-size: 14.5px;
-  margin-bottom: 22px;
+  border-left: 2px solid var(--rule-firm);
+  padding: 4px 0 4px 20px;
+  font-size: 15.5px;
+  margin-bottom: 30px;
+  color: var(--ink-soft);
 }
 .note strong {
-  display: block; font-family: var(--font-ui); font-size: 11.5px;
-  letter-spacing: .11em; text-transform: uppercase; margin-bottom: 4px;
+  display: block; font-family: var(--font-ui); font-size: 11px; font-weight: 700;
+  letter-spacing: .13em; text-transform: uppercase; margin-bottom: 6px; color: var(--ink);
 }
-.note--bad  { border-left-color: var(--stamp); color: var(--ink); }
+.note--bad  { border-left-color: var(--stamp); }
 .note--bad strong  { color: var(--stamp); }
 .note--good { border-left-color: var(--seal); }
 .note--good strong { color: var(--seal); }
-.note--warn { border-left-color: var(--stamp); background: var(--stamp-wash); padding: 12px 15px; }
+.note--warn { border-left-color: var(--stamp); background: var(--stamp-wash); padding: 16px 20px; }
 .note--warn strong { color: var(--stamp); }
 
-.empty { padding: 40px 0; text-align: center; color: var(--pencil); }
-.empty__title { font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.empty { padding: 56px 0; text-align: center; color: var(--pencil); }
+.empty__title { font-size: 23px; font-weight: 400; color: var(--ink); margin-bottom: 9px; }
 
 /* --------------------------------------------------------------------------
-   14. Forms — a form should look like a form
+   14. Forms
    -------------------------------------------------------------------------- */
 
-.field { margin-bottom: 24px; max-width: var(--measure); }
+.field { margin-bottom: 30px; max-width: var(--measure); }
 .field__label {
   display: block; font-family: var(--font-ui); font-weight: 700;
-  font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
-  margin-bottom: 4px;
+  font-size: 11.5px; letter-spacing: .13em; text-transform: uppercase;
+  margin-bottom: 7px; color: var(--ink);
 }
-.field__hint { font-size: 14px; color: var(--ink-soft); margin-bottom: 9px; }
+.field__hint { font-size: 15.5px; color: var(--ink-soft); margin-bottom: 12px; }
 
 .input, .textarea {
-  width: 100%; font-family: var(--font-text); font-size: 16px; color: var(--ink);
-  padding: 10px 12px;
-  background: var(--wash);
+  width: 100%; font-family: var(--font-text); font-size: 17px; color: var(--ink);
+  padding: 13px 15px;
+  background: var(--surface);
   border: 1px solid var(--rule-firm);
   border-bottom-width: 2px;
 }
-.textarea { min-height: 110px; resize: vertical; }
+.textarea { min-height: 120px; resize: vertical; line-height: 1.55; }
 .input:focus, .textarea:focus { background: #fff; border-color: var(--ink); }
 
-.filedrop { border: 2px dashed var(--rule-firm); padding: 22px; background: var(--wash); }
+.filedrop { border: 1px dashed var(--rule-firm); padding: 26px; background: var(--surface); }
 .filedrop input { font-family: var(--font-ui); font-size: 14px; }
 
 .choice {
-  display: flex; gap: 12px; align-items: flex-start;
-  padding: 11px 14px; margin-bottom: 6px;
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 14px 17px; margin-bottom: 8px;
   border: 1px solid var(--rule-firm);
-  background: var(--wash); cursor: pointer;
+  background: var(--surface); cursor: pointer;
 }
 .choice:hover { background: #fff; }
-.choice input { width: 19px; height: 19px; margin: 1px 0 0; accent-color: var(--stamp); flex: none; }
-.choice__text { font-size: 15px; }
-.choice:has(input:checked) { border-color: var(--ink); border-width: 2px; padding: 10px 13px; background: #fff; }
+.choice input { width: 19px; height: 19px; margin: 2px 0 0; accent-color: var(--stamp); flex: none; }
+.choice__text { font-size: 16px; }
+.choice:has(input:checked) { border-color: var(--ink); border-width: 2px; padding: 13px 16px; background: #fff; }
 
 /* --------------------------------------------------------------------------
    15. Self-reported marker (spine spec §5.10)
@@ -513,66 +548,67 @@ a:hover { text-decoration-thickness: 2px; }
 .selfreported {
   display: inline-block;
   font-family: var(--font-ui); font-size: 10px; font-weight: 700;
-  letter-spacing: .11em; text-transform: uppercase; color: var(--pencil);
+  letter-spacing: .13em; text-transform: uppercase; color: var(--pencil);
   border-top: 1px solid var(--rule-firm); border-bottom: 1px solid var(--rule-firm);
-  padding: 2px 0; margin-left: 4px;
+  padding: 3px 0; margin-left: 5px;
 }
 
 /* --------------------------------------------------------------------------
-   16. Filed record — submission history
+   16. Filed record
    -------------------------------------------------------------------------- */
 
 .filed { list-style: none; margin: 0; padding: 0; }
 .filed li {
-  padding: 0 0 18px 20px; position: relative;
+  padding: 0 0 24px 24px; position: relative;
   border-left: 1px solid var(--rule-firm); margin-left: 5px;
 }
 .filed li:last-child { border-left-color: transparent; padding-bottom: 0; }
 .filed li::before {
-  content: ""; position: absolute; left: -4px; top: 7px;
+  content: ""; position: absolute; left: -4px; top: 9px;
   width: 7px; height: 7px; background: var(--rule-firm);
 }
 .filed li.is-good::before { background: var(--seal); }
 .filed li.is-bad::before  { background: var(--stamp); }
-.filed__what { font-weight: 700; font-size: 15px; }
-.filed__when { font-family: var(--font-mono); font-size: 11.5px; color: var(--pencil); }
+.filed__what { font-size: 16.5px; font-weight: 600; color: var(--ink); }
+.filed__when { font-family: var(--font-mono); font-size: 12px; color: var(--pencil); }
 
 /* --------------------------------------------------------------------------
-   17. Responsive — the stamped report is photographed on a phone
+   17. Responsive
    -------------------------------------------------------------------------- */
 
-@media (max-width: 1040px) {
-  .columns { grid-template-columns: 1fr; gap: 26px; }
+@media (max-width: 1080px) {
+  .columns { grid-template-columns: 1fr; gap: 34px; }
 }
 
 @media (max-width: 800px) {
   .shell { grid-template-columns: 1fr; }
   .rail {
-    min-height: 0; border-right: 0; border-bottom: 2px solid var(--ink);
-    display: flex; overflow-x: auto; padding: 0;
+    min-height: 0; border-right: 0; border-bottom: 1px solid var(--rule-firm);
+    display: flex; overflow-x: auto; padding: 0; background: var(--surface);
   }
   .rail__heading, .rail__link--pending { display: none; }
   .rail__link {
-    white-space: nowrap; border-left: 0; border-bottom: 3px solid transparent;
-    padding: 10px 13px;
+    white-space: nowrap; border-left: 0; border-bottom: 2px solid transparent;
+    padding: 13px 15px;
   }
   .rail__link[aria-current="page"] { border-left: 0; border-bottom-color: var(--stamp); }
-  .letterhead { padding: 12px 16px 10px; }
+  .letterhead { padding: 16px 18px 14px; }
+  .letterhead__name { font-size: 22px; }
   .letterhead__holder { text-align: left; }
-  .sheet { padding: 20px 16px 60px; }
-  .head h1 { font-size: 25px; }
-  .docket { gap: 18px; }
-  .docket__title { font-size: 23px; }
+  .sheet { padding: 26px 18px 64px; }
+  .head h1 { font-size: 31px; }
+  .docket { padding: 24px 20px; gap: 22px; }
+  .docket__title { font-size: 26px; }
   .docket__action, .docket__action .btn { width: 100%; }
   .record { grid-template-columns: 1fr 1fr; }
   .record__cell:nth-child(3) { border-left: 0; }
   .record__cell:nth-child(n+3) { border-top: 1px solid var(--rule); }
-  .entry { flex-wrap: wrap; gap: 6px 14px; }
+  .entry { flex-wrap: wrap; gap: 7px 18px; padding: 17px 4px; }
   .entry__status { min-width: 0; text-align: left; }
 }
 
 /* --------------------------------------------------------------------------
-   18. Motion — one moment, once (§6)
+   18. Motion
    -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -584,7 +620,7 @@ a:hover { text-decoration-thickness: 2px; }
 }
 
 /* --------------------------------------------------------------------------
-   19. Print — an administrator will print a submission for a paper file
+   19. Print
    -------------------------------------------------------------------------- */
 
 @media print {
