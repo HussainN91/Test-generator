@@ -1,4 +1,5 @@
-"""URL map. Teacher views live at the root; the admin doubles as the review queue."""
+"""URL map. STEP owns the root; the Test Generator is the separate tool it
+grew out of, kept at its own prefix (see templates/step/_letterhead.html)."""
 
 from django.conf import settings
 from django.contrib import admin
@@ -20,11 +21,12 @@ urlpatterns = [
     # Where sign-in lands. A view rather than a fixed LOGIN_REDIRECT_URL
     # because the right destination depends on the role (config/views.py).
     path("after-sign-in/", config_views.post_login, name="post_login"),
-    path("", assembly_views.builder, name="builder"),
-    path("batch/<int:pk>/", assembly_views.batch_preview, name="batch_preview"),
-    path("batch/<int:pk>/print/", assembly_views.batch_print, name="batch_print"),
-    path("batch/<int:pk>/docx/", assembly_views.batch_docx, name="batch_docx"),
-    path("coverage/", bank_views.coverage, name="coverage"),
-    path("diagnostics/", include("diagnostics.urls")),
-    path("step/", include("step.urls")),
+    path("test-generator/", assembly_views.builder, name="builder"),
+    path("test-generator/batch/<int:pk>/", assembly_views.batch_preview, name="batch_preview"),
+    path("test-generator/batch/<int:pk>/print/", assembly_views.batch_print, name="batch_print"),
+    path("test-generator/batch/<int:pk>/docx/", assembly_views.batch_docx, name="batch_docx"),
+    path("test-generator/coverage/", bank_views.coverage, name="coverage"),
+    path("test-generator/diagnostics/", include("diagnostics.urls")),
+    # Last: an empty prefix only ever catches what nothing above already has.
+    path("", include("step.urls")),
 ]

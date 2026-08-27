@@ -19,7 +19,7 @@ urlpatterns = [
 ]
 
 
-# admin_urls.py's own patterns already carry the "admin/" prefix (spec: the
-# admin screens live at /step/admin/, /step/admin/review/, /step/admin/teachers/),
-# so this include is unprefixed to avoid doubling it to /step/admin/admin/.
+# admin_urls.py's own patterns already carry the "manage/" prefix (spec: the
+# admin screens live at /manage/, /manage/review/, /manage/teachers/), so
+# this include is unprefixed to avoid doubling it to /manage/manage/.
 urlpatterns += [path("", include("step.admin_urls"))]
