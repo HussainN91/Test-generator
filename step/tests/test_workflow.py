@@ -13,7 +13,10 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 
 from step import constants, workflow
-from step.models import Educator, Obligation, ObligationType, Region, Submission
+from step.models import (
+    Educator, Obligation, ObligationType, ProgressEntry, Region, Student, Submission,
+    TeachingClass,
+)
 
 MEDIA = tempfile.mkdtemp()
 
@@ -186,3 +189,66 @@ class ReviewQueueTests(TestCase):
         queue = workflow.review_queue()
         self.assertEqual(queue.count(), 1)
         self.assertEqual(queue.first().obligation.type, needs)
+
+
+class SyncCheckpointTests(TestCase):
+    def setUp(self):
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        self.educator = Educator.objects.create(full_name="Maria Santos", region=self.region)
+        self.teaching_class = TeachingClass.objects.create(
+            educator=self.educator, grade=9, slot=1, display_name="9A"
+        )
+        self.a = Student.objects.create(teaching_class=self.teaching_class, full_name="Aziz Karimov")
+        self.b = Student.objects.create(teaching_class=self.teaching_class, full_name="Dilnoza Yusupova")
+
+        self.boy_type = ObligationType.objects.create(
+            name_template="Beginning-of-year diagnostic", category=constants.CATEGORY_ASSESSMENTS,
+            cadence=constants.CADENCE_ANNUAL, evidence_spec=constants.EVIDENCE_NONE,
+            form_slug=constants.FORM_SLUG_ASSESSMENT_CHECKPOINT,
+        )
+        self.obligation = Obligation.objects.create(
+            type=self.boy_type, educator=self.educator, teaching_class=self.teaching_class,
+            period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+
+    def test_incomplete_class_does_not_settle_the_obligation(self):
+        ProgressEntry.objects.create(student=self.a, checkpoint=constants.CHECKPOINT_BOY, score=80)
+        workflow.sync_checkpoint(self.teaching_class, constants.CHECKPOINT_BOY)
+        self.obligation.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_NOT_STARTED)
+
+    def test_every_student_scored_settles_the_obligation(self):
+        ProgressEntry.objects.create(student=self.a, checkpoint=constants.CHECKPOINT_BOY, score=80)
+        ProgressEntry.objects.create(student=self.b, checkpoint=constants.CHECKPOINT_BOY, score=74)
+        workflow.sync_checkpoint(self.teaching_class, constants.CHECKPOINT_BOY)
+        self.obligation.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_ACCEPTED)
+
+    def test_settling_creates_no_submission(self):
+        ProgressEntry.objects.create(student=self.a, checkpoint=constants.CHECKPOINT_BOY, score=80)
+        ProgressEntry.objects.create(student=self.b, checkpoint=constants.CHECKPOINT_BOY, score=74)
+        workflow.sync_checkpoint(self.teaching_class, constants.CHECKPOINT_BOY)
+        self.assertEqual(self.obligation.submissions.count(), 0)
+
+    def test_a_different_checkpoint_does_not_settle_this_one(self):
+        ProgressEntry.objects.create(student=self.a, checkpoint=constants.CHECKPOINT_MOY, score=80)
+        ProgressEntry.objects.create(student=self.b, checkpoint=constants.CHECKPOINT_MOY, score=74)
+        workflow.sync_checkpoint(self.teaching_class, constants.CHECKPOINT_MOY)
+        self.obligation.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_NOT_STARTED)
+
+    def test_a_class_with_no_students_never_settles(self):
+        empty = TeachingClass.objects.create(educator=self.educator, grade=9, slot=2, display_name="9B")
+        Obligation.objects.create(
+            type=self.boy_type, educator=self.educator, teaching_class=empty,
+            period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        result = workflow.sync_checkpoint(empty, constants.CHECKPOINT_BOY)
+        self.assertIsNone(result)
+
+    def test_freeform_notes_do_not_count_toward_completion(self):
+        ProgressEntry.objects.create(student=self.a, checkpoint=constants.CHECKPOINT_BOY, score=80)
+        ProgressEntry.objects.create(student=self.b, comment="A freeform note, no checkpoint.")
+        workflow.sync_checkpoint(self.teaching_class, constants.CHECKPOINT_BOY)
+        self.obligation.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_NOT_STARTED)

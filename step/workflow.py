@@ -8,7 +8,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from step import constants
-from step.models import Evidence, Obligation, Submission
+from step.models import Evidence, Obligation, ProgressEntry, Submission
 
 
 class EvidenceRequired(Exception):
@@ -151,3 +151,35 @@ def feedback_for(educator):
         .select_related("obligation", "obligation__type")
         .order_by("-reviewed_at")
     )
+
+
+def sync_checkpoint(teaching_class, checkpoint: str) -> Obligation | None:
+    """Settle a class's checkpoint obligation once every student has a
+    structured entry for it.
+
+    Bypasses `submit` deliberately: a checkpoint obligation has no evidence to
+    check and nothing for a reviewer to decide (classes/gradebook spec,
+    "Auto-completion"). No Submission row is created — callers must not assume
+    one exists for these obligations.
+    """
+    total = teaching_class.students.count()
+    if total == 0:
+        return None
+
+    scored = (
+        ProgressEntry.objects.filter(student__teaching_class=teaching_class, checkpoint=checkpoint)
+        .values("student").distinct().count()
+    )
+    if scored < total:
+        return None
+
+    name_template = constants.CHECKPOINT_OBLIGATION_NAME_TEMPLATES[checkpoint]
+    obligation = Obligation.objects.filter(
+        teaching_class=teaching_class, type__name_template=name_template
+    ).first()
+    if obligation is None or obligation.status == constants.STATUS_ACCEPTED:
+        return obligation
+
+    obligation.status = constants.STATUS_ACCEPTED
+    obligation.save(update_fields=["status"])
+    return obligation
