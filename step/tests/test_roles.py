@@ -50,3 +50,23 @@ class RoleHelperTests(TestCase):
     def test_assigning_an_unknown_role_raises(self):
         with self.assertRaises(ValueError):
             roles.assign(self.user, "Wizard")
+
+    def test_a_superuser_counts_as_a_system_administrator(self):
+        """The account that deploys the site must not be locked out of the
+        staff screens it is responsible for."""
+        boss = get_user_model().objects.create_superuser("root", password="x")
+        self.assertIn(constants.ROLE_SYSTEM_ADMIN, roles.role_names(boss))
+        self.assertTrue(roles.is_staff_role(boss))
+
+    def test_a_superuser_is_not_thereby_an_educator(self):
+        """Staff never accrue obligations (spec §5.6), so the implicit role
+        must not leak into the educator side."""
+        boss = get_user_model().objects.create_superuser("root2", password="x")
+        self.assertFalse(roles.is_educator(boss))
+
+    def test_plain_is_staff_does_not_grant_a_step_role(self):
+        """Django's `is_staff` only opens the Django admin. STEP's staff
+        screens stay group-gated for everyone but superusers."""
+        djangoish = get_user_model().objects.create_user("desk", password="x", is_staff=True)
+        self.assertEqual(roles.role_names(djangoish), set())
+        self.assertFalse(roles.is_staff_role(djangoish))

@@ -163,7 +163,10 @@ DIAGNOSTICS_SOURCE_DIR = Path(
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "builder"
+# Role-aware: config.views.post_login forwards staff, teachers and
+# everyone else to different places. A fixed target here sent every
+# role to the Test Generator.
+LOGIN_REDIRECT_URL = "post_login"
 LOGOUT_REDIRECT_URL = "login"
 
 #: Where `import_guide` looks for the source .txt guides by default.

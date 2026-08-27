@@ -18,7 +18,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
-from step import constants, presentation, urgency, workflow
+from step import constants, presentation, roles, urgency, workflow
 from step.models import AcademicYear, Educator, Obligation, ProgressEntry, Submission
 
 
@@ -53,8 +53,23 @@ def _chrome(educator) -> dict:
     }
 
 
+def _belongs_on_the_admin_side(request) -> bool:
+    """A staff account has no roster row by design (spec §5.6).
+
+    So the teacher dashboard cannot serve one, and 404ing at a record they are
+    never meant to have reads as a broken site rather than a wrong turn.
+    """
+    return (
+        roles.is_staff_role(request.user)
+        and not Educator.objects.filter(user=request.user).exists()
+    )
+
+
 @login_required
 def dashboard(request):
+    if _belongs_on_the_admin_side(request):
+        return redirect("step:admin-dashboard")
+
     educator = _educator(request)
     today = date.today()
 

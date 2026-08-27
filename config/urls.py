@@ -8,6 +8,7 @@ from django.views.static import serve as serve_static
 
 from assembly import views as assembly_views
 from bank import views as bank_views
+from config import views as config_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -16,6 +17,9 @@ urlpatterns = [
     path("media/<path:path>", serve_static, {"document_root": settings.MEDIA_ROOT}),
     path("login/", auth_views.LoginView.as_view(template_name="registration/login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    # Where sign-in lands. A view rather than a fixed LOGIN_REDIRECT_URL
+    # because the right destination depends on the role (config/views.py).
+    path("after-sign-in/", config_views.post_login, name="post_login"),
     path("", assembly_views.builder, name="builder"),
     path("batch/<int:pk>/", assembly_views.batch_preview, name="batch_preview"),
     path("batch/<int:pk>/print/", assembly_views.batch_print, name="batch_print"),
