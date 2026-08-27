@@ -10,8 +10,8 @@ from django.contrib import admin
 
 from step.models import (
     AcademicYear, AliasMapping, District, Educator, Evidence, Obligation,
-    ObligationType, PendingSignup, Region, RosterImport, School, Submission,
-    Term, UnresolvedRow,
+    ObligationType, PendingSignup, ProgressEntry, Region, RosterImport,
+    School, Student, Submission, TeachingClass, Term, UnresolvedRow,
 )
 
 
@@ -125,3 +125,31 @@ class SubmissionAdmin(admin.ModelAdmin):
 class EvidenceAdmin(admin.ModelAdmin):
     list_display = ("submission", "kind", "caption", "uploaded_at")
     list_filter = ("kind",)
+
+
+class StudentInline(admin.TabularInline):
+    model = Student
+    extra = 0
+
+
+@admin.register(TeachingClass)
+class TeachingClassAdmin(admin.ModelAdmin):
+    list_display = ("display_name", "grade", "slot", "educator")
+    list_filter = ("grade", "slot")
+    search_fields = ("display_name", "educator__full_name")
+    inlines = [StudentInline]
+
+
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    list_display = ("full_name", "teaching_class")
+    list_filter = ("teaching_class__grade",)
+    search_fields = ("full_name",)
+
+
+@admin.register(ProgressEntry)
+class ProgressEntryAdmin(admin.ModelAdmin):
+    list_display = ("student", "checkpoint", "score", "skill", "created_at")
+    list_filter = ("checkpoint", "skill")
+    search_fields = ("student__full_name", "comment")
+    readonly_fields = ("created_at",)
