@@ -309,3 +309,30 @@ class TeacherDirectoryTests(TestCase):
         )
         response = self.client.get(reverse("step:admin-teacher-detail", args=[educator.pk]))
         self.assertContains(response, "late")
+
+
+class ActionQueueLinkTests(TestCase):
+    def setUp(self):
+        call_command("seed_roles", stdout=StringIO())
+        user = get_user_model().objects.create_user("admin1", password="pw")
+        roles.assign(user, constants.ROLE_ADMIN)
+        self.client.login(username="admin1", password="pw")
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        self.type = ObligationType.objects.create(
+            name_template="Monthly Report", category=constants.CATEGORY_MONTHLY_REPORTING,
+            cadence=constants.CADENCE_MONTHLY, evidence_spec=constants.EVIDENCE_NONE,
+        )
+        Obligation.objects.create(
+            type=self.type,
+            educator=Educator.objects.create(full_name="Teacher One", region=self.region),
+            period_kind=constants.PERIOD_MONTH, period_start=date(2026, 5, 1),
+            due_date=date(2026, 5, 27),
+        )
+
+    def test_the_dashboards_outstanding_link_lands_on_a_directory_that_shows_that_teacher(self):
+        dashboard = self.client.get(reverse("step:admin-dashboard") + "?period=2026-05")
+        self.assertContains(dashboard, "status=outstanding&period=2026-05")
+        directory = self.client.get(
+            reverse("step:admin-teachers") + "?status=outstanding&period=2026-05"
+        )
+        self.assertContains(directory, "Teacher One")
