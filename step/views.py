@@ -44,6 +44,9 @@ def _chrome(educator) -> dict:
     return {
         "educator": educator,
         "file_ref": presentation.file_reference(educator),
+        # The rail renders the category filters on every page, so this cannot
+        # live only in the dashboard's context.
+        "categories": constants.CATEGORY_CHOICES,
         "returned_count": educator.obligations.filter(
             status=constants.STATUS_RETURNED
         ).count(),
@@ -88,7 +91,6 @@ def dashboard(request):
         "next_item": presentation.decorate(next_obligation, today) if next_obligation else None,
         "tiles": urgency.teacher_tiles(educator, today=today),
         "this_month": today.strftime("%B %Y"),
-        "categories": constants.CATEGORY_CHOICES,
         "active_category": active_category,
         "deadlines": deadlines,
         "academic_year": year,

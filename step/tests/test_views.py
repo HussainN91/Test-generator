@@ -90,6 +90,46 @@ class EducatorScreenTests(TestCase):
         self.assertEqual(len(response.context["items"]), 1)
         self.assertEqual(response.context["active_category"], "eca")
 
+    def test_the_rail_marks_the_open_category_as_current(self):
+        """The highlight must follow the filter.
+
+        An earlier rail marked "All obligations" current for the whole section
+        and gave the category links no aria-current at all, so the marker never
+        moved when you opened a section.
+        """
+        self.make(self.eca, 4)
+        body = self.client.get(reverse("step:dashboard"), {"category": "eca"}).content.decode()
+
+        self.assertRegex(body, r'href="/step/\?category=eca"\s+aria-current="page"')
+        # ...and "All obligations" must have surrendered it.
+        self.assertNotRegex(body, r'href="/step/"\s+aria-current="page"')
+
+    def test_the_rail_marks_all_obligations_current_when_unfiltered(self):
+        self.make(self.eca, 4)
+        body = self.client.get(reverse("step:dashboard")).content.decode()
+        self.assertRegex(body, r'href="/step/"\s+aria-current="page"')
+
+    def test_exactly_one_rail_link_is_current_at_a_time(self):
+        self.make(self.monthly, 3)
+        for query in [{}, {"category": "eca"}, {"category": "monthly_reporting"}]:
+            body = self.client.get(reverse("step:dashboard"), query).content.decode()
+            self.assertEqual(
+                body.count('aria-current="page"'), 1,
+                f"expected one current rail link for {query}",
+            )
+
+    def test_the_rail_offers_every_category(self):
+        """Generated from the same list as the tabs, so the two cannot drift."""
+        body = self.client.get(reverse("step:dashboard")).content.decode()
+        for key, _label in constants.CATEGORY_CHOICES:
+            self.assertIn(f'href="/step/?category={key}"', body)
+
+    def test_the_rail_renders_on_pages_other_than_the_dashboard(self):
+        """The rail needs `categories` everywhere, not just on the dashboard."""
+        for name in ["step:submissions", "step:feedback"]:
+            body = self.client.get(reverse(name)).content.decode()
+            self.assertIn('href="/step/?category=eca"', body, f"rail incomplete on {name}")
+
     def test_an_unknown_category_is_ignored_rather_than_erroring(self):
         self.make(self.monthly, 3)
         response = self.client.get(reverse("step:dashboard"), {"category": "wizardry"})

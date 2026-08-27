@@ -49,16 +49,23 @@
 
   <nav class="rail" aria-label="Sections">
     <div class="rail__heading">Academic work</div>
-    <a class="rail__link" href="{% url 'step:dashboard' %}" {% if nav == 'work' %}aria-current="page"{% endif %}>All obligations</a>
+    {% comment %}
+      "All obligations" is only current when no filter is applied. Marking it
+      current for the whole section — which an earlier version did — left the
+      highlight stuck there no matter which category you opened.
+    {% endcomment %}
+    <a class="rail__link" href="{% url 'step:dashboard' %}"
+       {% if nav == 'work' and not active_category %}aria-current="page"{% endif %}>All obligations</a>
+
     {% comment %}
       Filters over the one register the teacher already understands, not five
-      separate places to learn.
+      separate places to learn. Generated from the same list that drives the
+      tabs, so the two can never disagree about what exists or what it is called.
     {% endcomment %}
-    <a class="rail__link" href="{% url 'step:dashboard' %}?category=monthly_reporting">Monthly reporting</a>
-    <a class="rail__link" href="{% url 'step:dashboard' %}?category=cpd_online">CPD online</a>
-    <a class="rail__link" href="{% url 'step:dashboard' %}?category=cpd_offline">CPD offline</a>
-    <a class="rail__link" href="{% url 'step:dashboard' %}?category=eca">ECA programme</a>
-    <a class="rail__link" href="{% url 'step:dashboard' %}?category=assessments">Assessments</a>
+    {% for key, label in categories %}
+    <a class="rail__link" href="{% url 'step:dashboard' %}?category={{ key }}"
+       {% if nav == 'work' and active_category == key %}aria-current="page"{% endif %}>{{ label }}</a>
+    {% endfor %}
 
     <div class="rail__heading">Evidence</div>
     <a class="rail__link" href="{% url 'step:submissions' %}" {% if nav == 'submissions' %}aria-current="page"{% endif %}>What I have sent</a>
