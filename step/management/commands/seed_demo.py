@@ -102,37 +102,57 @@ class Command(BaseCommand):
             )
 
         # --- The obligation catalogue, as drawn in the client mockup -----
+        # The three checkpoint types supersede the two generic "assessments"
+        # entries below them from an earlier draft (classes/gradebook spec,
+        # "supersedes §9") — see the cleanup right after this loop.
         catalogue = [
             ("Monthly Report", constants.CATEGORY_MONTHLY_REPORTING, constants.CADENCE_MONTHLY,
              constants.EVIDENCE_FILE, True,
-             "Your monthly report, with the page your director signed and stamped."),
+             "Your monthly report, with the page your director signed and stamped.", ""),
             ("CPD Online - Classroom Management", constants.CATEGORY_CPD_ONLINE, constants.CADENCE_TERMLY,
              constants.EVIDENCE_EITHER, False,
-             "Finish the online course and send the certificate."),
+             "Finish the online course and send the certificate.", ""),
             ("ECA Programme Plan - {period}", constants.CATEGORY_ECA, constants.CADENCE_TERMLY,
              constants.EVIDENCE_LINK, True,
-             "Your plan for this term's extra-curricular activity."),
-            ("Assessment Administration - {period}", constants.CATEGORY_ASSESSMENTS, constants.CADENCE_TERMLY,
-             constants.EVIDENCE_EITHER, False,
-             "Run the diagnostic papers with your classes."),
-            ("Assessment Scoring & Submission - {period}", constants.CATEGORY_ASSESSMENTS, constants.CADENCE_TERMLY,
-             constants.EVIDENCE_EITHER, True,
-             "Mark the papers and send the scores."),
+             "Your plan for this term's extra-curricular activity.", ""),
+            ("Beginning-of-year diagnostic", constants.CATEGORY_ASSESSMENTS, constants.CADENCE_ANNUAL,
+             constants.EVIDENCE_NONE, False,
+             "Score every student in the class on the beginning-of-year diagnostic.",
+             constants.FORM_SLUG_ASSESSMENT_CHECKPOINT),
+            ("Mid-year diagnostic", constants.CATEGORY_ASSESSMENTS, constants.CADENCE_ANNUAL,
+             constants.EVIDENCE_NONE, False,
+             "Score every student in the class on the mid-year diagnostic.",
+             constants.FORM_SLUG_ASSESSMENT_CHECKPOINT),
+            ("End-of-year diagnostic", constants.CATEGORY_ASSESSMENTS, constants.CADENCE_ANNUAL,
+             constants.EVIDENCE_NONE, False,
+             "Score every student in the class on the end-of-year diagnostic.",
+             constants.FORM_SLUG_ASSESSMENT_CHECKPOINT),
             ("Update Class Data & Targets", constants.CATEGORY_OTHER, constants.CADENCE_TERMLY,
              constants.EVIDENCE_LINK, False,
-             "Check your class list and targets are up to date."),
+             "Check your class list and targets are up to date.", ""),
         ]
 
         types = []
-        for template, category, cadence, spec, review, description in catalogue:
+        for template, category, cadence, spec, review, description, form_slug in catalogue:
             obligation_type, _ = ObligationType.objects.update_or_create(
                 name_template=template,
                 defaults={
                     "category": category, "cadence": cadence, "evidence_spec": spec,
                     "requires_review": review, "description": description, "is_active": True,
+                    "form_slug": form_slug,
                 },
             )
             types.append(obligation_type)
+
+        # A re-run against a database seeded by an older version of this
+        # command must actually remove the two types this catalogue replaced,
+        # not just stop touching them.
+        ObligationType.objects.filter(
+            name_template__in=[
+                "Assessment Administration - {period}",
+                "Assessment Scoring & Submission - {period}",
+            ]
+        ).delete()
 
         # --- The obligations, spread around today ------------------------
         if options["reset"]:
@@ -141,13 +161,19 @@ class Command(BaseCommand):
         # (type index, days from today, already accepted?)
         # A monthly report's period is the month it is due in, matching the
         # client mockup's "Monthly Report - May 2025, due 27 May 2025".
+        #
+        # The three checkpoint types (catalogue indices 3-5) are deliberately
+        # not spread here: they are per-class, not per-educator (classes/
+        # gradebook spec, "Generation"), and this command creates no demo
+        # TeachingClass. A checkpoint Obligation with no teaching_class would
+        # misrepresent the feature and crash its bespoke form. Demonstrating
+        # them means running `generate_obligations --checkpoints` against a
+        # real TeachingClass, not this per-educator spread.
         spread = [
             (0, -4,  False),   # Monthly Report — late
             (1, +2,  False),   # CPD Online — due soon
             (2, +5,  False),   # ECA plan — due soon
-            (3, +9,  False),   # Assessment admin — scheduled
-            (4, +21, False),   # Assessment scoring — scheduled
-            (5, +30, False),   # Class data — scheduled
+            (6, +30, False),   # Class data — scheduled
             (0, -32, True),    # last month's report — accepted
             (0, -63, True),    # and the one before
         ]
