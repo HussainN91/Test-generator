@@ -724,7 +724,9 @@ a:hover { text-decoration-thickness: 2px; }
    (spine spec §5.10). Presented unlabelled they read as verified assessment.
    This is a correctness requirement, not a caption. */
 .chart--selfreported .chart__note::before {
-  content: "Self-reported \2014 ";
+  /* Non-breaking space, not a plain one: a trailing space in `content` gets
+     collapsed and the label runs straight into the caption. */
+  content: "Self-reported \2014\00a0";
   font-weight: 700; color: var(--ink-soft);
 }
 
