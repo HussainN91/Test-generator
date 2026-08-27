@@ -70,6 +70,10 @@ requires a code change, S1 is wrong.
 3. **Slice 3 — Assessments.** S5. Merging `diagnostics` in.
 4. **Later.** S8, and any further verticals, which should be configuration.
 
+**Revised 2026-08-27:** Assessments (slice 3) is brought forward ahead of Monthly
+Reporting, at the user's explicit request — see §9, superseded by
+`docs/superpowers/specs/2026-08-27-step-classes-gradebook-design.md`.
+
 ---
 
 ## 3. Slice 1 boundary
@@ -485,11 +489,18 @@ backend, ready to be swapped.
 
 ## 9. Merge path for `diagnostics` (slice 3, recorded now)
 
+**Superseded 2026-08-27** by
+`docs/superpowers/specs/2026-08-27-step-classes-gradebook-design.md`, at the user's request —
+the two-per-term-obligation shape below turned out not to match what the user actually needed
+(a per-class BOY/MOY/EOY gradebook with student-level grades, comments and progress notes, not
+just scores-as-evidence). Kept here for history; the new spec is authoritative for the
+Assessments vertical's shape and for the cross-import rule.
+
 `diagnostics` was deliberately built decoupled for this moment: it uses
 `settings.AUTH_USER_MODEL` rather than a concrete user, imports nothing from `content`, `bank`
 or `assembly`, and puts teacher-to-grade resolution behind a swappable resolver.
 
-At slice 3:
+At slice 3 (original plan, superseded):
 
 - `TeacherGradeAssignment` is replaced by a resolver reading STEP's Educator-to-school-to-class
   assignment.
@@ -501,7 +512,9 @@ At slice 3:
 - `diagnostics` screens are rethemed to the STEP system.
 
 Nothing in slice 1 may import from `diagnostics`, and nothing in `diagnostics` may import from
-STEP's spine, until that slice.
+STEP's spine, until that slice. **This still holds direction-for-direction** — the new spec's
+one permitted exception is `diagnostics` reading STEP's `TeachingClass` table read-only, recorded
+explicitly there rather than as a silent violation of this rule.
 
 ---
 

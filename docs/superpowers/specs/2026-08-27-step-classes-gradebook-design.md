@@ -7,6 +7,14 @@ Owner: this session. Coordinate with `test-generator-16` (owns
 `static/css/step.css`) before editing any file on that list — see
 "Sequencing" at the end.
 
+**This supersedes §9 of `2026-08-26-step-platform-spine-design.md`.** That
+document scoped Assessments as slice 3 (after Monthly Reporting, slice 2)
+with a different shape — two per-term obligations, scores attached as
+generic evidence, no student-level model. The user has explicitly chosen to
+bring Assessments forward ahead of Monthly Reporting and to replace that
+shape with the one below. §9 has been annotated to point here rather than
+rewritten, so the original reasoning stays on record.
+
 ## Problem
 
 Nothing in the codebase lets a teacher record their own classes, students,
