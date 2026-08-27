@@ -1,0 +1,62 @@
+{% extends "step/base.html" %}
+
+{% block title %}Create a class — STEP{% endblock %}
+
+{% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'step:class_list' %}">My classes</a><span>/</span>Create a class
+</nav>
+
+<div class="head">
+  <h1>Create a class</h1>
+</div>
+
+<div class="columns">
+  <div>
+    <section class="block" aria-labelledby="create-h">
+      <h2 class="block__title" id="create-h">Which class is this</h2>
+      <div class="block__body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          <div class="field">
+            <span class="field__label" id="grade-h">Grade</span>
+            <div role="radiogroup" aria-labelledby="grade-h">
+              {% for value in grades %}
+              <label class="choice">
+                <input type="radio" name="grade" value="{{ value }}" {% if form.grade == value|stringformat:"s" %}checked{% endif %}>
+                <span class="choice__text">Grade <span class="num">{{ value }}</span></span>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field__label" id="slot-h">Class number</span>
+            <p class="field__hint">Matches the class pack number diagnostics already uses for this grade.</p>
+            <div role="radiogroup" aria-labelledby="slot-h">
+              {% for value in slots %}
+              <label class="choice">
+                <input type="radio" name="slot" value="{{ value }}" {% if form.slot == value|stringformat:"s" %}checked{% endif %}>
+                <span class="choice__text">Class <span class="num">{{ value }}</span></span>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="display_name">What you call this class</label>
+            <p class="field__hint">For example, 9B.</p>
+            <input class="input" type="text" id="display_name" name="display_name" value="{{ form.display_name|default:'' }}">
+          </div>
+
+          <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px">
+            <button class="btn btn--primary btn--lg" type="submit">Create the class</button>
+            <a class="btn btn--quiet" href="{% url 'step:class_list' %}">Back without creating</a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

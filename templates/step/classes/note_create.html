@@ -1,0 +1,44 @@
+{% extends "step/base.html" %}
+
+{% block title %}Add a note — {{ student.full_name }} — STEP{% endblock %}
+
+{% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'step:class_list' %}">My classes</a><span>/</span>
+  <a href="{% url 'step:student_detail' student.pk %}">{{ student.full_name }}</a><span>/</span>Add a note
+</nav>
+
+<div class="head"><h1>Add a note</h1></div>
+
+<div class="columns">
+  <div>
+    <section class="block" aria-labelledby="note-h">
+      <h2 class="block__title" id="note-h">What do you want to note</h2>
+      <div class="block__body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="field">
+            <span class="field__label" id="skill-h">Skill (optional)</span>
+            <div role="radiogroup" aria-labelledby="skill-h">
+              {% for value, label in skills %}
+              <label class="choice">
+                <input type="radio" name="skill" value="{{ value }}">
+                <span class="choice__text">{{ label }}</span>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="field">
+            <label class="field__label" for="comment">Note</label>
+            <textarea class="textarea" id="comment" name="comment"></textarea>
+          </div>
+          <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px">
+            <button class="btn btn--primary btn--lg" type="submit">Save the note</button>
+            <a class="btn btn--quiet" href="{% url 'step:student_detail' student.pk %}">Back without saving</a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

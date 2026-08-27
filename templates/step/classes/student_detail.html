@@ -1,0 +1,43 @@
+{% extends "step/base.html" %}
+
+{% block title %}{{ student.full_name }} — STEP{% endblock %}
+
+{% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'step:class_list' %}">My classes</a><span>/</span>
+  <a href="{% url 'step:class_detail' student.teaching_class.pk %}">{{ student.teaching_class.display_name }}</a><span>/</span>{{ student.full_name }}
+</nav>
+
+<div class="head"><h1>{{ student.full_name }}</h1></div>
+
+<div class="columns">
+  <div>
+    <section class="block" aria-labelledby="history-h">
+      <h2 class="block__title" id="history-h">History</h2>
+      <div class="block__body">
+        {% if entries %}
+        <ul class="filed">
+          {% for entry in entries %}
+          <li>
+            <div class="filed__what">
+              {% if entry.checkpoint %}{{ entry.get_checkpoint_display }}{% else %}Note{% endif %}
+              {% if entry.skill %} &middot; {{ entry.get_skill_display }}{% endif %}
+              {% if entry.score is not None %} &middot; <span class="num">{{ entry.score }}</span>{% endif %}
+            </div>
+            <div class="filed__when">{{ entry.created_at|date:"j F Y" }}</div>
+            {% if entry.grammar_point %}<p style="margin:4px 0 0; font-size:13.5px">{{ entry.grammar_point.name }}</p>{% endif %}
+            {% if entry.comment %}<p style="margin:4px 0 0; font-size:14px">{{ entry.comment }}</p>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>No entries yet.</p>
+        {% endif %}
+        <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
+          <a class="btn btn--primary" href="{% url 'step:note_create' student.pk %}">Add a note</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

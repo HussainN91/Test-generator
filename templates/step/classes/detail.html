@@ -1,0 +1,59 @@
+{% extends "step/base.html" %}
+
+{% block title %}{{ teaching_class.display_name }} — STEP{% endblock %}
+
+{% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'step:class_list' %}">My classes</a><span>/</span>{{ teaching_class.display_name }}
+</nav>
+
+<div class="head">
+  <h1>{{ teaching_class.display_name }}</h1>
+  <p>Grade {{ teaching_class.grade }}</p>
+</div>
+
+<div class="columns">
+  <div>
+    <section class="block" aria-labelledby="roster-h">
+      <h2 class="block__title" id="roster-h">Roster</h2>
+      <div class="block__body">
+        {% if students %}
+        <ul class="filed">
+          {% for student in students %}
+          <li>
+            <div class="filed__what"><a href="{% url 'step:student_detail' student.pk %}">{{ student.full_name }}</a></div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>No students yet.</p>
+        {% endif %}
+        <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
+          <a class="btn btn--primary" href="{% url 'step:student_create' teaching_class.pk %}">Add a student</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div>
+    <section class="block" aria-labelledby="checkpoints-h">
+      <h2 class="block__title" id="checkpoints-h">Checkpoints</h2>
+      <div class="block__body" style="font-size:14.5px">
+        {% for row in checkpoints %}
+        <p style="margin-bottom:11px">
+          <strong>{{ row.label }}</strong><br>
+          {% if row.obligation and row.obligation.status == 'accepted' %}
+          <span class="impression impression--seal">Complete</span>
+          {% else %}
+          <span class="num">{{ row.done }}</span> of <span class="num">{{ row.total }}</span> scored
+          {% if row.obligation %}
+          &middot; <a href="{% url 'step:obligation' row.obligation.pk %}">Score it</a>
+          {% endif %}
+          {% endif %}
+        </p>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

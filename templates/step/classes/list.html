@@ -1,0 +1,37 @@
+{% extends "step/base.html" %}
+
+{% block title %}My classes — STEP{% endblock %}
+
+{% block content %}
+<div class="head">
+  <h1>My classes</h1>
+</div>
+
+<div class="columns">
+  <div>
+    <section class="block" aria-labelledby="classes-h">
+      <h2 class="block__title" id="classes-h">Your classes</h2>
+      <div class="block__body">
+        {% if classes %}
+        <ul class="filed">
+          {% for teaching_class in classes %}
+          <li>
+            <div class="filed__what">
+              <a href="{% url 'step:class_detail' teaching_class.pk %}">{{ teaching_class.display_name }}</a>
+            </div>
+            <div class="filed__when">Grade {{ teaching_class.grade }} &middot; {{ teaching_class.students.count }} student{{ teaching_class.students.count|pluralize }}</div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>You have not added a class yet.</p>
+        {% endif %}
+
+        <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
+          <a class="btn btn--primary btn--lg" href="{% url 'step:class_create' %}">Add a class</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

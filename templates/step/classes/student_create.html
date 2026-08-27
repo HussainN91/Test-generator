@@ -1,0 +1,33 @@
+{% extends "step/base.html" %}
+
+{% block title %}Add a student — {{ teaching_class.display_name }} — STEP{% endblock %}
+
+{% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'step:class_list' %}">My classes</a><span>/</span>
+  <a href="{% url 'step:class_detail' teaching_class.pk %}">{{ teaching_class.display_name }}</a><span>/</span>Add a student
+</nav>
+
+<div class="head"><h1>Add a student</h1></div>
+
+<div class="columns">
+  <div>
+    <section class="block" aria-labelledby="add-student-h">
+      <h2 class="block__title" id="add-student-h">Student's name</h2>
+      <div class="block__body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="field">
+            <label class="field__label" for="full_name">Full name</label>
+            <input class="input" type="text" id="full_name" name="full_name" autofocus>
+          </div>
+          <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px">
+            <button class="btn btn--primary btn--lg" type="submit">Add the student</button>
+            <a class="btn btn--quiet" href="{% url 'step:class_detail' teaching_class.pk %}">Back without adding</a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}
