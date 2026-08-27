@@ -13,7 +13,7 @@ from datetime import date
 from django.db import transaction
 
 from step import constants, scheduling
-from step.models import Educator, Obligation, ObligationType
+from step.models import Educator, Obligation, ObligationType, TeachingClass
 
 
 def eligible_educators():
@@ -69,4 +69,30 @@ def generate_for_term(term) -> int:
         created += _create_missing(
             obligation_type, constants.PERIOD_TERM, term.start, due, label=term.name
         )
+    return created
+
+
+@transaction.atomic
+def generate_checkpoint_obligations(year) -> int:
+    """Create this year's beginning/mid/end-of-year diagnostic obligations.
+
+    One per TeachingClass, not per educator: a teacher with two classes owes
+    two checkpoints, because each class has its own roster and its own
+    completion state (classes/gradebook spec, "Generation").
+    """
+    created = 0
+    for obligation_type in ObligationType.objects.filter(
+        is_active=True, form_slug=constants.FORM_SLUG_ASSESSMENT_CHECKPOINT
+    ):
+        due = scheduling.due_date_for(obligation_type.due_rule, year.start, year.end)
+        for teaching_class in TeachingClass.objects.select_related("educator"):
+            _, made = Obligation.objects.get_or_create(
+                type=obligation_type,
+                educator=teaching_class.educator,
+                teaching_class=teaching_class,
+                period_start=year.start,
+                defaults={"period_kind": constants.PERIOD_YEAR, "due_date": due},
+            )
+            if made:
+                created += 1
     return created

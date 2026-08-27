@@ -14,9 +14,14 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--month", help='Month to generate, as YYYY-MM. Defaults to today.')
         parser.add_argument("--term", help="Term name within the current academic year.")
+        parser.add_argument(
+            "--checkpoints", action="store_true",
+            help="Also generate this year's beginning/mid/end-of-year diagnostic obligations.",
+        )
 
     def handle(self, *args, **options):
         total = 0
+        current = None  # resolved lazily so --month-only runs don't need a current year
 
         raw_month = options.get("month")
         if raw_month:
@@ -39,5 +44,11 @@ class Command(BaseCommand):
             if term is None:
                 raise CommandError(f"No term named {term_name!r} in {current.label}.")
             total += generation.generate_for_term(term)
+
+        if options.get("checkpoints"):
+            current = current or AcademicYear.objects.filter(is_current=True).first()
+            if current is None:
+                raise CommandError("No academic year is marked current.")
+            total += generation.generate_checkpoint_obligations(current)
 
         self.stdout.write(self.style.SUCCESS(f"Created {total} obligations."))
