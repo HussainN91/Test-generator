@@ -17,4 +17,8 @@ urlpatterns = [
     path("feedback/", views.feedback, name="feedback"),
 ]
 
-urlpatterns += [path("admin/", include("step.admin_urls"))]
+
+# admin_urls.py's own patterns already carry the "admin/" prefix (spec: the
+# admin screens live at /step/admin/, /step/admin/review/, /step/admin/teachers/),
+# so this include is unprefixed to avoid doubling it to /step/admin/admin/.
+urlpatterns += [path("", include("step.admin_urls"))]

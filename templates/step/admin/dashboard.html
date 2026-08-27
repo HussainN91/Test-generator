@@ -2,4 +2,43 @@
 {% block title %}Overview — STEP Administration{% endblock %}
 {% block content %}
 <h1>Overview</h1>
+
+<div class="block">
+  {% if outstanding_count %}
+  <p class="entry__title">
+    <a href="{% url 'step:admin-teachers' %}?status=outstanding&period={{ period|date:'Y-m' }}">
+      {{ outstanding_count }} teacher{{ outstanding_count|pluralize }} have not submitted for {{ period|date:"F Y" }}
+    </a>
+  </p>
+  {% endif %}
+  {% if review_count %}
+  <p class="entry__title">
+    <a href="{% url 'step:admin-review-queue' %}">
+      {{ review_count }} submission{{ review_count|pluralize }} waiting for your review
+    </a>
+  </p>
+  {% endif %}
+  {% if not outstanding_count and not review_count %}
+  <p>Nothing is waiting on you right now.</p>
+  {% endif %}
+</div>
+
+<div class="record">
+  <div class="record__cell">
+    <div class="record__value">{{ headline.submitted_percent }}%</div>
+    <div class="label">Submitted</div>
+  </div>
+  <div class="record__cell">
+    <div class="record__value">{{ headline.pending }}</div>
+    <div class="label">Pending</div>
+  </div>
+  <div class="record__cell">
+    <div class="record__value">{{ headline.not_started }}</div>
+    <div class="label">Not started</div>
+  </div>
+  <div class="record__cell">
+    <div class="record__value">{{ headline.total }}</div>
+    <div class="label">Total for {{ period|date:"F Y" }}</div>
+  </div>
+</div>
 {% endblock %}
