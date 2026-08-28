@@ -7,6 +7,7 @@ from step.models.activities import (
     Session,
     SessionAttendance,
 )
+from step.models.announcements import Announcement, AnnouncementResponse
 from step.models.classes import ProgressEntry, Student, TeachingClass
 from step.models.geography import District, Region
 from step.models.roster import (
@@ -27,6 +28,8 @@ __all__ = [
     "ActivityParticipant",
     "ActivityPlan",
     "AliasMapping",
+    "Announcement",
+    "AnnouncementResponse",
     "District",
     "Educator",
     "Evidence",
