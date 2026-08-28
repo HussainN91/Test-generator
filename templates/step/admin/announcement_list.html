@@ -1,0 +1,29 @@
+{% extends "step/base_admin.html" %}
+{% block title %}Announcements — STEP Administration{% endblock %}
+{% block content %}
+<h1>Announcements</h1>
+
+{% if can_publish %}
+<p><a class="btn btn--primary" href="{% url 'step:admin-announcement-new' %}">New announcement</a></p>
+{% endif %}
+
+<div class="register">
+  {% for row in rows %}
+  <div class="entry">
+    <div class="entry__main">
+      <div class="entry__title">{{ row.announcement.title }}</div>
+      <div class="entry__cat">
+        {{ row.announcement.published_at|date:"j F Y" }}{% if not row.announcement.is_active %} &middot; inactive{% endif %}
+      </div>
+      {% if row.announcement.requires_response %}
+      <p>{{ row.attending }} attending &middot; {{ row.not_attending }} not attending &middot; {{ row.not_answered }} not yet answered</p>
+      {% else %}
+      <p class="chart__note">News only &mdash; no response needed.</p>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <p>No announcements yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

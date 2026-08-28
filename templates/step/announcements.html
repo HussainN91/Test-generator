@@ -1,0 +1,113 @@
+{% extends "step/base.html" %}
+
+{% block title %}Announcements — STEP{% endblock %}
+
+{% block content %}
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'step:dashboard' %}">Register</a><span>/</span>Announcements
+</nav>
+
+<div class="head">
+  <h1>Announcements</h1>
+  <p>CPD Online sessions are run by the Ministry. Nothing here is marked or sent for
+  checking &mdash; where you are asked, the whole answer is whether you will be there.</p>
+</div>
+
+{% if rows %}
+<div style="max-width:820px">
+  {% for row in rows %}
+  <section class="block" id="announcement-{{ row.announcement.pk }}"
+           aria-labelledby="ann-{{ row.announcement.pk }}-h">
+    <h2 class="block__title" id="ann-{{ row.announcement.pk }}-h">
+      {{ row.announcement.title }}
+      <span class="aside">
+        {% if row.announcement.requires_response %}
+          {% if row.response %}
+            <span class="mark mark--done">Answered</span>
+          {% elif row.closed %}
+            <span class="mark mark--scheduled">Closed</span>
+          {% else %}
+            <span class="mark mark--due_soon">Needs your answer</span>
+          {% endif %}
+        {% endif %}
+      </span>
+    </h2>
+    <div class="block__body">
+      <p class="filed__when" style="margin-bottom:12px">
+        Announced {{ row.announcement.published_at|date:"j F Y" }}
+        {% if row.announcement.respond_by %}
+          &middot; answer by <span class="num">{{ row.announcement.respond_by|date:"j F Y" }}</span>
+        {% endif %}
+      </p>
+
+      <div style="max-width:var(--measure); white-space:pre-line">{{ row.announcement.body }}</div>
+
+      {% if row.announcement.requires_response %}
+        {% if row.closed %}
+          {% comment %}
+            Read-only once the date has passed. The view refuses the write too
+            &mdash; hiding the form is the courtesy, not the rule.
+          {% endcomment %}
+          <div class="note" style="margin-top:20px">
+            <strong>This is closed</strong>
+            {% if row.response %}
+              You said you will{% if not row.response.attending %} not{% endif %} attend.
+              That answer stands and can no longer be changed.
+            {% else %}
+              The date for answering passed on
+              {{ row.announcement.respond_by|date:"j F Y" }}, and no answer was recorded.
+            {% endif %}
+          </div>
+        {% else %}
+          <form method="post" action="{% url 'step:announcement_respond' row.announcement.pk %}"
+                style="margin-top:20px">
+            {% csrf_token %}
+            <div class="field">
+              <span class="field__label" id="rsvp-{{ row.announcement.pk }}-h">Will you attend?</span>
+              <p class="field__hint">
+                {% if row.response %}
+                  You said you will{% if not row.response.attending %} not{% endif %} attend.
+                  You can change this until
+                  {% if row.announcement.respond_by %}{{ row.announcement.respond_by|date:"j F Y" }}{% else %}the session{% endif %}.
+                {% else %}
+                  You have not answered this yet.
+                {% endif %}
+              </p>
+              <div role="radiogroup" aria-labelledby="rsvp-{{ row.announcement.pk }}-h">
+                <label class="choice">
+                  <input type="radio" name="attending" value="yes"
+                         {% if row.response and row.response.attending %}checked{% endif %}>
+                  <span class="choice__text">I will attend</span>
+                </label>
+                <label class="choice">
+                  <input type="radio" name="attending" value="no"
+                         {% if row.response and not row.response.attending %}checked{% endif %}>
+                  <span class="choice__text">I will not attend</span>
+                </label>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn btn--primary" type="submit">
+                {% if row.response %}Change my answer{% else %}Send my answer{% endif %}
+              </button>
+              <span class="quiet" style="font-size:14px">Only you see your answer here.</span>
+            </div>
+          </form>
+        {% endif %}
+      {% endif %}
+    </div>
+  </section>
+  {% endfor %}
+</div>
+{% else %}
+<section class="block">
+  <div class="empty">
+    <p class="empty__title">Nothing announced</p>
+    <p>When the Ministry announces a CPD Online session, it will appear here and on
+    <a href="{% url 'step:dashboard' %}">your Academic work page</a>.</p>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

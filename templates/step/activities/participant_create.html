@@ -1,0 +1,89 @@
+{% extends "step/base.html" %}
+
+{% block title %}Add participants — {{ activity.title }} — STEP{% endblock %}
+
+{% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'step:activity_list' %}">My activities</a><span>/</span>
+  <a href="{% url 'step:activity_detail' activity.pk %}">{{ activity.title }}</a><span>/</span>Add participants
+</nav>
+
+<div class="head">
+  <h1>Add participants</h1>
+  <p>{{ activity.title }} &middot; {{ activity.get_kind_display }}</p>
+</div>
+
+<div class="columns">
+  <div>
+    {% if needs_school %}
+    <section class="block">
+      <div class="block__body">
+        <div class="note note--warn">
+          <strong>No school set</strong>
+          <p style="margin:0">
+            This CPD Offline activity has no school yet, so there is no shared staff list to add from.
+            Set a school on the activity first.
+          </p>
+        </div>
+      </div>
+    </section>
+    {% else %}
+    <section class="block" aria-labelledby="add-h">
+      <h2 class="block__title" id="add-h">Who takes part</h2>
+      <div class="block__body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          {% if activity.kind == 'eca' %}
+          {% if classes %}
+          <div class="field">
+            <label class="field__label" for="from_class">Pull in a whole class</label>
+            <p class="field__hint">Every current student in the class you pick is added. Anyone already on this roster is skipped.</p>
+            <select id="from_class" name="from_class">
+              <option value="">&mdash; Don't pull in a class &mdash;</option>
+              {% for teaching_class in classes %}
+              <option value="{{ teaching_class.pk }}">{{ teaching_class.display_name }} ({{ teaching_class.students.count }} student{{ teaching_class.students.count|pluralize }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+
+          <div class="field">
+            <label class="field__label" for="full_name">Or add one more by name</label>
+            <input class="input" type="text" id="full_name" name="full_name" autocomplete="off">
+          </div>
+
+          {% else %}
+          {% if staff_choices %}
+          <div class="field">
+            <span class="field__label" id="staff-h">Add from this school's staff list</span>
+            <p class="field__hint">Shared with every teacher at this school &mdash; anyone added here is offered again next time.</p>
+            <div role="group" aria-labelledby="staff-h">
+              {% for staff in staff_choices %}
+              <label class="choice">
+                <input type="checkbox" name="staff" value="{{ staff.pk }}">
+                <span class="choice__text">{{ staff.full_name }}</span>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="field">
+            <label class="field__label" for="full_name">Or add someone new</label>
+            <p class="field__hint">Added to this school's shared staff list, and to this activity's roster.</p>
+            <input class="input" type="text" id="full_name" name="full_name" autocomplete="off">
+          </div>
+          {% endif %}
+
+          <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px">
+            <button class="btn btn--primary btn--lg" type="submit">Add</button>
+            <a class="btn btn--quiet" href="{% url 'step:activity_detail' activity.pk %}">Back without adding</a>
+          </div>
+        </form>
+      </div>
+    </section>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

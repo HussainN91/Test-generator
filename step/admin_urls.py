@@ -21,4 +21,6 @@ urlpatterns = [
     path("manage/review/<int:pk>/", admin_views.review_detail, name="admin-review-detail"),
     path("manage/teachers/", admin_views.teacher_directory, name="admin-teachers"),
     path("manage/teachers/<int:pk>/", admin_views.teacher_detail, name="admin-teacher-detail"),
+    path("manage/announcements/", admin_views.announcement_list, name="admin-announcements"),
+    path("manage/announcements/new/", admin_views.announcement_create, name="admin-announcement-new"),
 ]

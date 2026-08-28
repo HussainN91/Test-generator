@@ -15,7 +15,14 @@ urlpatterns = [
     path("work/<int:pk>/", views.obligation, name="obligation"),
     path("submissions/", views.submissions, name="submissions"),
     path("feedback/", views.feedback, name="feedback"),
+    path("announcements/", views.announcements, name="announcements"),
+    path(
+        "announcements/<int:pk>/respond/",
+        views.announcement_respond,
+        name="announcement_respond",
+    ),
     path("classes/", include("step.classes_urls")),
+    path("activities/", include("step.activities_urls")),
 ]
 
 

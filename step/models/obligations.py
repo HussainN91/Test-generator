@@ -12,6 +12,7 @@ Status is stored. Urgency is not — see `step/urgency.py` and spec §5.3.
 from django.db import models
 
 from step import constants
+from step.models.activities import Activity
 from step.models.classes import TeachingClass
 from step.models.roster import Educator
 from step.scheduling import period_end as _period_end
@@ -102,6 +103,9 @@ class Obligation(models.Model):
     teaching_class = models.ForeignKey(
         TeachingClass, null=True, blank=True, on_delete=models.CASCADE, related_name="obligations"
     )
+    activity = models.ForeignKey(
+        Activity, null=True, blank=True, on_delete=models.CASCADE, related_name="obligations"
+    )
 
     period_kind = models.CharField(max_length=16, choices=constants.PERIOD_KIND_CHOICES)
     period_start = models.DateField()
@@ -129,16 +133,26 @@ class Obligation(models.Model):
             # (type, educator, period_start) guarantee for every ordinary
             # obligation (teaching_class always NULL) — the exact case
             # step/generation.py's idempotency docstring relies on. Each half
-            # keeps its own guarantee intact.
+            # keeps its own guarantee intact. `activity` joins the same split
+            # for the same reason, one level over: an activity-linked
+            # obligation (e.g. an ECA plan) must not collide with the
+            # no-class/no-activity or per-class guarantees below, so both of
+            # those now also require no activity, and a third constraint
+            # gives per-activity obligations their own guarantee.
             models.UniqueConstraint(
                 fields=["type", "educator", "period_start"],
-                condition=models.Q(teaching_class__isnull=True),
+                condition=models.Q(teaching_class__isnull=True, activity__isnull=True),
                 name="step_obligation_unique_per_period_no_class",
             ),
             models.UniqueConstraint(
                 fields=["type", "educator", "teaching_class", "period_start"],
-                condition=models.Q(teaching_class__isnull=False),
+                condition=models.Q(teaching_class__isnull=False, activity__isnull=True),
                 name="step_obligation_unique_per_period_per_class",
+            ),
+            models.UniqueConstraint(
+                fields=["type", "educator", "activity", "period_start"],
+                condition=models.Q(activity__isnull=False),
+                name="step_obligation_unique_per_period_per_activity",
             ),
         ]
         indexes = [

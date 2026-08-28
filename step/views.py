@@ -15,11 +15,14 @@ from datetime import date
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from step import constants, presentation, roles, urgency, workflow
-from step.models import AcademicYear, Educator, Obligation, ProgressEntry, Submission
+from step.models import (
+    AcademicYear, ActivityPlan, Announcement, AnnouncementResponse, Educator, Obligation,
+    ProgressEntry, Submission,
+)
 
 
 def _educator(request) -> Educator:
@@ -63,6 +66,37 @@ def _belongs_on_the_admin_side(request) -> bool:
         roles.is_staff_role(request.user)
         and not Educator.objects.filter(user=request.user).exists()
     )
+
+
+def _announcements_for(educator, today) -> list:
+    """Active announcements, each carrying *this* teacher's own answer.
+
+    Two queries whatever the count: one for the announcements, one for the
+    responses — never one lookup per announcement. `Meta.ordering` on
+    Announcement already puts the newest first, so nothing is re-sorted here.
+
+    There is no third state for "has not answered": `response` is simply
+    absent (fix step plan.md §5, and the AnnouncementResponse docstring).
+    Only announcements that ask for an answer can need one, and an
+    announcement is closed — read-only — once its `respond_by` has passed.
+    """
+    announcements = list(Announcement.objects.filter(is_active=True))
+    responses = {
+        response.announcement_id: response
+        for response in AnnouncementResponse.objects.filter(
+            educator=educator, announcement__in=announcements
+        )
+    }
+    rows = []
+    for announcement in announcements:
+        response = responses.get(announcement.pk)
+        rows.append({
+            "announcement": announcement,
+            "response": response,
+            "closed": announcement.responding_has_closed(today),
+            "needs_answer": announcement.requires_response and response is None,
+        })
+    return rows
 
 
 @login_required
@@ -121,6 +155,9 @@ def dashboard(request):
         "deadlines": deadlines,
         "academic_year": year,
         "terms": terms,
+        # Beside the diary, not in the docket: an announcement is news, not an
+        # obligation, and the docket answers "what do I owe" (UI contract §5.3).
+        "announcements": _announcements_for(educator, today),
     }
     context.update(_chrome(educator))
     return render(request, "step/dashboard.html", context)
@@ -133,13 +170,16 @@ def obligation(request, pk: int):
     today = date.today()
 
     obligation_obj = get_object_or_404(
-        Obligation.objects.select_related("type", "educator", "teaching_class"),
+        Obligation.objects.select_related("type", "educator", "teaching_class", "activity"),
         pk=pk,
         educator=educator,
     )
 
     if obligation_obj.type.form_slug == constants.FORM_SLUG_ASSESSMENT_CHECKPOINT:
         return _checkpoint_obligation(request, educator, obligation_obj, today)
+
+    if obligation_obj.type.form_slug == constants.FORM_SLUG_ECA_MONTHLY_PLAN:
+        return _eca_plan_obligation(request, educator, obligation_obj, today)
 
     if request.method == "POST":
         return _handle_submit(request, educator, obligation_obj)
@@ -281,6 +321,53 @@ def _checkpoint_obligation(request, educator, obligation_obj, today):
     return render(request, "step/obligation.html", context)
 
 
+def _eca_plan_obligation(request, educator, obligation_obj, today):
+    """The three-field monthly plan for an ECA activity.
+
+    No evidence, no Submission row (mirrors _checkpoint_obligation) — each
+    POST here writes directly to the ActivityPlan draft and asks
+    workflow.sync_activity_plan to settle the obligation once every field is
+    filled.
+
+    Autosaved as a draft on blur (see the script in obligation.html): those
+    requests carry a hidden `autosave=1` field so this view can tell them
+    apart from the real submit and skip the redirect/flash message, replying
+    with a bare 204 instead. The manual Save button is the one thing that
+    must work with JS off, so it always follows the normal
+    save-then-redirect path.
+    """
+    activity = obligation_obj.activity
+    plan, _created = ActivityPlan.objects.get_or_create(
+        activity=activity, period=obligation_obj.period_start
+    )
+
+    if request.method == "POST":
+        plan.overview = (request.POST.get("overview") or "").strip()
+        plan.session_outline = (request.POST.get("session_outline") or "").strip()
+        plan.intended_outcomes = (request.POST.get("intended_outcomes") or "").strip()
+        plan.save()
+        workflow.sync_activity_plan(plan)
+
+        if request.POST.get("autosave") == "1":
+            return HttpResponse(status=204)
+
+        obligation_obj.refresh_from_db()
+        if obligation_obj.status == constants.STATUS_ACCEPTED:
+            messages.success(request, "Thank you — that is complete. Nothing further to do.")
+        else:
+            messages.success(request, "Saved. Come back to finish the plan.")
+        return redirect("step:obligation", pk=obligation_obj.pk)
+
+    context = {
+        "nav": "work",
+        "item": presentation.decorate(obligation_obj, today),
+        "activity_plan": plan,
+        "can_submit": obligation_obj.status != constants.STATUS_ACCEPTED,
+    }
+    context.update(_chrome(educator))
+    return render(request, "step/obligation.html", context)
+
+
 @login_required
 def submissions(request):
     educator = _educator(request)
@@ -302,3 +389,68 @@ def feedback(request):
     context = {"nav": "feedback", "rows": rows}
     context.update(_chrome(educator))
     return render(request, "step/feedback.html", context)
+
+
+@login_required
+def announcements(request):
+    """Everything the Ministry has announced, in full, with the RSVP.
+
+    Announcements live here rather than with the activities screens because
+    they are not the teacher's own activity: the Ministry runs the session and
+    the teacher's whole part in it is saying whether they will be there.
+    """
+    educator = _educator(request)
+    context = {"nav": "announcements", "rows": _announcements_for(educator, date.today())}
+    context.update(_chrome(educator))
+    return render(request, "step/announcements.html", context)
+
+
+@login_required
+def announcement_respond(request, pk: int):
+    """Record — or change — one teacher's answer to one announcement.
+
+    Every refusal below is enforced here rather than by hiding the control:
+    a closed announcement that merely lacks a button is still writable by
+    anything that posts to this address.
+    """
+    educator = _educator(request)
+
+    if request.method != "POST":
+        raise Http404("This page only accepts a submitted answer.")
+
+    announcement = get_object_or_404(Announcement, pk=pk)
+    today = date.today()
+
+    if not announcement.is_active:
+        messages.error(request, "That announcement has been withdrawn, so it cannot be answered.")
+        return redirect("step:announcements")
+
+    if not announcement.requires_response:
+        messages.error(request, "That announcement is for information only — there is nothing to answer.")
+        return redirect("step:announcements")
+
+    if announcement.responding_has_closed(today):
+        # Written as a date a person would say out loud. "%-d" is not portable
+        # to Windows, hence the stripped leading zero.
+        closed_on = announcement.respond_by.strftime("%d %B %Y").lstrip("0")
+        messages.error(
+            request,
+            f"The last day to answer this was {closed_on}, so your answer can no longer be changed.",
+        )
+        return redirect("step:announcements")
+
+    answer = (request.POST.get("attending") or "").strip()
+    if answer not in {"yes", "no"}:
+        messages.error(request, "Choose whether you will attend, then send your answer.")
+        return redirect("step:announcements")
+
+    attending = answer == "yes"
+    AnnouncementResponse.objects.update_or_create(
+        announcement=announcement, educator=educator, defaults={"attending": attending},
+    )
+
+    if attending:
+        messages.success(request, "Thank you — we have recorded that you will attend.")
+    else:
+        messages.success(request, "Thank you — we have recorded that you will not attend.")
+    return redirect("step:announcements")

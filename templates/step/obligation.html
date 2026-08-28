@@ -77,6 +77,85 @@
     </div>
   </section>
   {% endif %}
+  {% elif activity_plan %}
+  {% if can_submit %}
+  <section class="block" aria-labelledby="do-h">
+    <h2 class="block__title" id="do-h">This month's plan for {{ item.obligation.activity.title }}</h2>
+    <div class="block__body">
+      <form method="post" novalidate id="plan-form">
+        {% csrf_token %}
+
+        <div class="field">
+          <label class="field__label" for="overview">Overview</label>
+          <p class="field__hint">What this activity is doing this month.</p>
+          <textarea class="textarea" id="overview" name="overview">{{ activity_plan.overview }}</textarea>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="session_outline">Session outline</label>
+          <p class="field__hint">A rough shape for the sessions this month.</p>
+          <textarea class="textarea" id="session_outline" name="session_outline">{{ activity_plan.session_outline }}</textarea>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="intended_outcomes">Intended outcomes</label>
+          <p class="field__hint">What students should get out of it.</p>
+          <textarea class="textarea" id="intended_outcomes" name="intended_outcomes">{{ activity_plan.intended_outcomes }}</textarea>
+        </div>
+
+        <p class="readout" id="autosave-readout" role="status" aria-live="polite" hidden></p>
+
+        <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px">
+          <button class="btn btn--primary btn--lg" type="submit">Save</button>
+          <a class="btn btn--quiet" href="{% url 'step:dashboard' %}">Back without saving</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script>
+  (function () {
+    // Autosaves a draft on blur so nothing is ever lost. Purely additive:
+    // with JS off, these listeners never attach and the Save button above
+    // still works on its own, posting the same three fields the normal way.
+    var form = document.getElementById("plan-form");
+    if (!form) { return; }
+    var fieldNames = ["overview", "session_outline", "intended_outcomes"];
+    var readout = document.getElementById("autosave-readout");
+    var csrfInput = form.querySelector('input[name="csrfmiddlewaretoken"]');
+    if (!csrfInput) { return; }
+
+    function autosave() {
+      var body = new URLSearchParams();
+      body.set("csrfmiddlewaretoken", csrfInput.value);
+      body.set("autosave", "1");
+      fieldNames.forEach(function (name) {
+        var field = document.getElementById(name);
+        body.set(name, field ? field.value : "");
+      });
+
+      fetch(window.location.href, {
+        method: "POST",
+        body: body,
+        credentials: "same-origin",
+        headers: {"X-Requested-With": "XMLHttpRequest"}
+      }).then(function (response) {
+        if (response.ok && readout) {
+          readout.hidden = false;
+          readout.textContent = "Saved";
+        }
+      }).catch(function () {
+        // Best-effort only — the manual Save button is what actually matters.
+      });
+    }
+
+    fieldNames.forEach(function (name) {
+      var field = document.getElementById(name);
+      if (field) { field.addEventListener("blur", autosave); }
+    });
+  })();
+  </script>
+  {% endif %}
   {% else %}
   {% if can_submit %}
   <section class="block" aria-labelledby="do-h">

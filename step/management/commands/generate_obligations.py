@@ -1,11 +1,12 @@
 """Creates the next period's obligations. Scheduled, and safe to re-run."""
 
-from datetime import date
+from datetime import date, timedelta
 
 from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
 
 from step import generation
-from step.models import AcademicYear, Term
+from step.models import AcademicYear, Activity, Term
 
 
 class Command(BaseCommand):
@@ -17,6 +18,11 @@ class Command(BaseCommand):
         parser.add_argument(
             "--checkpoints", action="store_true",
             help="Also generate this year's beginning/mid/end-of-year diagnostic obligations.",
+        )
+        parser.add_argument(
+            "--sessions", action="store_true",
+            help="Also generate ECA monthly-plan obligations and materialise upcoming "
+                 "Session rows for every active activity.",
         )
 
     def handle(self, *args, **options):
@@ -51,4 +57,21 @@ class Command(BaseCommand):
                 raise CommandError("No academic year is marked current.")
             total += generation.generate_checkpoint_obligations(current)
 
-        self.stdout.write(self.style.SUCCESS(f"Created {total} obligations."))
+        if options.get("sessions"):
+            total += generation.generate_activity_plan_obligations(month_start)
+
+            sessions_created = 0
+            active_activities = Activity.objects.filter(
+                Q(archived_on__isnull=True) | Q(archived_on__gte=date.today())
+            )
+            for activity in active_activities:
+                sessions_created += generation.generate_sessions(
+                    activity,
+                    through=date.today() + timedelta(days=generation.SESSION_GENERATION_HORIZON_DAYS),
+                )
+
+            self.stdout.write(
+                self.style.SUCCESS(f"Created {total} obligations and {sessions_created} sessions.")
+            )
+        else:
+            self.stdout.write(self.style.SUCCESS(f"Created {total} obligations."))

@@ -16,7 +16,7 @@ from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 
 from step import analytics, constants, presentation, roles, workflow
-from step.models import Educator, Obligation, Region, Submission
+from step.models import Announcement, Educator, Obligation, Region, Submission
 
 
 def staff_required(view):
@@ -32,6 +32,23 @@ def staff_required(view):
             return HttpResponseForbidden(
                 "This area is for programme staff. If you believe this is a mistake, "
                 "contact your System Administrator."
+            )
+        return view(request, *args, **kwargs)
+    return wrapped
+
+
+def programme_admin_required(view):
+    """Publishing an announcement is narrower than the other staff screens
+    (fix step plan §5.2): only Programme Admin, not the other two staff
+    roles, to stop several administrators broadcasting contradictory
+    messages to ~2,000 teachers."""
+    @login_required
+    @wraps(view)
+    def wrapped(request, *args, **kwargs):
+        if not roles.can_publish_announcements(request.user):
+            return HttpResponseForbidden(
+                "Publishing announcements is limited to Programme Admin. If you believe "
+                "this is a mistake, contact your System Administrator."
             )
         return view(request, *args, **kwargs)
     return wrapped
@@ -74,6 +91,27 @@ def _region_bars(rows: list[dict]) -> list[dict]:
         {**row, "percent": round(row["count"] / maximum * 100, 1) if maximum else 0.0}
         for row in rows
     ]
+
+
+def _activity_bars(rows: list[dict]) -> list[dict]:
+    """`analytics.activity_by_region()`'s rows, with each of the four columns
+    turned into a 0-100 `percent` of THAT COLUMN's own largest region — never
+    a shared scale across columns. A monthly-report count and a session
+    count are different units (fix step plan §3.6 puts sessions at roughly
+    30x reports per teacher per month); one shared scale would render the
+    reports column as a hairline next to the session columns and imply a
+    comparison that means nothing (`.mini-bar__fill`'s contract, §17.6)."""
+    columns = ["monthly_reports", "cpd_online_responses", "cpd_offline_sessions", "eca_sessions"]
+    maxima = {column: max((row[column] for row in rows), default=0) for column in columns}
+    out = []
+    for row in rows:
+        entry = dict(row)
+        for column in columns:
+            entry[f"{column}_percent"] = (
+                round(row[column] / maxima[column] * 100, 1) if maxima[column] else 0.0
+            )
+        out.append(entry)
+    return out
 
 
 def _status_rows(rows: list[dict]) -> list[dict]:
@@ -165,6 +203,8 @@ def dashboard(request):
         "status_rows": _status_rows(analytics.status_by_region(period)),
         "timeliness": analytics.timeliness(period),
         "completeness_rate": analytics.completeness_rate(period),
+        "activity_bars": _activity_bars(analytics.activity_by_region(period)),
+        "sessions_held": analytics.sessions_held(period),
     }
     context.update(_admin_chrome(request))
     return render(request, "step/admin/dashboard.html", context)
@@ -275,3 +315,73 @@ def teacher_detail(request, pk: int):
     }
     context.update(_admin_chrome(request))
     return render(request, "step/admin/teacher_detail.html", context)
+
+
+@staff_required
+def announcement_list(request):
+    """The RSVP view (fix step plan item 17): coming / not coming / not yet
+    answered, per announcement. "Not yet answered" only means something for
+    an announcement that asked for an answer — pure news has no such figure
+    (`Announcement.requires_response`, spec §5.3)."""
+    from step.generation import eligible_educators
+
+    total_eligible = eligible_educators().count()
+    rows = []
+    for announcement in Announcement.objects.order_by("-published_at"):
+        row = {"announcement": announcement}
+        if announcement.requires_response:
+            attending = announcement.responses.filter(attending=True).count()
+            not_attending = announcement.responses.filter(attending=False).count()
+            row["attending"] = attending
+            row["not_attending"] = not_attending
+            row["not_answered"] = max(total_eligible - attending - not_attending, 0)
+        rows.append(row)
+
+    context = {
+        "nav": "announcements",
+        "rows": rows,
+        "can_publish": roles.can_publish_announcements(request.user),
+    }
+    context.update(_admin_chrome(request))
+    return render(request, "step/admin/announcement_list.html", context)
+
+
+@programme_admin_required
+def announcement_create(request):
+    context = {"nav": "announcements", "form": {}}
+
+    if request.method == "POST":
+        title = (request.POST.get("title") or "").strip()
+        body = (request.POST.get("body") or "").strip()
+        requires_response = request.POST.get("requires_response") == "on"
+        respond_by_raw = (request.POST.get("respond_by") or "").strip()
+
+        error = None
+        respond_by = None
+
+        if not title:
+            error = "Enter a title for this announcement."
+        elif not body:
+            error = "Enter the details teachers will see."
+        elif respond_by_raw:
+            try:
+                respond_by = date.fromisoformat(respond_by_raw)
+            except ValueError:
+                error = "That date is not valid."
+
+        if error is None:
+            Announcement.objects.create(
+                created_by=request.user, title=title, body=body,
+                requires_response=requires_response, respond_by=respond_by,
+            )
+            messages.success(request, f'"{title}" has been published.')
+            return redirect("step:admin-announcements")
+
+        messages.error(request, error)
+        context["form"] = {
+            "title": title, "body": body,
+            "requires_response": requires_response, "respond_by": respond_by_raw,
+        }
+
+    context.update(_admin_chrome(request))
+    return render(request, "step/admin/announcement_create.html", context)

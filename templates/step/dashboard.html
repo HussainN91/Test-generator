@@ -145,6 +145,48 @@
   </section>
 
   <div>
+    {% comment %}
+      Announcements sit beside the diary, never in the docket: the docket is
+      the one unmissable "what do I owe" element (UI contract §5.3) and an
+      announcement is not an obligation. Nothing is rendered at all when there
+      is nothing announced — an empty box would only add to the page.
+    {% endcomment %}
+    {% if announcements %}
+    <section class="block" aria-labelledby="ann-h">
+      <h2 class="block__title" id="ann-h">
+        Announcements
+        <span class="aside">CPD Online</span>
+      </h2>
+      <div class="block__body">
+        <ul class="filed">
+          {% for row in announcements %}
+          <li>
+            <div class="filed__what">{{ row.announcement.title }}</div>
+            <div class="filed__when">{{ row.announcement.published_at|date:"j F Y" }}</div>
+            {% if row.needs_answer and not row.closed %}
+              <div class="note note--warn" style="margin:8px 0 0">
+                <strong>Needs your answer</strong>
+                Say whether you will attend{% if row.announcement.respond_by %},
+                by <span class="num">{{ row.announcement.respond_by|date:"j F Y" }}</span>{% endif %}.
+                <a href="{% url 'step:announcements' %}">Answer this</a>
+              </div>
+            {% elif row.needs_answer and row.closed %}
+              <div class="filed__when">The date for answering this has passed.</div>
+            {% elif row.response %}
+              <div class="filed__when">
+                You said you will{% if not row.response.attending %} not{% endif %} attend.
+              </div>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        <p style="margin:14px 0 0">
+          <a class="btn btn--quiet" href="{% url 'step:announcements' %}">Read all announcements</a>
+        </p>
+      </div>
+    </section>
+    {% endif %}
+
     <section class="block" aria-labelledby="diary-h">
       <h2 class="block__title" id="diary-h">Next deadlines</h2>
       <div class="block__body">

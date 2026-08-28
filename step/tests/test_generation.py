@@ -3,7 +3,7 @@ after a partial failure must not double up (spec §5.2). Staff must never
 accrue obligations (spec §5.6).
 """
 
-from datetime import date
+from datetime import date, timedelta
 from io import StringIO
 
 from django.contrib.auth import get_user_model
@@ -12,7 +12,7 @@ from django.test import TestCase
 
 from step import constants, generation, roles
 from step.models import (
-    AcademicYear, Educator, Obligation, ObligationType, Region, TeachingClass, Term,
+    AcademicYear, Activity, Educator, Obligation, ObligationType, Region, Session, TeachingClass, Term,
 )
 
 
@@ -110,6 +110,50 @@ class GenerateCommandTests(TestCase):
         from django.core.management.base import CommandError
         with self.assertRaises(CommandError):
             call_command("generate_obligations", "--month", "May", stdout=StringIO())
+
+    def test_without_sessions_flag_neither_plan_obligations_nor_sessions_are_touched(self):
+        educator = Educator.objects.get(full_name="Maria Santos")
+        Activity.objects.create(
+            educator=educator, kind=constants.ACTIVITY_KIND_ECA, title="Chess Club",
+            schedule_rule={"weekdays": [0, 1, 2, 3, 4, 5, 6]}, started_on=date.today(),
+        )
+        out = StringIO()
+        call_command("generate_obligations", "--month", "2026-05", stdout=out)
+        # Existing per-educator monthly generation still runs unchanged; what
+        # must NOT happen without --sessions is any per-activity row or Session.
+        self.assertEqual(Session.objects.count(), 0)
+        self.assertEqual(Obligation.objects.filter(activity__isnull=False).count(), 0)
+        self.assertIn("Created 1 obligations.", out.getvalue())
+        self.assertNotIn("sessions", out.getvalue())
+
+    def test_sessions_flag_generates_plan_obligations_and_materialises_sessions(self):
+        region = Region.objects.get(code="samarkand")
+        educator = Educator.objects.get(full_name="Maria Santos")
+        ObligationType.objects.create(
+            name_template="ECA Monthly Plan", category=constants.CATEGORY_ECA,
+            cadence=constants.CADENCE_MONTHLY, form_slug=constants.FORM_SLUG_ECA_MONTHLY_PLAN,
+        )
+        Activity.objects.create(
+            educator=educator, kind=constants.ACTIVITY_KIND_ECA, title="Chess Club",
+            schedule_rule={"weekdays": [0, 1, 2, 3, 4, 5, 6]}, started_on=date(2026, 4, 1),
+        )
+        out = StringIO()
+        call_command("generate_obligations", "--month", "2026-05", "--sessions", stdout=out)
+        self.assertTrue(Obligation.objects.filter(activity__isnull=False).exists())
+        self.assertTrue(Session.objects.exists())
+        self.assertIn("sessions", out.getvalue())
+
+    def test_sessions_flag_skips_archived_activities(self):
+        region = Region.objects.get(code="samarkand")
+        educator = Educator.objects.get(full_name="Maria Santos")
+        Activity.objects.create(
+            educator=educator, kind=constants.ACTIVITY_KIND_CPD_OFFLINE, title="Offline CPD",
+            schedule_rule={"weekdays": [0, 1, 2, 3, 4, 5, 6]}, started_on=date.today() - timedelta(days=60),
+            archived_on=date.today() - timedelta(days=1),
+        )
+        out = StringIO()
+        call_command("generate_obligations", "--sessions", stdout=out)
+        self.assertEqual(Session.objects.count(), 0)
 
 
 class GenerateCheckpointObligationsTests(TestCase):

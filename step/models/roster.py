@@ -33,6 +33,26 @@ class School(models.Model):
         return self.name
 
 
+class SchoolStaff(models.Model):
+    """A local staff member typed in against a school, not the roster import.
+
+    Scoped to the school rather than the educator (fix step plan §3.3, spine
+    spec §5.10): two foreign teachers at one school share this list instead of
+    each duplicating it. These people hold no user accounts, so there is
+    nothing here beyond a name.
+    """
+
+    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name="staff")
+    full_name = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["full_name"]
+
+    def __str__(self) -> str:
+        return self.full_name
+
+
 class Educator(models.Model):
     """An international educator. The only role that accrues obligations."""
 

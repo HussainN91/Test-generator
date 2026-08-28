@@ -12,7 +12,7 @@ from django.test import TestCase
 
 from step import constants
 from step.models import (
-    AcademicYear, Educator, Obligation, ObligationType, Region, TeachingClass, Term,
+    AcademicYear, Activity, Educator, Obligation, ObligationType, Region, TeachingClass, Term,
 )
 
 
@@ -188,5 +188,106 @@ class TeachingClassObligationTests(TestCase):
         with self.assertRaises(IntegrityError):
             Obligation.objects.create(
                 type=self.type, educator=self.educator,
+                period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+            )
+
+
+class ActivityObligationTests(TestCase):
+    """Parallel to TeachingClassObligationTests: an ECA plan obligation is
+    per-activity, exactly the way a checkpoint obligation is per-class."""
+
+    def setUp(self):
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        self.educator = Educator.objects.create(full_name="Maria Santos", region=self.region)
+        self.type = ObligationType.objects.create(
+            name_template="ECA Programme Plan - {period}", category=constants.CATEGORY_ECA,
+            cadence=constants.CADENCE_TERMLY, form_slug=constants.FORM_SLUG_ECA_MONTHLY_PLAN,
+        )
+
+    def test_an_obligation_carries_its_activity(self):
+        activity = Activity.objects.create(
+            educator=self.educator, kind=constants.ACTIVITY_KIND_ECA,
+            title="Chess Club", started_on=date(2025, 9, 1),
+        )
+        obligation = Obligation.objects.create(
+            type=self.type, educator=self.educator, activity=activity,
+            period_kind=constants.PERIOD_TERM, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        self.assertEqual(obligation.activity, activity)
+
+    def test_an_ordinary_obligation_still_has_no_activity(self):
+        obligation = Obligation.objects.create(
+            type=self.type, educator=self.educator,
+            period_kind=constants.PERIOD_TERM, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        self.assertIsNone(obligation.activity)
+
+    def test_two_activities_can_share_a_period_start_for_the_same_type(self):
+        a = Activity.objects.create(
+            educator=self.educator, kind=constants.ACTIVITY_KIND_ECA,
+            title="Chess Club", started_on=date(2025, 9, 1),
+        )
+        b = Activity.objects.create(
+            educator=self.educator, kind=constants.ACTIVITY_KIND_ECA,
+            title="Debate Club", started_on=date(2025, 9, 1),
+        )
+        Obligation.objects.create(
+            type=self.type, educator=self.educator, activity=a,
+            period_kind=constants.PERIOD_TERM, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        Obligation.objects.create(
+            type=self.type, educator=self.educator, activity=b,
+            period_kind=constants.PERIOD_TERM, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        self.assertEqual(Obligation.objects.filter(type=self.type).count(), 2)
+
+    def test_the_same_activity_and_period_cannot_repeat(self):
+        activity = Activity.objects.create(
+            educator=self.educator, kind=constants.ACTIVITY_KIND_ECA,
+            title="Chess Club", started_on=date(2025, 9, 1),
+        )
+        Obligation.objects.create(
+            type=self.type, educator=self.educator, activity=activity,
+            period_kind=constants.PERIOD_TERM, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        with self.assertRaises(IntegrityError):
+            Obligation.objects.create(
+                type=self.type, educator=self.educator, activity=activity,
+                period_kind=constants.PERIOD_TERM, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+            )
+
+    def test_the_pre_existing_no_class_no_activity_uniqueness_still_holds(self):
+        """(type, educator, period_start) must stay unique for an obligation
+        with neither teaching_class nor activity, now that the constraint's
+        condition also checks activity__isnull=True."""
+        Obligation.objects.create(
+            type=self.type, educator=self.educator,
+            period_kind=constants.PERIOD_TERM, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        with self.assertRaises(IntegrityError):
+            Obligation.objects.create(
+                type=self.type, educator=self.educator,
+                period_kind=constants.PERIOD_TERM, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+            )
+
+    def test_the_pre_existing_per_class_uniqueness_still_holds_with_no_activity(self):
+        """(type, educator, teaching_class, period_start) must stay unique for
+        an obligation with a teaching_class and no activity, now that the
+        constraint's condition also checks activity__isnull=True."""
+        checkpoint_type = ObligationType.objects.create(
+            name_template="Beginning-of-year diagnostic", category=constants.CATEGORY_ASSESSMENTS,
+            cadence=constants.CADENCE_ANNUAL, evidence_spec=constants.EVIDENCE_NONE,
+            form_slug=constants.FORM_SLUG_ASSESSMENT_CHECKPOINT,
+        )
+        teaching_class = TeachingClass.objects.create(
+            educator=self.educator, grade=9, slot=3, display_name="9C"
+        )
+        Obligation.objects.create(
+            type=checkpoint_type, educator=self.educator, teaching_class=teaching_class,
+            period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
+        )
+        with self.assertRaises(IntegrityError):
+            Obligation.objects.create(
+                type=checkpoint_type, educator=self.educator, teaching_class=teaching_class,
                 period_kind=constants.PERIOD_YEAR, period_start=date(2025, 9, 1), due_date=date(2025, 10, 1),
             )

@@ -63,6 +63,16 @@ STEP is a platform, not a project. It breaks into these pieces:
 S7 being pure configuration is the acceptance test for the S1 design. If adding CPD Offline
 requires a code change, S1 is wrong.
 
+**Superseded 2026-08-27** by `fix step plan.md` (repo root) — S7 failed its own acceptance test
+above. CPD Offline needs a weekly cadence and a session/attendance concept the obligation engine
+does not have, and cannot be configured into being; CPD Online needs an announcement concept that
+does not exist either. `fix step plan.md` §2 replaces S7 with three peer concepts — Obligation
+(owed), Activity → Session → Attendance (done, covering CPD Offline and ECA), and Announcement →
+Response (broadcast, covering CPD Online) — rather than forcing all three verticals through the
+shape below. Only Monthly Reporting and the mockup's `Update Class Data & Targets | Other` remain
+pure `ObligationType` configuration; ECA keeps one monthly-plan `ObligationType` alongside its new
+`Activity` shape. Kept here for history; `fix step plan.md` is authoritative for S7.
+
 ### Build order
 
 1. **Slice 1 — the spine.** S0 + S1 + S2 + S3 + S4. This document.
@@ -238,6 +248,15 @@ Only two things ever require code: a vertical with a bespoke multi-step form (Mo
 Reporting, slice 2) and one with bespoke content (Assessments, slice 3). Both attach by
 `form_slug` referencing a coded form.
 
+**Superseded 2026-08-27** by `fix step plan.md` §2-§5, for CPD Online, CPD Offline and ECA only —
+those three turned out not to be `ObligationType` configuration after all. CPD Offline needs a
+weekly cadence and a session log this shape has no room for; CPD Online is Ministry-run and merely
+announced, with no obligation row at all; ECA is structurally a class with a roster, not a
+per-term document. The obligation-type-is-data model above still stands for Monthly Reporting and
+Assessments, and ECA keeps one monthly-plan `ObligationType` (`form_slug=eca_monthly_plan`)
+alongside its new `Activity` → `Session` → `Attendance` shape. Kept here for history; `fix step
+plan.md` is authoritative for the three verticals' shape.
+
 ### 5.2 Instances are materialised
 
 A scheduled management command generates the next period's `Obligation` rows for every active
@@ -323,6 +342,15 @@ This is the audit trail, and it is the data behind `Feedback & Correction`.
 `requires_review` on the type. Monthly reports enter the queue. Something like `Update Class
 Data & Targets` can auto-accept on submit. The states, queue and revision machinery exist
 regardless, so switching review on for a type is a configuration change.
+
+**Superseded 2026-08-27** by `fix step plan.md`, for CPD Online and CPD Offline only — neither
+goes through `requires_review`/submission at all any more. CPD Online is an announcement RSVP
+with no obligation row to review, and CPD Offline's session logs never enter the review queue
+(`fix step plan.md` §2, "the review queue's load" — logging a session is a twenty-second act, not
+a submission awaiting review). The pattern above still governs Monthly Reporting and the ECA
+monthly plan, which auto-accepts exactly as `Update Class Data & Targets` does here, once all
+three of its fields are filled. Kept here for history; `fix step plan.md` is authoritative for
+CPD Online and CPD Offline.
 
 ### 5.10 The director is never a user, and the data says so
 

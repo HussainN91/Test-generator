@@ -182,3 +182,29 @@ CHECKPOINT_OBLIGATION_NAME_TEMPLATES = {
     CHECKPOINT_EOY: "End-of-year diagnostic",
 }
 NAME_TEMPLATE_TO_CHECKPOINT = {v: k for k, v in CHECKPOINT_OBLIGATION_NAME_TEMPLATES.items()}
+
+# --- Activities: ECA Programme & CPD Offline (platform spine spec §3, fix
+# step plan §3-4) ------------------------------------------------------------
+# These are recurring delivery with a roster, not paperwork, so they are
+# modeled as Activity -> Session -> Attendance rather than as obligations.
+# Deliberately no weekly CADENCE_* value: sessions are not obligations.
+ACTIVITY_KIND_ECA = "eca"
+ACTIVITY_KIND_CPD_OFFLINE = "cpd_offline"
+
+ACTIVITY_KIND_CHOICES = [
+    (ACTIVITY_KIND_ECA, "ECA Programme"),
+    (ACTIVITY_KIND_CPD_OFFLINE, "CPD Offline"),
+]
+
+SESSION_STATUS_EXPECTED = "expected"
+SESSION_STATUS_HELD = "held"
+SESSION_STATUS_CANCELLED = "cancelled"
+
+SESSION_STATUS_CHOICES = [
+    (SESSION_STATUS_EXPECTED, "Expected"),
+    (SESSION_STATUS_HELD, "Held"),
+    (SESSION_STATUS_CANCELLED, "Cancelled"),
+]
+
+#: The bespoke obligation form the ECA monthly plan uses (ObligationType.form_slug).
+FORM_SLUG_ECA_MONTHLY_PLAN = "eca_monthly_plan"

@@ -63,3 +63,47 @@ class DueDateRuleTests(SimpleTestCase):
     def test_an_empty_rule_defaults_to_the_period_end(self):
         due = scheduling.due_date_for({}, date(2026, 5, 1), date(2026, 5, 31))
         self.assertEqual(due, date(2026, 5, 31))
+
+
+class SessionDatesTests(SimpleTestCase):
+    def test_a_single_weekday_rule_returns_every_matching_date_in_range(self):
+        # May 2026: Fridays fall on the 1st, 8th, 15th, 22nd, 29th.
+        dates = scheduling.session_dates({"weekdays": [4]}, date(2026, 5, 1), date(2026, 5, 31))
+        self.assertEqual(
+            dates,
+            [date(2026, 5, 1), date(2026, 5, 8), date(2026, 5, 15), date(2026, 5, 22), date(2026, 5, 29)],
+        )
+
+    def test_a_multi_weekday_rule_returns_both_interleaved_in_order(self):
+        # Tue+Thu across one week: 2026-05-05 (Tue) and 2026-05-07 (Thu).
+        dates = scheduling.session_dates({"weekdays": [1, 3]}, date(2026, 5, 4), date(2026, 5, 10))
+        self.assertEqual(dates, [date(2026, 5, 5), date(2026, 5, 7)])
+
+    def test_start_that_is_itself_a_matching_weekday_is_included(self):
+        # 2026-05-01 is a Friday.
+        dates = scheduling.session_dates({"weekdays": [4]}, date(2026, 5, 1), date(2026, 5, 1))
+        self.assertEqual(dates, [date(2026, 5, 1)])
+
+    def test_finish_that_is_itself_a_matching_weekday_is_included(self):
+        # 2026-05-29 is a Friday.
+        dates = scheduling.session_dates({"weekdays": [4]}, date(2026, 5, 25), date(2026, 5, 29))
+        self.assertEqual(dates, [date(2026, 5, 29)])
+
+    def test_a_range_that_starts_and_ends_mid_week_only_returns_matches_inside_it(self):
+        # 2026-05-06 is a Wednesday, 2026-05-12 is a Tuesday. Only the Friday
+        # in between (2026-05-08) should be returned for a Friday rule.
+        dates = scheduling.session_dates({"weekdays": [4]}, date(2026, 5, 6), date(2026, 5, 12))
+        self.assertEqual(dates, [date(2026, 5, 8)])
+
+    def test_crossing_a_month_boundary_returns_dates_from_both_months(self):
+        # Fridays late May into early June 2026: 2026-05-29 and 2026-06-05.
+        dates = scheduling.session_dates({"weekdays": [4]}, date(2026, 5, 25), date(2026, 6, 5))
+        self.assertEqual(dates, [date(2026, 5, 29), date(2026, 6, 5)])
+
+    def test_an_empty_weekdays_list_returns_nothing(self):
+        dates = scheduling.session_dates({"weekdays": []}, date(2026, 5, 1), date(2026, 5, 31))
+        self.assertEqual(dates, [])
+
+    def test_a_missing_weekdays_key_returns_nothing(self):
+        dates = scheduling.session_dates({}, date(2026, 5, 1), date(2026, 5, 31))
+        self.assertEqual(dates, [])

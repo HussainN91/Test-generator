@@ -738,9 +738,47 @@ a:hover { text-decoration-thickness: 2px; }
   font-weight: 700; color: var(--ink-soft);
 }
 
+/* --- 17.6 Grouped bar row ------------------------------------------------ */
+/* Four verticals share nothing but a region — a monthly-report count and a
+   session count are different units, so there is no honest shared scale.
+   Each mini-bar's fill is a percent of THAT series' own largest region, never
+   a percent of the row or of another series (fix step plan §6). Stacking the
+   four mini-bars under one region heading, rather than side by side, is what
+   keeps this legible at 375px — a wide multi-column grid is the one layout
+   this widget cannot afford. */
+
+.grouped-rows { display: flex; flex-direction: column; }
+.grouped-row { padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.grouped-rows .grouped-row:last-child { border-bottom: 0; }
+.grouped-row__label {
+  display: block; font-size: 14px; font-weight: 700; color: var(--ink-body);
+  margin-bottom: 8px;
+}
+.grouped-row__series { display: grid; gap: 5px; }
+
+.mini-bar {
+  display: grid;
+  grid-template-columns: var(--mini-bar-name, 96px) minmax(0, 1fr) var(--mini-bar-value, 34px);
+  align-items: center; gap: 10px;
+}
+.mini-bar__name {
+  font-family: var(--font-ui); font-size: 11px; color: var(--ink-soft);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mini-bar__track { position: relative; height: 10px; border-left: 1px solid var(--rule-firm); }
+.mini-bar__fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--series, var(--ink)); min-width: 1px;
+}
+.mini-bar__value {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+  color: var(--ink); text-align: right;
+}
+
 @media (max-width: 620px) {
   .bars { --bars-label: 104px; --bars-value: 48px; }
   .bar__label { font-size: 13px; }
+  .mini-bar { --mini-bar-name: 78px; --mini-bar-value: 28px; }
 }
 
 /* --------------------------------------------------------------------------
