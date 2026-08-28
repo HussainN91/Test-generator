@@ -12,6 +12,15 @@ A due rule is a small JSON object stored on the obligation type:
     {"kind": "fixed", "date": "2026-06-15"}
 
 An empty rule means "the last day of the period".
+
+A schedule rule is a small JSON object stored on Activity.schedule_rule,
+following the same convention:
+
+    {"weekdays": [4]}       # every Friday
+    {"weekdays": [1, 3]}    # every Tuesday and Thursday
+
+Weekday numbers follow date.weekday(): Monday=0 ... Sunday=6. An empty or
+missing "weekdays" list means no sessions.
 """
 
 import calendar
@@ -73,3 +82,16 @@ def due_date_for(rule, period_start: date, period_finish: date) -> date:
         return date.fromisoformat(rule["date"])
 
     raise ValueError(f"Unknown due rule kind: {kind!r}")
+
+
+def session_dates(schedule_rule: dict, start: date, finish: date) -> list[date]:
+    """Every date in the closed interval [start, finish] whose weekday matches
+    the rule, sorted ascending. An empty/missing "weekdays" list returns []."""
+    weekdays = schedule_rule.get("weekdays") or []
+    dates = []
+    day = start
+    while day <= finish:
+        if day.weekday() in weekdays:
+            dates.append(day)
+        day += timedelta(days=1)
+    return dates
