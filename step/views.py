@@ -93,15 +93,10 @@ def _announcements_for(educator, today) -> list:
         rows.append({
             "announcement": announcement,
             "response": response,
-            "closed": _responding_has_closed(announcement, today),
+            "closed": announcement.responding_has_closed(today),
             "needs_answer": announcement.requires_response and response is None,
         })
     return rows
-
-
-def _responding_has_closed(announcement, today) -> bool:
-    """Past the last day to answer. No `respond_by` means it never closes."""
-    return announcement.respond_by is not None and announcement.respond_by < today
 
 
 @login_required
@@ -434,7 +429,7 @@ def announcement_respond(request, pk: int):
         messages.error(request, "That announcement is for information only — there is nothing to answer.")
         return redirect("step:announcements")
 
-    if _responding_has_closed(announcement, today):
+    if announcement.responding_has_closed(today):
         # Written as a date a person would say out loud. "%-d" is not portable
         # to Windows, hence the stripped leading zero.
         closed_on = announcement.respond_by.strftime("%d %B %Y").lstrip("0")
