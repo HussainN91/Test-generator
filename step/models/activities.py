@@ -96,6 +96,21 @@ class Session(models.Model):
 
     class Meta:
         ordering = ["scheduled_for"]
+        constraints = [
+            # Makes generate_sessions' idempotency (fix step plan §3.4) a real
+            # database guarantee rather than only a property of get_or_create,
+            # which does not protect against two concurrent generation runs.
+            models.UniqueConstraint(
+                fields=["activity", "scheduled_for"], name="step_session_unique_per_activity_date"
+            ),
+        ]
+        indexes = [
+            # The exact access path activity_by_region() (fix step plan §6)
+            # filters on: activity (kind/region via join), status='held',
+            # held_on within a period. Session is the largest table in the
+            # system at scale (~500k rows/year per §2), so this isn't optional.
+            models.Index(fields=["activity", "status", "held_on"]),
+        ]
 
     def __str__(self) -> str:
         return f"{self.activity.title} - {self.scheduled_for}"
