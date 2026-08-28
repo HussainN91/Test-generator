@@ -3,7 +3,7 @@ after a partial failure must not double up (spec §5.2). Staff must never
 accrue obligations (spec §5.6).
 """
 
-from datetime import date
+from datetime import date, timedelta
 from io import StringIO
 
 from django.contrib.auth import get_user_model
@@ -144,7 +144,6 @@ class GenerateCommandTests(TestCase):
         self.assertIn("sessions", out.getvalue())
 
     def test_sessions_flag_skips_archived_activities(self):
-        from datetime import timedelta
         region = Region.objects.get(code="samarkand")
         educator = Educator.objects.get(full_name="Maria Santos")
         Activity.objects.create(

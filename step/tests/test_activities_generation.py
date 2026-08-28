@@ -85,14 +85,14 @@ class FirstEligiblePlanPeriodTests(TestCase):
         )
 
     def test_started_early_in_the_month_is_eligible_for_that_month(self):
-        # May 2026 has 31 days; May 23 is 8 days before month-end (not "within
-        # the last 7 days" per the inclusive boundary at exactly 7 days).
-        activity = self._activity(date(2026, 5, 23))
+        # May 2026 has 31 days; May 24 is 7 days before month-end (not "within
+        # the last 7 days" per the literal boundary: days 25-31 are the last 7).
+        activity = self._activity(date(2026, 5, 24))
         self.assertEqual(generation._first_eligible_plan_period(activity), date(2026, 5, 1))
 
-    def test_started_exactly_seven_days_before_month_end_is_deferred(self):
-        # May 31 - 7 days = May 24: the documented inclusive boundary.
-        activity = self._activity(date(2026, 5, 24))
+    def test_started_exactly_on_the_first_day_of_the_last_seven_is_deferred(self):
+        # May 31 - 6 days = May 25: the first day of the literal last-7 window.
+        activity = self._activity(date(2026, 5, 25))
         self.assertEqual(generation._first_eligible_plan_period(activity), date(2026, 6, 1))
 
     def test_started_in_the_last_week_of_the_month_is_deferred_to_next_month(self):
@@ -153,7 +153,7 @@ class GenerateActivityPlanObligationsTests(TestCase):
         self.assertEqual(Obligation.objects.filter(type=self.plan_type).count(), 1)
 
     def test_an_activity_created_too_late_in_the_month_is_skipped_for_that_month(self):
-        self._eca(started_on=date(2026, 5, 24))  # within the last-7-days grace window
+        self._eca(started_on=date(2026, 5, 25))  # within the last-7-days grace window
         created = generation.generate_activity_plan_obligations(date(2026, 5, 1))
         self.assertEqual(created, 0)
         created_next = generation.generate_activity_plan_obligations(date(2026, 6, 1))

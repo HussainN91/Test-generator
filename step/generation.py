@@ -148,13 +148,12 @@ def _first_eligible_plan_period(activity) -> date:
     Normally the month containing `activity.started_on`. But a group started
     in the last 7 days of that month should not be born already overdue for
     a month it barely joined, so it skips straight to next month instead.
-    The boundary is inclusive: a `started_on` that lands exactly 7 days
-    before month-end already counts as "within the last 7 days" and is
-    deferred (i.e. the cutoff is `month_end - 7 days`, not `- 6`).
+    The boundary is inclusive and literal: the last 7 calendar days of an
+    N-day month are days (N-6)..N, so the cutoff is `month_end - 6 days`.
     """
     month_start = scheduling.period_start_for(activity.started_on, constants.PERIOD_MONTH)
     month_finish = scheduling.period_end(month_start, constants.PERIOD_MONTH)
-    if activity.started_on >= month_finish - timedelta(days=7):
+    if activity.started_on >= month_finish - timedelta(days=6):
         return scheduling.next_period_start(month_start, constants.PERIOD_MONTH)
     return month_start
 
