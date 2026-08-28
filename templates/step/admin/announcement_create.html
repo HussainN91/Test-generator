@@ -1,0 +1,28 @@
+{% extends "step/base_admin.html" %}
+{% block title %}New announcement — STEP Administration{% endblock %}
+{% block content %}
+<h1>New announcement</h1>
+<p class="entry__cat">Every eligible teacher sees this on their home screen (fix step plan §5.3).</p>
+
+<form method="post">
+  {% csrf_token %}
+
+  <label for="title">Title</label>
+  <input class="input" type="text" id="title" name="title" value="{{ form.title|default:'' }}">
+
+  <label for="body">Details</label>
+  <textarea id="body" name="body">{{ form.body|default:"" }}</textarea>
+
+  <label>
+    <input type="checkbox" name="requires_response" {% if form.requires_response %}checked{% endif %}>
+    Teachers must answer attending / not attending
+  </label>
+
+  <label for="respond_by">Last day to respond (optional)</label>
+  <input class="input" type="date" id="respond_by" name="respond_by" value="{{ form.respond_by|default:'' }}">
+  <p class="chart__note">Leave blank if there is no deadline to answer.</p>
+
+  <button class="btn btn--primary" type="submit">Publish</button>
+  <a class="btn btn--quiet" href="{% url 'step:admin-announcements' %}">Cancel</a>
+</form>
+{% endblock %}

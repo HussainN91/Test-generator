@@ -36,3 +36,12 @@ def is_educator(user) -> bool:
 
 def is_staff_role(user) -> bool:
     return bool(role_names(user) & constants.STAFF_ROLES)
+
+
+def can_publish_announcements(user) -> bool:
+    """Fix step plan §5.2: "Only the Programme Admin role may publish an
+    announcement" — deliberately narrower than `is_staff_role`, to stop
+    several administrators broadcasting contradictory messages to ~2,000
+    teachers. Read literally (Programme Admin only, not System Admin too);
+    this is a one-line change if that reading turns out to be wrong."""
+    return constants.ROLE_PROGRAMME_ADMIN in role_names(user)

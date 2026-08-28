@@ -70,3 +70,22 @@ class RoleHelperTests(TestCase):
         djangoish = get_user_model().objects.create_user("desk", password="x", is_staff=True)
         self.assertEqual(roles.role_names(djangoish), set())
         self.assertFalse(roles.is_staff_role(djangoish))
+
+    def test_only_programme_admin_can_publish_announcements(self):
+        """fix step plan §5.2 — narrower than `is_staff_role`, deliberately:
+        the other two staff roles reach every other staff screen but not
+        this one."""
+        roles.assign(self.user, constants.ROLE_PROGRAMME_ADMIN)
+        self.assertTrue(roles.can_publish_announcements(self.user))
+
+    def test_the_other_two_staff_roles_cannot_publish_announcements(self):
+        roles.assign(self.user, constants.ROLE_ADMIN)
+        self.assertFalse(roles.can_publish_announcements(self.user))
+
+    def test_a_superuser_cannot_publish_announcements_without_the_role(self):
+        """Provisional reading of §5.2 (read literally: Programme Admin
+        only) — unlike every other staff gate, the deploying superuser is
+        NOT implicitly admitted here. Flagged to the orchestrator as a
+        one-line flip if that reading is wrong."""
+        boss = get_user_model().objects.create_superuser("root3", password="x")
+        self.assertFalse(roles.can_publish_announcements(boss))

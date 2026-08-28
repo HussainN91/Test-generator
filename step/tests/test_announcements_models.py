@@ -36,6 +36,30 @@ class AnnouncementTests(TestCase):
         announcement = Announcement.objects.create(title="New CPD session", body="Details here.")
         self.assertEqual(str(announcement), "New CPD session")
 
+    def test_responding_has_not_closed_before_respond_by(self):
+        announcement = Announcement.objects.create(
+            title="New CPD session", body="Details here.", respond_by=date(2026, 9, 30),
+        )
+        self.assertFalse(announcement.responding_has_closed(date(2026, 9, 29)))
+
+    def test_responding_has_closed_on_the_day_after_respond_by(self):
+        announcement = Announcement.objects.create(
+            title="New CPD session", body="Details here.", respond_by=date(2026, 9, 30),
+        )
+        self.assertTrue(announcement.responding_has_closed(date(2026, 10, 1)))
+
+    def test_responding_has_closed_is_false_on_respond_by_itself(self):
+        """`respond_by` is the last day a teacher MAY answer, so it is not
+        itself past — the boundary is exclusive."""
+        announcement = Announcement.objects.create(
+            title="New CPD session", body="Details here.", respond_by=date(2026, 9, 30),
+        )
+        self.assertFalse(announcement.responding_has_closed(date(2026, 9, 30)))
+
+    def test_responding_never_closes_without_a_respond_by_date(self):
+        announcement = Announcement.objects.create(title="New CPD session", body="Details here.")
+        self.assertFalse(announcement.responding_has_closed(date(2099, 1, 1)))
+
 
 class AnnouncementResponseTests(TestCase):
     def setUp(self):

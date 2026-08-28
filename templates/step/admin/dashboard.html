@@ -167,5 +167,76 @@
     </div>
   </section>
 
+  <section class="chart">
+    <h2>Activity by region</h2>
+    <p class="chart__note">
+      {{ sessions_held }} ECA and CPD Offline session{{ sessions_held|pluralize }} logged as held for {{ period|date:"F Y" }}.
+      Each bar below is scaled against its own column's busiest region — a report count and a session
+      count are different units and cannot share one scale.
+    </p>
+    <div class="grouped-rows">
+      {% for row in activity_bars|slice:":8" %}
+      <div class="grouped-row">
+        <span class="grouped-row__label">{{ row.region }}</span>
+        <div class="grouped-row__series">
+          <div class="mini-bar s-teal">
+            <span class="mini-bar__name">Reports</span>
+            <span class="mini-bar__track"><span class="mini-bar__fill" style="width:{{ row.monthly_reports_percent }}%"></span></span>
+            <span class="mini-bar__value">{{ row.monthly_reports }}</span>
+          </div>
+          <div class="mini-bar s-violet">
+            <span class="mini-bar__name">CPD Online</span>
+            <span class="mini-bar__track"><span class="mini-bar__fill" style="width:{{ row.cpd_online_responses_percent }}%"></span></span>
+            <span class="mini-bar__value">{{ row.cpd_online_responses }}</span>
+          </div>
+          <div class="mini-bar s-ochre">
+            <span class="mini-bar__name">CPD Offline</span>
+            <span class="mini-bar__track"><span class="mini-bar__fill" style="width:{{ row.cpd_offline_sessions_percent }}%"></span></span>
+            <span class="mini-bar__value">{{ row.cpd_offline_sessions }}</span>
+          </div>
+          <div class="mini-bar s-plum">
+            <span class="mini-bar__name">ECA</span>
+            <span class="mini-bar__track"><span class="mini-bar__fill" style="width:{{ row.eca_sessions_percent }}%"></span></span>
+            <span class="mini-bar__value">{{ row.eca_sessions }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% if activity_bars|length > 8 %}
+    <details><summary>Show all {{ activity_bars|length }} regions</summary>
+      <div class="grouped-rows">
+        {% for row in activity_bars|slice:"8:" %}
+        <div class="grouped-row">
+          <span class="grouped-row__label">{{ row.region }}</span>
+          <div class="grouped-row__series">
+            <div class="mini-bar s-teal">
+              <span class="mini-bar__name">Reports</span>
+              <span class="mini-bar__track"><span class="mini-bar__fill" style="width:{{ row.monthly_reports_percent }}%"></span></span>
+              <span class="mini-bar__value">{{ row.monthly_reports }}</span>
+            </div>
+            <div class="mini-bar s-violet">
+              <span class="mini-bar__name">CPD Online</span>
+              <span class="mini-bar__track"><span class="mini-bar__fill" style="width:{{ row.cpd_online_responses_percent }}%"></span></span>
+              <span class="mini-bar__value">{{ row.cpd_online_responses }}</span>
+            </div>
+            <div class="mini-bar s-ochre">
+              <span class="mini-bar__name">CPD Offline</span>
+              <span class="mini-bar__track"><span class="mini-bar__fill" style="width:{{ row.cpd_offline_sessions_percent }}%"></span></span>
+              <span class="mini-bar__value">{{ row.cpd_offline_sessions }}</span>
+            </div>
+            <div class="mini-bar s-plum">
+              <span class="mini-bar__name">ECA</span>
+              <span class="mini-bar__track"><span class="mini-bar__fill" style="width:{{ row.eca_sessions_percent }}%"></span></span>
+              <span class="mini-bar__value">{{ row.eca_sessions }}</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </details>
+    {% endif %}
+  </section>
+
 </details>
 {% endblock %}
