@@ -10,9 +10,10 @@ from django.contrib import admin
 
 from step.models import (
     AcademicYear, Activity, ActivityParticipant, ActivityPlan, AliasMapping,
-    District, Educator, Evidence, Obligation, ObligationType, PendingSignup,
-    ProgressEntry, Region, RosterImport, School, SchoolStaff, Session,
-    SessionAttendance, Student, Submission, TeachingClass, Term, UnresolvedRow,
+    Announcement, AnnouncementResponse, District, Educator, Evidence, Obligation,
+    ObligationType, PendingSignup, ProgressEntry, Region, RosterImport, School,
+    SchoolStaff, Session, SessionAttendance, Student, Submission, TeachingClass,
+    Term, UnresolvedRow,
 )
 
 
@@ -213,3 +214,17 @@ class ActivityPlanAdmin(admin.ModelAdmin):
     list_display = ("activity", "period", "created_at", "updated_at")
     list_filter = ("activity",)
     readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = ("title", "requires_response", "is_active", "published_at", "respond_by")
+    list_filter = ("requires_response", "is_active")
+    readonly_fields = ("published_at",)
+
+
+@admin.register(AnnouncementResponse)
+class AnnouncementResponseAdmin(admin.ModelAdmin):
+    list_display = ("announcement", "educator", "attending", "responded_at")
+    list_filter = ("announcement", "attending")
+    readonly_fields = ("responded_at",)
