@@ -1,0 +1,110 @@
+{% extends "step/base.html" %}
+
+{% block title %}{{ activity.title }} — STEP{% endblock %}
+
+{% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'step:activity_list' %}">My activities</a><span>/</span>{{ activity.title }}
+</nav>
+
+<div class="head">
+  <h1>{{ activity.title }}</h1>
+  <p>{{ activity.get_kind_display }}{% if activity.school %} &middot; {{ activity.school.name }}{% endif %}</p>
+</div>
+
+<div class="columns">
+  <div>
+
+    {% if due_sessions %}
+    <section class="block" aria-labelledby="due-h">
+      <h2 class="block__title" id="due-h">Sessions to log</h2>
+      <div class="block__body">
+        <ul class="filed">
+          {% for session in due_sessions %}
+          <li>
+            <div class="filed__what">
+              <a href="{% url 'step:activity_session_log' activity.pk session.pk %}">{{ session.scheduled_for|date:"j F Y" }}</a>
+            </div>
+            <div class="filed__when">Not yet logged</div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+    {% endif %}
+
+    <section class="block" aria-labelledby="roster-h">
+      <h2 class="block__title" id="roster-h">Roster</h2>
+      <div class="block__body">
+        {% if participants %}
+        <ul class="filed">
+          {% for participant in participants %}
+          <li>
+            <div class="filed__what">{{ participant.full_name }}</div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>Nobody has been added yet.</p>
+        {% endif %}
+        <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
+          <a class="btn btn--primary" href="{% url 'step:activity_participant_create' activity.pk %}">Add participants</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="sessions-h">
+      <h2 class="block__title" id="sessions-h">Sessions</h2>
+      <div class="block__body">
+        {% if sessions %}
+        <ul class="filed">
+          {% for session in sessions %}
+          <li>
+            <div class="filed__what">
+              {% if session.status == 'expected' %}
+              <a href="{% url 'step:activity_session_log' activity.pk session.pk %}">{{ session.scheduled_for|date:"j F Y" }}</a>
+              {% else %}
+              {{ session.scheduled_for|date:"j F Y" }}
+              {% endif %}
+            </div>
+            <div class="filed__when">
+              {% if session.status == 'held' %}Held{% elif session.status == 'cancelled' %}Cancelled{% else %}Expected{% endif %}
+              {% if session.topic %} &middot; {{ session.topic }}{% endif %}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>No sessions yet.</p>
+        {% endif %}
+
+        <form method="post" action="{% url 'step:activity_session_create' activity.pk %}" novalidate
+              style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
+          {% csrf_token %}
+          <div class="field" style="margin-bottom:14px">
+            <label class="field__label" for="scheduled_for">Add an extra session for a date</label>
+            <input class="input" type="date" id="scheduled_for" name="scheduled_for" value="{{ today_iso }}" style="max-width:220px">
+          </div>
+          <button class="btn btn--quiet" type="submit">Add and log it</button>
+        </form>
+      </div>
+    </section>
+
+  </div>
+
+  <div>
+    {% if activity.kind == 'eca' %}
+    <section class="block">
+      <h2 class="block__title">This month's plan</h2>
+      <div class="block__body" style="font-size:14.5px">
+        {% if plan_obligation %}
+        <p><a href="{% url 'step:obligation' plan_obligation.pk %}">Open this month's plan</a></p>
+        {% else %}
+        <p>This month's plan hasn't been created yet. Check back after it's generated.</p>
+        {% endif %}
+      </div>
+    </section>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

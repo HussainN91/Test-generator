@@ -15,11 +15,11 @@ from datetime import date
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from step import constants, presentation, roles, urgency, workflow
-from step.models import AcademicYear, Educator, Obligation, ProgressEntry, Submission
+from step.models import AcademicYear, ActivityPlan, Educator, Obligation, ProgressEntry, Submission
 
 
 def _educator(request) -> Educator:
@@ -133,13 +133,16 @@ def obligation(request, pk: int):
     today = date.today()
 
     obligation_obj = get_object_or_404(
-        Obligation.objects.select_related("type", "educator", "teaching_class"),
+        Obligation.objects.select_related("type", "educator", "teaching_class", "activity"),
         pk=pk,
         educator=educator,
     )
 
     if obligation_obj.type.form_slug == constants.FORM_SLUG_ASSESSMENT_CHECKPOINT:
         return _checkpoint_obligation(request, educator, obligation_obj, today)
+
+    if obligation_obj.type.form_slug == constants.FORM_SLUG_ECA_MONTHLY_PLAN:
+        return _eca_plan_obligation(request, educator, obligation_obj, today)
 
     if request.method == "POST":
         return _handle_submit(request, educator, obligation_obj)
@@ -275,6 +278,53 @@ def _checkpoint_obligation(request, educator, obligation_obj, today):
         "teaching_class": teaching_class,
         "rows": rows,
         "skill_choices": constants.SKILL_CHOICES,
+        "can_submit": obligation_obj.status != constants.STATUS_ACCEPTED,
+    }
+    context.update(_chrome(educator))
+    return render(request, "step/obligation.html", context)
+
+
+def _eca_plan_obligation(request, educator, obligation_obj, today):
+    """The three-field monthly plan for an ECA activity.
+
+    No evidence, no Submission row (mirrors _checkpoint_obligation) — each
+    POST here writes directly to the ActivityPlan draft and asks
+    workflow.sync_activity_plan to settle the obligation once every field is
+    filled.
+
+    Autosaved as a draft on blur (see the script in obligation.html): those
+    requests carry a hidden `autosave=1` field so this view can tell them
+    apart from the real submit and skip the redirect/flash message, replying
+    with a bare 204 instead. The manual Save button is the one thing that
+    must work with JS off, so it always follows the normal
+    save-then-redirect path.
+    """
+    activity = obligation_obj.activity
+    plan, _created = ActivityPlan.objects.get_or_create(
+        activity=activity, period=obligation_obj.period_start
+    )
+
+    if request.method == "POST":
+        plan.overview = (request.POST.get("overview") or "").strip()
+        plan.session_outline = (request.POST.get("session_outline") or "").strip()
+        plan.intended_outcomes = (request.POST.get("intended_outcomes") or "").strip()
+        plan.save()
+        workflow.sync_activity_plan(plan)
+
+        if request.POST.get("autosave") == "1":
+            return HttpResponse(status=204)
+
+        obligation_obj.refresh_from_db()
+        if obligation_obj.status == constants.STATUS_ACCEPTED:
+            messages.success(request, "Thank you — that is complete. Nothing further to do.")
+        else:
+            messages.success(request, "Saved. Come back to finish the plan.")
+        return redirect("step:obligation", pk=obligation_obj.pk)
+
+    context = {
+        "nav": "work",
+        "item": presentation.decorate(obligation_obj, today),
+        "activity_plan": plan,
         "can_submit": obligation_obj.status != constants.STATUS_ACCEPTED,
     }
     context.update(_chrome(educator))

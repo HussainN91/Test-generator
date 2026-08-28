@@ -183,3 +183,23 @@ def sync_checkpoint(teaching_class, checkpoint: str) -> Obligation | None:
     obligation.status = constants.STATUS_ACCEPTED
     obligation.save(update_fields=["status"])
     return obligation
+
+
+def sync_activity_plan(activity_plan) -> Obligation | None:
+    """Settle an ECA activity's monthly-plan obligation once all three
+    fields are filled. Mirrors sync_checkpoint: no evidence to check and
+    nothing for a reviewer to decide, so this bypasses submit() entirely.
+    """
+    fields = (activity_plan.overview, activity_plan.session_outline, activity_plan.intended_outcomes)
+    if not all(field and field.strip() for field in fields):
+        return None
+
+    obligation = Obligation.objects.filter(
+        activity=activity_plan.activity, period_start=activity_plan.period
+    ).first()
+    if obligation is None or obligation.status == constants.STATUS_ACCEPTED:
+        return obligation
+
+    obligation.status = constants.STATUS_ACCEPTED
+    obligation.save(update_fields=["status"])
+    return obligation

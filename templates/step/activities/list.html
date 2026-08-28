@@ -1,0 +1,44 @@
+{% extends "step/base.html" %}
+
+{% block title %}My activities — STEP{% endblock %}
+
+{% block content %}
+<div class="head">
+  <h1>My activities</h1>
+</div>
+
+<div class="columns">
+  <div>
+    <section class="block" aria-labelledby="activities-h">
+      <h2 class="block__title" id="activities-h">ECA Programme &amp; CPD Offline</h2>
+      <div class="block__body">
+        {% if rows %}
+        <ul class="filed">
+          {% for row in rows %}
+          <li>
+            <div class="filed__what">
+              <a href="{% url 'step:activity_detail' row.activity.pk %}">{{ row.activity.title }}</a>
+              <span class="field__hint" style="display:inline; margin:0">&middot; {{ row.activity.get_kind_display }}</span>
+            </div>
+            <div class="filed__when">
+              {% if row.due_count %}
+              <strong>{{ row.due_count }}</strong> session{{ row.due_count|pluralize }} to log
+              {% else %}
+              Nothing due
+              {% endif %}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>You have not added an activity yet.</p>
+        {% endif %}
+
+        <div class="actions" style="border-top:2px solid var(--ink); padding-top:22px; margin-top:22px">
+          <a class="btn btn--primary btn--lg" href="{% url 'step:activity_create' %}">Add an activity</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

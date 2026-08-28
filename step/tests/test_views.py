@@ -16,7 +16,8 @@ from django.urls import reverse
 
 from step import constants, workflow
 from step.models import (
-    Educator, Obligation, ObligationType, ProgressEntry, Region, Student, TeachingClass,
+    Activity, ActivityPlan, Educator, Obligation, ObligationType, ProgressEntry, Region, Student,
+    TeachingClass,
 )
 
 MEDIA = tempfile.mkdtemp()
@@ -424,3 +425,75 @@ class CheckpointObligationTests(TestCase):
         entry = ProgressEntry.objects.get(student=self.a, checkpoint=constants.CHECKPOINT_BOY)
         self.assertIsNone(entry.score)
         self.assertEqual(entry.comment, "typo")
+
+
+@override_settings(MEDIA_ROOT=MEDIA)
+class EcaPlanObligationTests(TestCase):
+    """The three-field monthly plan wired into the shared obligation() view
+    (see step/views.py's _eca_plan_obligation), mirroring
+    CheckpointObligationTests above for the ECA monthly-plan form."""
+
+    def setUp(self):
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        self.user = get_user_model().objects.create_user("maria", password="pw")
+        self.educator = Educator.objects.create(full_name="Maria Santos", region=self.region, user=self.user)
+        self.activity = Activity.objects.create(
+            educator=self.educator, kind=constants.ACTIVITY_KIND_ECA, title="Chess Club",
+            schedule_rule={"weekdays": [4]}, started_on=date(2026, 5, 1),
+        )
+        self.plan_type = ObligationType.objects.create(
+            name_template="ECA Monthly Plan", category=constants.CATEGORY_ECA,
+            cadence=constants.CADENCE_MONTHLY, evidence_spec=constants.EVIDENCE_NONE,
+            form_slug=constants.FORM_SLUG_ECA_MONTHLY_PLAN,
+        )
+        self.obligation = Obligation.objects.create(
+            type=self.plan_type, educator=self.educator, activity=self.activity,
+            period_kind=constants.PERIOD_MONTH, period_start=date(2026, 5, 1), due_date=date(2026, 5, 31),
+        )
+        self.client.login(username="maria", password="pw")
+        self.url = reverse("step:obligation", args=[self.obligation.pk])
+
+    def test_the_page_shows_the_three_plan_fields_instead_of_an_uploader(self):
+        response = self.client.get(self.url)
+        self.assertContains(response, 'name="overview"')
+        self.assertContains(response, 'name="session_outline"')
+        self.assertContains(response, 'name="intended_outcomes"')
+        self.assertNotContains(response, 'name="link"')
+
+    def test_a_partial_save_leaves_the_obligation_not_started(self):
+        self.client.post(self.url, {"overview": "We meet weekly."})
+        self.obligation.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_NOT_STARTED)
+        plan = ActivityPlan.objects.get(activity=self.activity, period=date(2026, 5, 1))
+        self.assertEqual(plan.overview, "We meet weekly.")
+
+    def test_filling_all_three_fields_settles_the_obligation(self):
+        self.client.post(self.url, {
+            "overview": "We meet weekly.", "session_outline": "Warm up, play, review.",
+            "intended_outcomes": "Improve strategic thinking.",
+        })
+        self.obligation.refresh_from_db()
+        self.assertEqual(self.obligation.status, constants.STATUS_ACCEPTED)
+
+    def test_resubmitting_updates_the_same_plan_rather_than_duplicating(self):
+        self.client.post(self.url, {"overview": "First draft."})
+        self.client.post(self.url, {"overview": "Revised draft."})
+        self.assertEqual(ActivityPlan.objects.filter(activity=self.activity).count(), 1)
+        plan = ActivityPlan.objects.get(activity=self.activity)
+        self.assertEqual(plan.overview, "Revised draft.")
+
+    def test_an_autosave_post_saves_without_redirecting(self):
+        response = self.client.post(self.url, {"overview": "Autosaved draft.", "autosave": "1"})
+        self.assertEqual(response.status_code, 204)
+        plan = ActivityPlan.objects.get(activity=self.activity)
+        self.assertEqual(plan.overview, "Autosaved draft.")
+
+    def test_an_autosave_post_preserves_the_other_two_fields(self):
+        self.client.post(self.url, {"overview": "A", "session_outline": "B", "intended_outcomes": "C"})
+        self.client.post(self.url, {
+            "overview": "A changed", "session_outline": "B", "intended_outcomes": "C", "autosave": "1",
+        })
+        plan = ActivityPlan.objects.get(activity=self.activity)
+        self.assertEqual(plan.overview, "A changed")
+        self.assertEqual(plan.session_outline, "B")
+        self.assertEqual(plan.intended_outcomes, "C")

@@ -16,6 +16,7 @@ urlpatterns = [
     path("submissions/", views.submissions, name="submissions"),
     path("feedback/", views.feedback, name="feedback"),
     path("classes/", include("step.classes_urls")),
+    path("activities/", include("step.activities_urls")),
 ]
 
 
