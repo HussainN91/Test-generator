@@ -13,7 +13,10 @@ from django.test import TestCase
 from django.urls import reverse
 
 from step import constants, roles
-from step.models import Educator, Evidence, Obligation, ObligationType, Region, Submission
+from step.models import (
+    Announcement, AnnouncementResponse, Educator, Evidence, Obligation, ObligationType,
+    Region, Submission,
+)
 
 
 class AccessControlTests(TestCase):
@@ -501,3 +504,145 @@ class ActionQueueGrammarTests(TestCase):
         self._outstanding(2)
         response = self.client.get(reverse("step:admin-dashboard") + "?period=2026-05")
         self.assertContains(response, "2 teachers have not submitted")
+
+
+class AnnouncementAccessControlTests(TestCase):
+    """fix step plan §5.2: publishing is Programme Admin only, narrower than
+    the other three staff roles that reach every other admin screen."""
+
+    def setUp(self):
+        call_command("seed_roles", stdout=StringIO())
+
+    def _staff(self, username, role):
+        user = get_user_model().objects.create_user(username, password="pw")
+        roles.assign(user, role)
+        return user
+
+    def test_any_staff_role_can_see_the_announcement_list(self):
+        for i, role in enumerate(
+            [constants.ROLE_ADMIN, constants.ROLE_PROGRAMME_ADMIN, constants.ROLE_SYSTEM_ADMIN]
+        ):
+            self._staff(f"staff{i}", role)
+            self.client.login(username=f"staff{i}", password="pw")
+            response = self.client.get(reverse("step:admin-announcements"))
+            self.assertEqual(response.status_code, 200, f"{role} was refused the RSVP view")
+            self.client.logout()
+
+    def test_only_programme_admin_can_reach_the_composer(self):
+        self._staff("admin", constants.ROLE_ADMIN)
+        self.client.login(username="admin", password="pw")
+        response = self.client.get(reverse("step:admin-announcement-new"))
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+
+        self._staff("sysadmin", constants.ROLE_SYSTEM_ADMIN)
+        self.client.login(username="sysadmin", password="pw")
+        response = self.client.get(reverse("step:admin-announcement-new"))
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+
+        self._staff("programme", constants.ROLE_PROGRAMME_ADMIN)
+        self.client.login(username="programme", password="pw")
+        response = self.client.get(reverse("step:admin-announcement-new"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_an_educator_cannot_reach_the_composer(self):
+        region = Region.objects.create(name="Samarkand", code="samarkand")
+        user = get_user_model().objects.create_user("maria", password="pw")
+        roles.assign(user, constants.ROLE_EDUCATOR)
+        Educator.objects.create(full_name="Maria Santos", region=region, user=user)
+        self.client.login(username="maria", password="pw")
+        response = self.client.get(reverse("step:admin-announcement-new"))
+        self.assertEqual(response.status_code, 403)
+
+
+class AnnouncementRsvpViewTests(TestCase):
+    def setUp(self):
+        call_command("seed_roles", stdout=StringIO())
+        self.region = Region.objects.create(name="Samarkand", code="samarkand")
+        self._staff("staff", constants.ROLE_ADMIN)
+        self.client.login(username="staff", password="pw")
+
+    def _staff(self, username, role):
+        user = get_user_model().objects.create_user(username, password="pw")
+        roles.assign(user, role)
+        return user
+
+    def _educator(self, **kwargs):
+        return Educator.objects.create(
+            full_name=f"Teacher {Educator.objects.count() + 1}", region=self.region, **kwargs
+        )
+
+    def test_shows_attending_not_attending_and_not_answered_counts(self):
+        attending = self._educator()
+        not_attending = self._educator()
+        unanswered = self._educator()  # noqa: F841 — exists only to be counted as unanswered
+
+        announcement = Announcement.objects.create(
+            title="New CPD session", body="Details.", requires_response=True,
+        )
+        AnnouncementResponse.objects.create(announcement=announcement, educator=attending, attending=True)
+        AnnouncementResponse.objects.create(announcement=announcement, educator=not_attending, attending=False)
+
+        response = self.client.get(reverse("step:admin-announcements"))
+        self.assertContains(response, "1 attending")
+        self.assertContains(response, "1 not attending")
+        self.assertContains(response, "1 not yet answered")
+
+    def test_a_pure_news_announcement_shows_no_rsvp_counts(self):
+        self._educator()
+        Announcement.objects.create(title="FYI only", body="No answer needed.", requires_response=False)
+        response = self.client.get(reverse("step:admin-announcements"))
+        self.assertContains(response, "News only")
+        self.assertNotContains(response, "not yet answered")
+
+    def test_an_inactive_educator_does_not_count_toward_not_answered(self):
+        self._educator()
+        self._educator(is_active=False)
+        Announcement.objects.create(title="New CPD session", body="Details.", requires_response=True)
+        response = self.client.get(reverse("step:admin-announcements"))
+        self.assertContains(response, "1 not yet answered")
+
+
+class AnnouncementComposerTests(TestCase):
+    def setUp(self):
+        call_command("seed_roles", stdout=StringIO())
+        user = get_user_model().objects.create_user("programme", password="pw")
+        roles.assign(user, constants.ROLE_PROGRAMME_ADMIN)
+        self.client.login(username="programme", password="pw")
+
+    def test_publishing_creates_an_active_announcement_attributed_to_its_author(self):
+        response = self.client.post(reverse("step:admin-announcement-new"), {
+            "title": "New CPD session", "body": "Details here.", "requires_response": "on",
+            "respond_by": "2026-09-30",
+        })
+        self.assertRedirects(response, reverse("step:admin-announcements"))
+        announcement = Announcement.objects.get(title="New CPD session")
+        self.assertTrue(announcement.is_active)
+        self.assertTrue(announcement.requires_response)
+        self.assertEqual(announcement.respond_by, date(2026, 9, 30))
+        self.assertEqual(announcement.created_by.username, "programme")
+
+    def test_a_deadline_is_optional(self):
+        response = self.client.post(reverse("step:admin-announcement-new"), {
+            "title": "FYI only", "body": "No answer needed.",
+        })
+        self.assertRedirects(response, reverse("step:admin-announcements"))
+        announcement = Announcement.objects.get(title="FYI only")
+        self.assertIsNone(announcement.respond_by)
+        self.assertFalse(announcement.requires_response)
+
+    def test_a_blank_title_is_rejected_and_the_body_is_not_lost(self):
+        response = self.client.post(reverse("step:admin-announcement-new"), {
+            "title": "", "body": "Details here.",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Announcement.objects.exists())
+        self.assertContains(response, "Details here.")
+
+    def test_an_invalid_respond_by_date_is_rejected(self):
+        response = self.client.post(reverse("step:admin-announcement-new"), {
+            "title": "New CPD session", "body": "Details here.", "respond_by": "not-a-date",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Announcement.objects.exists())

@@ -18,7 +18,7 @@ from datetime import date
 from django.db.models import Count
 
 from step import constants
-from step.models import Educator, Evidence, Obligation, Region, Submission
+from step.models import AnnouncementResponse, Educator, Evidence, Obligation, Region, Session, Submission
 
 
 def _percent(part: int, whole: int) -> float:
@@ -207,3 +207,88 @@ def completeness_rate(period_start: date) -> float:
         required += need
         filled += min(Evidence.objects.filter(submission=submission).count(), need)
     return _percent(filled, required)
+
+
+def activity_by_region(period_start: date) -> list[dict]:
+    """One row per region with eligible educators, counts spanning all four
+    verticals (fix step plan.md §6). Every column is scoped to the same
+    `generation.eligible_educators()` predicate `teachers_by_region()` above
+    uses, so this chart and the RSVP view can never disagree about who is
+    being counted.
+
+    CPD Online responses are scoped by `Announcement.published_at`
+    (auto_now_add, immutable), never `AnnouncementResponse.responded_at`
+    (auto_now — it rewrites on every RSVP change, so a September edit to a
+    July announcement would silently move that answer into September's
+    figure). This matches `_period_obligations()` above: a row belongs to
+    the period it originated in, not the period someone later acted on it.
+
+    Counts every response regardless of `attending` — this measures
+    engagement with the announcement, not turnout. Whether "responses"
+    should mean attendees only is an open question put to the client;
+    if it comes back that way, only the `.count()` call below changes.
+    """
+    from step.generation import eligible_educators
+    from step.scheduling import period_end
+
+    finish = period_end(period_start, constants.PERIOD_MONTH)
+    rows = []
+    for region in Region.objects.filter(id__in=eligible_educators().values("region_id")).distinct():
+        educators = eligible_educators().filter(region=region)
+
+        monthly_reports = (
+            Obligation.objects.filter(
+                type__category=constants.CATEGORY_MONTHLY_REPORTING,
+                period_start=period_start,
+                educator__in=educators,
+            )
+            .exclude(status=constants.STATUS_NOT_STARTED)
+            .count()
+        )
+        cpd_online_responses = AnnouncementResponse.objects.filter(
+            educator__in=educators,
+            # __date, not __range, on this DateTimeField: period_end is an
+            # inclusive `date`, and a plain __range coerces it to midnight,
+            # silently dropping everything published on the month's last day.
+            announcement__published_at__date__range=(period_start, finish),
+        ).count()
+        cpd_offline_sessions = Session.objects.filter(
+            activity__kind=constants.ACTIVITY_KIND_CPD_OFFLINE,
+            status=constants.SESSION_STATUS_HELD,
+            held_on__range=(period_start, finish),
+            activity__educator__in=educators,
+        ).count()
+        eca_sessions = Session.objects.filter(
+            activity__kind=constants.ACTIVITY_KIND_ECA,
+            status=constants.SESSION_STATUS_HELD,
+            held_on__range=(period_start, finish),
+            activity__educator__in=educators,
+        ).count()
+
+        rows.append({
+            "region": region.name,
+            "monthly_reports": monthly_reports,
+            "cpd_online_responses": cpd_online_responses,
+            "cpd_offline_sessions": cpd_offline_sessions,
+            "eca_sessions": eca_sessions,
+        })
+    return sorted(
+        rows,
+        key=lambda r: -(
+            r["monthly_reports"] + r["cpd_online_responses"]
+            + r["cpd_offline_sessions"] + r["eca_sessions"]
+        ),
+    )
+
+
+def sessions_held(period_start: date) -> int:
+    """Total Activity sessions logged as held in the period, across both
+    verticals — the headline figure alongside `activity_by_region()`
+    (fix step plan.md item 18)."""
+    from step.scheduling import period_end
+
+    finish = period_end(period_start, constants.PERIOD_MONTH)
+    return Session.objects.filter(
+        status=constants.SESSION_STATUS_HELD,
+        held_on__range=(period_start, finish),
+    ).count()

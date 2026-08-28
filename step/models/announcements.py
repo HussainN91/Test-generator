@@ -43,6 +43,10 @@ class Announcement(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    def responding_has_closed(self, today) -> bool:
+        """Past the last day to answer. No `respond_by` means it never closes."""
+        return self.respond_by is not None and self.respond_by < today
+
 
 class AnnouncementResponse(models.Model):
     """One answer per teacher, changeable until `respond_by` — enforced by

@@ -24,6 +24,7 @@
     <a class="rail__link" href="{% url 'step:admin-dashboard' %}" {% if nav == 'dashboard' %}aria-current="page"{% endif %}>Overview</a>
     <a class="rail__link" href="{% url 'step:admin-review-queue' %}" {% if nav == 'review' %}aria-current="page"{% endif %}>Review queue</a>
     <a class="rail__link" href="{% url 'step:admin-teachers' %}" {% if nav == 'teachers' %}aria-current="page"{% endif %}>Teachers</a>
+    <a class="rail__link" href="{% url 'step:admin-announcements' %}" {% if nav == 'announcements' %}aria-current="page"{% endif %}>Announcements</a>
   </nav>
 
   <main class="sheet" id="sheet">
