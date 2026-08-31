@@ -25,7 +25,7 @@ from diagnostics.extraction.keys import (
 )
 from diagnostics.extraction.listening_content import extract_question_content
 from diagnostics.extraction.worksheets import split_clips
-from diagnostics.models import AudioClip, ListeningQuestion
+from diagnostics.models import AudioClip, ListeningQuestion, ListeningQuestionSet
 
 MD_NAME = "Listening Question Bank -2026 EC.md"
 DOCX_NAME = "Listening Question Bank -2026 EC.docx"
@@ -78,7 +78,8 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS(
             f"Imported {AudioClip.objects.count()} clips, "
-            f"{ListeningQuestion.objects.count()} questions."
+            f"{ListeningQuestionSet.objects.filter(number=1).count()} first sets, "
+            f"{ListeningQuestion.objects.filter(question_set__number=1).count()} questions."
         ))
 
     def _import_clip(self, number, body, images_by_slot, audio_path):
@@ -105,15 +106,19 @@ class Command(BaseCommand):
 
         content = extract_question_content(number, task_type, body)
 
-        for question in clip.questions.all():
+        question_set, _ = ListeningQuestionSet.objects.get_or_create(
+            clip=clip, number=1
+        )
+
+        for question in question_set.questions.all():
             if question.image:
                 question.image.delete(save=False)
-        clip.questions.all().delete()
+        question_set.questions.all().delete()
         for position, (answer, alts, item) in enumerate(
             zip(answers, alternatives, content), start=1
         ):
             question = ListeningQuestion.objects.create(
-                clip=clip,
+                question_set=question_set,
                 position=position,
                 stem=item["stem"],
                 options=item["options"],

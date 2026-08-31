@@ -46,14 +46,18 @@ class ImportListeningTests(TestCase):
     def test_letter_clips_have_letter_answers(self):
         call_command("import_listening", stdout=StringIO())
         for clip in AudioClip.objects.filter(number__in=[1, 2, 4]):
-            for question in clip.questions.all():
+            for question in ListeningQuestion.objects.filter(
+                question_set__clip=clip, question_set__number=1
+            ):
                 self.assertIn(question.answer, {"A", "B", "C"})
 
     def test_picture_clips_have_images_attached(self):
         call_command("import_listening", stdout=StringIO())
         for number in (1, 5, 9, 13, 15):
             clip = AudioClip.objects.get(number=number)
-            for question in clip.questions.all():
+            for question in ListeningQuestion.objects.filter(
+                question_set__clip=clip, question_set__number=1
+            ):
                 self.assertTrue(question.image, f"clip {number} Q{question.position}")
 
     def test_running_twice_is_idempotent(self):
@@ -70,7 +74,30 @@ class ImportListeningTests(TestCase):
         call_command("import_listening", stdout=StringIO())
         for (number, position), (wrong, right) in STEM_CORRECTIONS.items():
             question = ListeningQuestion.objects.get(
-                clip__number=number, position=position
+                question_set__clip__number=number, question_set__number=1,
+                position=position,
             )
             self.assertEqual(question.stem, right, f"clip {number} Q{position}")
             self.assertNotEqual(question.stem, wrong)
+
+    def test_import_writes_into_set_one_and_leaves_set_two_alone(self):
+        from diagnostics.models import ListeningQuestionSet
+        call_command("import_listening", stdout=StringIO())
+        self.assertEqual(ListeningQuestionSet.objects.filter(number=1).count(), 20)
+        for question in ListeningQuestion.objects.all():
+            self.assertEqual(question.question_set.number, 1)
+
+    def test_reimport_does_not_disturb_an_existing_set_two(self):
+        from diagnostics.models import AudioClip, ListeningQuestionSet
+        call_command("import_listening", stdout=StringIO())
+        clip = AudioClip.objects.get(number=2)
+        set_two = ListeningQuestionSet.objects.create(clip=clip, number=2)
+        ListeningQuestion.objects.create(
+            question_set=set_two, position=1, stem="second set", answer="A"
+        )
+        call_command("import_listening", stdout=StringIO())
+        self.assertTrue(
+            ListeningQuestion.objects.filter(
+                question_set=set_two, stem="second set"
+            ).exists()
+        )
