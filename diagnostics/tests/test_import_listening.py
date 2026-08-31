@@ -60,3 +60,13 @@ class ImportListeningTests(TestCase):
         call_command("import_listening", stdout=StringIO())
         self.assertEqual(AudioClip.objects.count(), 20)
         self.assertEqual(ListeningQuestion.objects.count(), 100)
+
+    def test_known_source_typos_are_corrected_on_import(self):
+        from diagnostics.constants import STEM_CORRECTIONS
+        call_command("import_listening", stdout=StringIO())
+        for (number, position), (wrong, right) in STEM_CORRECTIONS.items():
+            question = ListeningQuestion.objects.get(
+                clip__number=number, position=position
+            )
+            self.assertEqual(question.stem, right, f"clip {number} Q{position}")
+            self.assertNotEqual(question.stem, wrong)
