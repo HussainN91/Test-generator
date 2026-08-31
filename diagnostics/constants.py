@@ -73,6 +73,13 @@ PICTURE_CLIPS = tuple(
     number for number, task in CLIP_TASK_TYPES.items() if task == TaskType.PICTURE
 )
 
+#: Question sets per clip. Two variants sit in one room hearing one
+#: recording, so one recording must carry two different question papers -
+#: which is exactly two sets, no more. Picture clips can only just support
+#: this (seven recorded items against 5 + 5 slots, so 3 items appear in both
+#: sets); a third set is arithmetically impossible without new audio.
+SETS_PER_CLIP = 2
+
 #: The other fifteen clips, grouped by task type so a future allocator can
 #: rotate evenly across the three non-picture types.
 ROTATING_CLIPS_BY_TYPE = {

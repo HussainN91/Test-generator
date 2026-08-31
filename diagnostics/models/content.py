@@ -9,7 +9,9 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from diagnostics.constants import MAX_PASSAGE_WORDS, MIN_PASSAGE_WORDS, TaskType
+from diagnostics.constants import (
+    MAX_PASSAGE_WORDS, MIN_PASSAGE_WORDS, SETS_PER_CLIP, TaskType,
+)
 
 
 def _position_validators(maximum):
@@ -33,8 +35,45 @@ class AudioClip(models.Model):
         return f"Clip {self.number} ({TaskType(self.task_type).label})"
 
 
+class ListeningQuestionSet(models.Model):
+    """One paper's worth of questions about one recording.
+
+    The layer this model adds is what lets the two variants sitting in the
+    same room hear the same audio and answer different questions. Before it,
+    ListeningQuestion hung off AudioClip directly under unique(clip,
+    position), so a clip had exactly one set of five questions and pairing
+    the audio per group would have produced two byte-identical papers.
+
+    Two sets per clip, no more (SETS_PER_CLIP). The rotating clips get two
+    fully distinct sets; the five picture clips only have seven recorded
+    items between their two sets, so three items are shared - an accepted,
+    documented limitation, not something a third set could fix.
+    """
+
+    clip = models.ForeignKey(
+        AudioClip, on_delete=models.CASCADE, related_name="question_sets"
+    )
+    number = models.PositiveSmallIntegerField(
+        validators=_position_validators(SETS_PER_CLIP),
+        help_text="1 or 2. Which of the recording's two question papers this is.",
+    )
+
+    class Meta:
+        ordering = ["clip__number", "number"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["clip", "number"], name="unique_listening_set_number"
+            )
+        ]
+
+    def __str__(self):
+        return f"Clip {self.clip.number} set {self.number}"
+
+
 class ListeningQuestion(models.Model):
-    clip = models.ForeignKey(AudioClip, on_delete=models.CASCADE, related_name="questions")
+    question_set = models.ForeignKey(
+        ListeningQuestionSet, on_delete=models.CASCADE, related_name="questions"
+    )
     position = models.PositiveSmallIntegerField(validators=_position_validators(5))
     stem = models.TextField()
     options = models.JSONField(
@@ -51,15 +90,25 @@ class ListeningQuestion(models.Model):
     )
 
     class Meta:
-        ordering = ["clip__number", "position"]
+        ordering = ["question_set__clip__number", "question_set__number", "position"]
         constraints = [
             models.UniqueConstraint(
-                fields=["clip", "position"], name="unique_listening_position"
+                fields=["question_set", "position"], name="unique_listening_position"
             )
         ]
 
     def __str__(self):
-        return f"Clip {self.clip.number} Q{self.position}"
+        return f"{self.question_set} Q{self.position}"
+
+    @property
+    def clip(self):
+        """The recording this question is about.
+
+        Kept as a read-only property because the extraction and verification
+        code reads `question.clip.number` in a dozen places and none of it
+        cares which set the question came from.
+        """
+        return self.question_set.clip
 
 
 class ReadingSubtype(models.TextChoices):
@@ -217,12 +266,24 @@ class KeyVerification(models.Model):
 
     @staticmethod
     def current_fingerprint():
+        """Hash every answer in the bank, set number included.
+
+        The set number is part of the key: without it, clip 3 set 1 Q2 and
+        clip 3 set 2 Q2 hash into the same slot and a swapped pair of answers
+        between the two sets would leave the fingerprint unchanged.
+
+        Adding the second sets necessarily changes this digest, so an
+        existing sign-off lapses and must be re-done by a human. That is the
+        intended behaviour, not a bug to route around.
+        """
         rows = ListeningQuestion.objects.order_by(
-            "clip__number", "position"
-        ).values_list("clip__number", "position", "answer")
+            "question_set__clip__number", "question_set__number", "position"
+        ).values_list(
+            "question_set__clip__number", "question_set__number", "position", "answer"
+        )
         digest = hashlib.sha256()
-        for clip_number, position, answer in rows:
-            digest.update(f"{clip_number}:{position}:{answer}\n".encode("utf-8"))
+        for clip_number, set_number, position, answer in rows:
+            digest.update(f"{clip_number}:{set_number}:{position}:{answer}\n".encode("utf-8"))
         return digest.hexdigest()
 
     @classmethod

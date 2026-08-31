@@ -1,12 +1,12 @@
 from diagnostics.models.content import (
-    AudioClip, KeyVerification, ListeningQuestion,
+    AudioClip, KeyVerification, ListeningQuestion, ListeningQuestionSet,
     ReadingPassage, ReadingQuestion, ReadingSubtype,
     SpeakingPrompt, SpeakingRubric, SpeakingTask,
     WritingQuestion, WritingSubtype,
 )
 
 __all__ = [
-    "AudioClip", "KeyVerification", "ListeningQuestion",
+    "AudioClip", "KeyVerification", "ListeningQuestion", "ListeningQuestionSet",
     "ReadingPassage", "ReadingQuestion", "ReadingSubtype",
     "SpeakingPrompt", "SpeakingRubric", "SpeakingTask",
     "WritingQuestion", "WritingSubtype",
