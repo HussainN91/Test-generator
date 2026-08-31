@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 
 from diagnostics.authored.schema import ContentError, validate_reading
 
@@ -91,3 +91,72 @@ class ReadingValidationTests(TestCase):
         payload["questions"][0]["options"] = ["i", "ii", "iii", "iv", "v", "vi"]
         payload["questions"][0]["answer"] = "  III  "  # different case, extra whitespace
         validate_reading(payload)  # must not raise
+
+
+from diagnostics.authored.listening_sets import ContentError as ListeningContentError
+from diagnostics.authored.listening_sets import validate_listening_set_payload
+
+
+def _question(position, **overrides):
+    base = {
+        "position": position, "stem": f"Stem {position}", "options": ["a", "b", "c"],
+        "answer": "A", "acceptable_answers": [],
+    }
+    base.update(overrides)
+    return base
+
+
+def _clip(number, task_type, **question_overrides):
+    return {
+        "number": number, "task_type": task_type,
+        "questions": [_question(p, **question_overrides) for p in range(1, 6)],
+    }
+
+
+class ListeningSetValidationTests(SimpleTestCase):
+    def test_a_clip_must_have_exactly_five_questions(self):
+        payload = _clip(2, "mcq3")
+        payload["questions"] = payload["questions"][:4]
+        with self.assertRaisesMessage(ListeningContentError, "positions"):
+            validate_listening_set_payload(payload)
+
+    def test_task_type_must_match_the_bank(self):
+        payload = _clip(2, "gap_fill")
+        with self.assertRaisesMessage(ListeningContentError, "mcq3"):
+            validate_listening_set_payload(payload)
+
+    def test_picture_questions_need_an_image_and_no_options(self):
+        payload = _clip(1, "picture", options=[], image=None)
+        with self.assertRaisesMessage(ListeningContentError, "image"):
+            validate_listening_set_payload(payload)
+
+    def test_picture_questions_reject_options(self):
+        payload = _clip(1, "picture", image="clip-01-q6.jpg")
+        with self.assertRaisesMessage(ListeningContentError, "options"):
+            validate_listening_set_payload(payload)
+
+    def test_letter_answers_must_be_a_b_or_c(self):
+        payload = _clip(2, "mcq3", answer="D")
+        with self.assertRaisesMessage(ListeningContentError, "A, B or C"):
+            validate_listening_set_payload(payload)
+
+    def test_gap_fill_rejects_options(self):
+        payload = _clip(3, "gap_fill", answer="museum")
+        with self.assertRaisesMessage(ListeningContentError, "options"):
+            validate_listening_set_payload(payload)
+
+    def test_gap_fill_needs_a_non_empty_answer(self):
+        payload = _clip(3, "gap_fill", options=[], answer="")
+        with self.assertRaisesMessage(ListeningContentError, "answer"):
+            validate_listening_set_payload(payload)
+
+    def test_a_valid_mcq_clip_passes(self):
+        validate_listening_set_payload(_clip(2, "mcq3"))
+
+    def test_a_valid_gap_fill_clip_passes(self):
+        validate_listening_set_payload(_clip(3, "gap_fill", options=[], answer="museum"))
+
+    def test_a_valid_picture_clip_passes(self):
+        validate_listening_set_payload(
+            _clip(1, "picture", options=[], image="clip-01-q6.jpg", answer="B")
+        )
