@@ -229,6 +229,856 @@
           "acceptable_answers": []
         }
       ]
+    },
+    {
+      "number": 2,
+      "task_type": "mcq3",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "Why did Simon miss the school trip to the climbing centre?",
+          "options": [
+            "He was ill.",
+            "He was busy with homework.",
+            "He didn't want to go."
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 2,
+          "stem": "What colour are the holes used for an easy climb?",
+          "options": [
+            "Red",
+            "Green",
+            "Blue"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 3,
+          "stem": "How did Simon do on his first climb?",
+          "options": [
+            "He was the fastest to the top.",
+            "He was the last to reach the top.",
+            "He didn't reach the top."
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "What did the instructor warn the climbers about?",
+          "options": [
+            "That their arms might hurt.",
+            "That the wall was dangerous.",
+            "That they needed better shoes."
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "What did Simon notice about his friends compared to himself?",
+          "options": [
+            "He is fitter than they are.",
+            "They climb better than he does.",
+            "They go outside more than he does."
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "task_type": "gap_fill",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "Casper's mother sometimes plays the ______ while she dances above the ring.",
+          "options": [],
+          "answer": "violin",
+          "acceptable_answers": [
+            "violin"
+          ]
+        },
+        {
+          "position": 2,
+          "stem": "Casper's sister is ______ years old.",
+          "options": [],
+          "answer": "16/sixteen",
+          "acceptable_answers": [
+            "16",
+            "sixteen"
+          ]
+        },
+        {
+          "position": 3,
+          "stem": "In the motorbike act, Casper's sister stands at the ______ of the group.",
+          "options": [],
+          "answer": "top",
+          "acceptable_answers": [
+            "top"
+          ]
+        },
+        {
+          "position": 4,
+          "stem": "Casper is not allowed to perform in the circus until he is ______ years old.",
+          "options": [],
+          "answer": "15/fifteen",
+          "acceptable_answers": [
+            "15",
+            "fifteen"
+          ]
+        },
+        {
+          "position": 5,
+          "stem": "The only animal in Casper's circus is a ______.",
+          "options": [],
+          "answer": "rabbit",
+          "acceptable_answers": [
+            "rabbit"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "task_type": "true_false",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "Lucas did not expect his mother to let him go to the concert.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 2,
+          "stem": "Claire paid for her own concert ticket.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 3,
+          "stem": "Claire and Lucas had seats close to the front of the stage.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "The band performed with all its original members that night.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "Every online review of the band's new album was positive.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "task_type": "mcq3",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "Who performs at the Theatre Royal on 12 May?",
+          "options": [
+            "George Melly",
+            "Elaine Delmar",
+            "The Brodsky String Quartet"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 2,
+          "stem": "Which group appears at the Corn Exchange on 19 May?",
+          "options": [
+            "London All Stars Steel Band",
+            "Viennese Gala Orchestra",
+            "Brodsky String Quartet"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 3,
+          "stem": "How long does the guided walk around Ickworth Park last?",
+          "options": [
+            "About one hour",
+            "About two hours",
+            "About two and a half hours"
+          ],
+          "answer": "C",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "If you want to book festival tickets by post, how must you pay?",
+          "options": [
+            "By cash only",
+            "By cheque only",
+            "By credit card only"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "What time does the box office open on Saturdays?",
+          "options": [
+            "9:00 a.m.",
+            "10:00 a.m.",
+            "12:00 p.m."
+          ],
+          "answer": "C",
+          "acceptable_answers": []
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "task_type": "gap_fill",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "In her first job, she looked after ______ children.",
+          "options": [],
+          "answer": "three/3",
+          "acceptable_answers": [
+            "three",
+            "3"
+          ]
+        },
+        {
+          "position": 2,
+          "stem": "She became a hotel receptionist so that she could continue to practise her ______.",
+          "options": [],
+          "answer": "languages",
+          "acceptable_answers": [
+            "languages"
+          ]
+        },
+        {
+          "position": 3,
+          "stem": "She had to leave the hotel job because the hotel ______.",
+          "options": [],
+          "answer": "closed down",
+          "acceptable_answers": [
+            "closed down"
+          ]
+        },
+        {
+          "position": 4,
+          "stem": "The bakery where she worked belonged to the hotel manager's ______.",
+          "options": [],
+          "answer": "brother",
+          "acceptable_answers": [
+            "brother"
+          ]
+        },
+        {
+          "position": 5,
+          "stem": "Her last job was in the foreign department of ______.",
+          "options": [],
+          "answer": "(the) Bank International",
+          "acceptable_answers": [
+            "(the) Bank International"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "task_type": "true_false",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "The boy first suggests going to the cinema or the theatre.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 2,
+          "stem": "The girl wants to watch the new Italian film.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 3,
+          "stem": "The boy refuses to watch a comedy because he doesn't want to spend money on it.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "The girl says she and the boy have never seen a Robert De Niro film.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "The boy offers to prepare some food while the girl goes to choose a film.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "task_type": "mcq3",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "How long did it take to build Waterside Shopping Centre?",
+          "options": [
+            "Two months",
+            "Three weeks",
+            "Three years"
+          ],
+          "answer": "C",
+          "acceptable_answers": []
+        },
+        {
+          "position": 2,
+          "stem": "How many free parking spaces does Waterside have?",
+          "options": [
+            "7,000",
+            "12,000",
+            "15,000"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 3,
+          "stem": "On a normal weekday, what time do the shops open?",
+          "options": [
+            "9:00 a.m.",
+            "10:00 a.m.",
+            "8:00 a.m."
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "How many banks are there at Waterside?",
+          "options": [
+            "Seven",
+            "Twelve",
+            "Fifteen"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "What did David complain about at the shopping centre?",
+          "options": [
+            "The quality of the food",
+            "The rubbish on the ground",
+            "The crowded car park"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "task_type": "gap_fill",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "The Bristol Hotel is closed during the month of ______.",
+          "options": [],
+          "answer": "January",
+          "acceptable_answers": [
+            "January"
+          ]
+        },
+        {
+          "position": 2,
+          "stem": "The Bristol Hotel has just ______ rooms.",
+          "options": [],
+          "answer": "7/seven",
+          "acceptable_answers": [
+            "7",
+            "seven"
+          ]
+        },
+        {
+          "position": 3,
+          "stem": "A double room at the Ferndale Hotel includes free use of the ______.",
+          "options": [],
+          "answer": "tennis courts",
+          "acceptable_answers": [
+            "tennis courts"
+          ]
+        },
+        {
+          "position": 4,
+          "stem": "The Ferndale Hotel is a ______-star hotel.",
+          "options": [],
+          "answer": "2/two",
+          "acceptable_answers": [
+            "2",
+            "two"
+          ]
+        },
+        {
+          "position": 5,
+          "stem": "The Fir Trees Hotel is in Lowton, ______ miles south of Lakeside.",
+          "options": [],
+          "answer": "7/seven",
+          "acceptable_answers": [
+            "7",
+            "seven"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "task_type": "true_false",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "The wedding will take place on a weekday.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 2,
+          "stem": "Mike used to go out with Jill's sister.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 3,
+          "stem": "Ann has known Jill and Tony for a long time.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "More than a hundred guests are expected at the wedding.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "Ann would prefer a smaller wedding.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "task_type": "mcq3",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "What is Sarah's job apart from painting?",
+          "options": [
+            "She teaches art.",
+            "She works with computers.",
+            "She sells paintings full-time."
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 2,
+          "stem": "Why can't Sarah go to art college full-time?",
+          "options": [
+            "She doesn't have enough talent.",
+            "She has rent and a car to pay for.",
+            "She doesn't have time."
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 3,
+          "stem": "How often did Sarah have art classes at secondary school?",
+          "options": [
+            "Once a week",
+            "Twice a week",
+            "Every day"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "Where is Sarah's next exhibition going to be?",
+          "options": [
+            "The Queen's Gallery",
+            "A local school",
+            "Her flat"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "In which country did Sarah paint desert scenes?",
+          "options": [
+            "Greece",
+            "Morocco",
+            "Spain"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "task_type": "mcq3",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "What was John's very first trip?",
+          "options": [
+            "A round-the-world journey",
+            "A trip to the North Pole",
+            "A journey around the Pacific"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 2,
+          "stem": "Which of John's trips was the most difficult?",
+          "options": [
+            "The Pacific Ocean trip",
+            "The round-the-world trip",
+            "The North Pole to South Pole car journey"
+          ],
+          "answer": "C",
+          "acceptable_answers": []
+        },
+        {
+          "position": 3,
+          "stem": "How does John describe his health?",
+          "options": [
+            "Poor",
+            "Excellent",
+            "Uncertain"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "What happened while John was filming in Borneo?",
+          "options": [
+            "He became seriously ill.",
+            "His wife needed an emergency operation.",
+            "He lost his camera equipment."
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "What kind of writing does John want to do in future?",
+          "options": [
+            "Poetry",
+            "Fiction",
+            "Newspaper articles"
+          ],
+          "answer": "C",
+          "acceptable_answers": []
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "task_type": "true_false",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "Susanna feels that daily violin practice helps her improve.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 2,
+          "stem": "Carl uses playing the piano to help him relax from his schoolwork.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 3,
+          "stem": "Carl believes he is good enough to become a professional musician.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "Susanna wants to become a teacher, like her parents.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "Susanna hopes the school concert will be a success.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "task_type": "gap_fill",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "The play was written by ______.",
+          "options": [],
+          "answer": "Andrew McVitty",
+          "acceptable_answers": [
+            "Andrew McVitty"
+          ]
+        },
+        {
+          "position": 2,
+          "stem": "The play is a comedy about a birthday ______.",
+          "options": [],
+          "answer": "celebration",
+          "acceptable_answers": [
+            "celebration"
+          ]
+        },
+        {
+          "position": 3,
+          "stem": "Students will be sitting together in rows ______.",
+          "options": [],
+          "answer": "E and F",
+          "acceptable_answers": [
+            "E and F"
+          ]
+        },
+        {
+          "position": 4,
+          "stem": "The full price of a ticket, before the group discount, is £______.",
+          "options": [],
+          "answer": "£18",
+          "acceptable_answers": [
+            "£18",
+            "18"
+          ]
+        },
+        {
+          "position": 5,
+          "stem": "Money for the coach costs £______.",
+          "options": [],
+          "answer": "£3.50",
+          "acceptable_answers": [
+            "£3.50",
+            "3.50"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "task_type": "gap_fill",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "There are no seats, so people sit on the ______.",
+          "options": [],
+          "answer": "ground",
+          "acceptable_answers": [
+            "ground"
+          ]
+        },
+        {
+          "position": 2,
+          "stem": "You do not need a blanket because the ______ don't drop in the evenings during summer.",
+          "options": [],
+          "answer": "temperature(s)",
+          "acceptable_answers": [
+            "temperature",
+            "temperatures"
+          ]
+        },
+        {
+          "position": 3,
+          "stem": "By car, the round trip to the cinema is about ______ kilometres.",
+          "options": [],
+          "answer": "8/eight",
+          "acceptable_answers": [
+            "8",
+            "eight"
+          ]
+        },
+        {
+          "position": 4,
+          "stem": "Some visitors like to bring a ______ to eat after the film.",
+          "options": [],
+          "answer": "picnic",
+          "acceptable_answers": [
+            "picnic"
+          ]
+        },
+        {
+          "position": 5,
+          "stem": "Lighting a ______ is against the rules at the cinema.",
+          "options": [],
+          "answer": "barbecue",
+          "acceptable_answers": [
+            "barbecue"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "task_type": "true_false",
+      "questions": [
+        {
+          "position": 1,
+          "stem": "Peter's sister enjoys going to parties.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 2,
+          "stem": "Anne thought last year's party was enjoyable, despite the crowd.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 3,
+          "stem": "Anne hopes there will be a good DJ at the party.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "The food at the party will be similar to the food in the college cafeteria.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "Peter suggests taking a taxi if he is with a group of friends.",
+          "options": [
+            "YES",
+            "NO"
+          ],
+          "answer": "A",
+          "acceptable_answers": []
+        }
+      ]
     }
   ]
 }
