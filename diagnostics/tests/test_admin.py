@@ -36,12 +36,12 @@ class AdminRegistrationTests(TestCase):
         }
         self.assertEqual(inline_models, {"paperwritingquestion", "paperspeakingprompt"})
 
-    def test_audio_clip_admin_shows_its_questions_inline(self):
+    def test_audio_clip_admin_shows_its_question_sets_inline(self):
         inline_models = [
             inline.model._meta.model_name
             for inline in admin.site._registry[AudioClip].inlines
         ]
-        self.assertEqual(inline_models, ["listeningquestion"])
+        self.assertEqual(inline_models, ["listeningquestionset"])
 
     def test_reading_passage_admin_shows_its_questions_inline(self):
         inline_models = [

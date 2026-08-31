@@ -20,9 +20,9 @@ from django.contrib import admin
 
 from diagnostics.models import (
     AudioClip, GenerationEvent, GenerationWindow, KeyVerification,
-    ListeningQuestion, Paper, PaperSpeakingPrompt, PaperWritingQuestion,
-    ReadingPassage, ReadingQuestion, SpeakingPrompt, SpeakingRubric,
-    TeacherGradeAssignment, WritingQuestion,
+    ListeningQuestion, ListeningQuestionSet, Paper, PaperSpeakingPrompt,
+    PaperWritingQuestion, ReadingPassage, ReadingQuestion, SpeakingPrompt,
+    SpeakingRubric, TeacherGradeAssignment, WritingQuestion,
 )
 
 
@@ -42,39 +42,66 @@ class ImportedContentAdmin(admin.ModelAdmin):
         return False
 
 
+class ListeningQuestionSetInline(admin.TabularInline):
+    model = ListeningQuestionSet
+    extra = 0
+    fields = ("number",)
+    ordering = ("number",)
+    verbose_name = "question set"
+    verbose_name_plural = "question sets on this recording"
+
+
 class ListeningQuestionInline(admin.TabularInline):
     model = ListeningQuestion
     extra = 0
     fields = ("position", "stem", "options", "image", "answer", "acceptable_answers")
     ordering = ("position",)
     verbose_name = "question"
-    verbose_name_plural = "questions in this clip"
+    verbose_name_plural = "questions in this set"
 
 
 @admin.register(AudioClip)
 class AudioClipAdmin(ImportedContentAdmin):
-    list_display = ("number", "task_type", "question_count", "has_audio")
+    list_display = ("number", "task_type", "set_count", "question_count", "has_audio")
     list_filter = ("task_type",)
     search_fields = ("number", "intro_text")
     ordering = ("number",)
-    inlines = [ListeningQuestionInline]
+    inlines = [ListeningQuestionSetInline]
+
+    @admin.display(description="sets")
+    def set_count(self, obj):
+        return obj.question_sets.count()
 
     @admin.display(description="questions")
     def question_count(self, obj):
-        return obj.questions.count()
+        return ListeningQuestion.objects.filter(question_set__clip=obj).count()
 
     @admin.display(boolean=True, description="audio file")
     def has_audio(self, obj):
         return bool(obj.audio_file)
 
 
+@admin.register(ListeningQuestionSet)
+class ListeningQuestionSetAdmin(ImportedContentAdmin):
+    list_display = ("__str__", "clip", "number", "question_count")
+    list_filter = ("number", "clip__task_type")
+    ordering = ("clip__number", "number")
+    list_select_related = ("clip",)
+    inlines = [ListeningQuestionInline]
+
+    @admin.display(description="questions")
+    def question_count(self, obj):
+        return obj.questions.count()
+
+
 @admin.register(ListeningQuestion)
 class ListeningQuestionAdmin(ImportedContentAdmin):
-    list_display = ("__str__", "clip", "position", "answer", "has_image")
-    list_filter = ("clip__task_type", "clip__number")
+    list_display = ("__str__", "question_set", "position", "answer", "has_image")
+    list_filter = ("question_set__number", "question_set__clip__task_type",
+                   "question_set__clip__number")
     search_fields = ("stem", "answer")
-    ordering = ("clip__number", "position")
-    list_select_related = ("clip",)
+    ordering = ("question_set__clip__number", "question_set__number", "position")
+    list_select_related = ("question_set__clip",)
 
     @admin.display(boolean=True, description="image")
     def has_image(self, obj):
