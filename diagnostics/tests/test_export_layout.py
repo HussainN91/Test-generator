@@ -119,11 +119,11 @@ class PictureGridTests(RenderingTestCase):
     grid is what buys the fourth page, not the picture width."""
 
     def _give_every_picture_question_an_image(self):
-        clip = self.paper.listening_clip_1
-        for question in clip.questions.all():
+        question_set = self.paper.listening_set_1
+        for question in question_set.questions.all():
             question.image = "diagnostics/listening/clip-01-q1.jpg"
             question.save(update_fields=["image"])
-        return clip
+        return question_set
 
     def test_pictures_print_two_to_a_row(self):
         self.assertEqual(PICTURES_PER_ROW, 2)
@@ -137,9 +137,9 @@ class PictureGridTests(RenderingTestCase):
         self.assertLess(used, printable)
 
     def test_a_picture_clip_is_laid_out_as_a_grid_not_as_stacked_questions(self):
-        clip = self._give_every_picture_question_an_image()
+        question_set = self._give_every_picture_question_an_image()
         document = student_docx(self.paper)
-        stems = [question.stem for question in clip.questions.order_by("position")]
+        stems = [question.stem for question in question_set.questions.order_by("position")]
         top_level = "\n".join(p.text for p in document.paragraphs)
         for stem in stems:
             self.assertNotIn(
@@ -148,7 +148,7 @@ class PictureGridTests(RenderingTestCase):
             )
 
     def test_the_grid_still_numbers_the_questions_in_order(self):
-        clip = self._give_every_picture_question_an_image()
+        question_set = self._give_every_picture_question_an_image()
         document = student_docx(self.paper)
         cells = [
             cell.text
@@ -156,7 +156,7 @@ class PictureGridTests(RenderingTestCase):
             for row in table.rows
             for cell in row.cells
         ]
-        for position, question in enumerate(clip.questions.order_by("position"), 1):
+        for position, question in enumerate(question_set.questions.order_by("position"), 1):
             self.assertTrue(
                 any(text.startswith(f"{position}. {question.stem}") for text in cells),
                 f"question {position} is not numbered {position} in the grid",
@@ -165,8 +165,8 @@ class PictureGridTests(RenderingTestCase):
     def test_a_question_with_no_image_on_disk_still_gets_its_cell(self):
         """One missing file must not push the paper back to full-width
         layout, which would put it over budget."""
-        clip = self._give_every_picture_question_an_image()
-        orphan = clip.questions.order_by("position").last()
+        question_set = self._give_every_picture_question_an_image()
+        orphan = question_set.questions.order_by("position").last()
         orphan.image = "diagnostics/listening/does-not-exist.jpg"
         orphan.save(update_fields=["image"])
 

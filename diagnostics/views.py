@@ -60,7 +60,7 @@ def _get_visible_paper(user, grade, variant):
         raise Http404("No paper here.")
     return get_object_or_404(
         Paper.objects.select_related(
-            "listening_clip_1", "listening_clip_2", "reading_passage"
+            "listening_set_1__clip", "listening_set_2__clip", "reading_passage"
         ),
         grade=grade, variant=variant, is_published=True,
     )
@@ -74,7 +74,7 @@ def _pack_papers(user, grade, number):
         Paper.objects.filter(
             grade=grade, is_published=True, variant__in=variants_for_class(number)
         )
-        .select_related("listening_clip_1", "listening_clip_2", "reading_passage")
+        .select_related("listening_set_1__clip", "listening_set_2__clip", "reading_passage")
         .order_by("variant")
     )
 

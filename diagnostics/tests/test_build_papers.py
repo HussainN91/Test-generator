@@ -10,17 +10,19 @@ from diagnostics.constants import (
     VARIANTS,
 )
 from diagnostics.models import (
-    AudioClip, Paper, PaperSpeakingPrompt, PaperWritingQuestion,
+    AudioClip, ListeningQuestionSet, Paper, PaperSpeakingPrompt, PaperWritingQuestion,
     ReadingPassage, SpeakingPrompt, WritingQuestion, WritingSubtype,
 )
 
 
 def seed_content():
     """Real bank-size content: enough to build all 48 papers under the reuse
-    caps - 20 clips (real task types), 15 passages, 200 writing questions
-    (50 per subtype) and 50 speaking prompts (10 per task)."""
+    caps - 20 clips (real task types) each with their set 1, 15 passages,
+    200 writing questions (50 per subtype) and 50 speaking prompts (10 per
+    task)."""
     for number in range(1, 21):
-        AudioClip.objects.create(number=number, task_type=CLIP_TASK_TYPES[number])
+        clip = AudioClip.objects.create(number=number, task_type=CLIP_TASK_TYPES[number])
+        ListeningQuestionSet.objects.create(clip=clip, number=1)
     for n in range(1, 16):
         ReadingPassage.objects.create(
             label=f"R{n:02d}", title=f"Passage {n}", body=" ".join(["word"] * 220)

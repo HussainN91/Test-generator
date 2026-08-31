@@ -134,12 +134,21 @@ def needs_inline_blank(stem, options):
     return not _EXISTING_GAP_RE.search(stem or "")
 
 
-def _clip_section(clip):
+def _clip_section(question_set):
+    """One recording's block on the paper.
+
+    Takes the question set rather than the recording: the two variants in a
+    group share the recording and differ only in which set they answer, so
+    the set is the thing that identifies a paper's listening block. The
+    returned keys are unchanged - export.py, views._annotate_for_display and
+    both templates read them by name.
+    """
+    clip = question_set.clip
     return {
         "number": clip.number,
         "intro": clip.intro_text,
         "audio": clip.audio_file,
-        "questions": list(clip.questions.order_by("position")),
+        "questions": list(question_set.questions.order_by("position")),
     }
 
 
@@ -167,8 +176,8 @@ def paper_sections(paper):
             "marks": SECTION_MARKS,
             "instructions": LISTENING_INSTRUCTIONS,
             "clips": [
-                _clip_section(paper.listening_clip_1),
-                _clip_section(paper.listening_clip_2),
+                _clip_section(paper.listening_set_1),
+                _clip_section(paper.listening_set_2),
             ],
         },
         {

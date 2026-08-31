@@ -96,7 +96,7 @@ class AdminRegistrationTests(TestCase):
     def test_paper_list_display_and_filter(self):
         model_admin = admin.site._registry[Paper]
         for field in (
-            "grade", "variant", "listening_clip_1", "listening_clip_2",
+            "grade", "variant", "listening_set_1", "listening_set_2",
             "reading_passage", "is_published",
         ):
             self.assertIn(field, model_admin.list_display)

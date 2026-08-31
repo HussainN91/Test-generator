@@ -24,7 +24,7 @@ from django.db import transaction
 
 from diagnostics.allocation import allocate
 from diagnostics.constants import CLIP_TASK_TYPES, GRADES, VARIANTS
-from diagnostics.models import AudioClip, Paper, ReadingPassage
+from diagnostics.models import ListeningQuestionSet, Paper, ReadingPassage
 from diagnostics.sampling import SamplingError, sample_speaking_prompts, sample_writing_questions
 from diagnostics.verification import find_reuse_violations
 
@@ -45,12 +45,16 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         resample = options["resample"]
-        clips = {clip.number: clip for clip in AudioClip.objects.all()}
+        sets = {
+            (question_set.clip.number, question_set.number): question_set
+            for question_set in ListeningQuestionSet.objects.select_related("clip")
+        }
         needed_clips = set(CLIP_TASK_TYPES)
-        missing = sorted(needed_clips - set(clips))
+        missing = sorted(number for number in needed_clips if (number, 1) not in sets)
         if missing:
             raise CommandError(
-                f"Missing listening clips {missing}. Run import_listening first."
+                f"Missing listening set 1 for clips {missing}. "
+                f"Run import_listening first."
             )
 
         passages = {p.label: p for p in ReadingPassage.objects.all()}
@@ -72,8 +76,8 @@ class Command(BaseCommand):
                             grade=grade,
                             variant=variant,
                             defaults={
-                                "listening_clip_1": clips[picture],
-                                "listening_clip_2": clips[rotating],
+                                "listening_set_1": sets[(picture, 1)],
+                                "listening_set_2": sets[(rotating, 1)],
                                 "reading_passage": passages[passage_label],
                                 "is_published": True,
                             },

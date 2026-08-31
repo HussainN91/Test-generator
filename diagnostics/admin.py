@@ -192,14 +192,14 @@ class PaperSpeakingPromptInline(admin.TabularInline):
 @admin.register(Paper)
 class PaperAdmin(admin.ModelAdmin):
     list_display = (
-        "__str__", "grade", "variant", "listening_clip_1", "listening_clip_2",
+        "__str__", "grade", "variant", "listening_set_1", "listening_set_2",
         "reading_passage", "is_published",
     )
     list_filter = ("grade", "variant", "is_published")
-    list_select_related = ("listening_clip_1", "listening_clip_2", "reading_passage")
+    list_select_related = ("listening_set_1__clip", "listening_set_2__clip", "reading_passage")
     ordering = ("grade", "variant")
     fields = (
-        "grade", "variant", "listening_clip_1", "listening_clip_2",
+        "grade", "variant", "listening_set_1", "listening_set_2",
         "reading_passage", "is_published",
     )
     inlines = [PaperWritingQuestionInline, PaperSpeakingPromptInline]

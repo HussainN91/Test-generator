@@ -77,7 +77,7 @@ class Command(BaseCommand):
             )
         try:
             return Paper.objects.select_related(
-                "listening_clip_1", "listening_clip_2", "reading_passage"
+                "listening_set_1__clip", "listening_set_2__clip", "reading_passage"
             ).get(grade=grade, variant=variant)
         except Paper.DoesNotExist:
             raise CommandError(
@@ -88,7 +88,7 @@ class Command(BaseCommand):
     def _all_papers(self):
         papers = list(
             Paper.objects.select_related(
-                "listening_clip_1", "listening_clip_2", "reading_passage"
+                "listening_set_1__clip", "listening_set_2__clip", "reading_passage"
             ).order_by("grade", "variant")
         )
         if not papers:

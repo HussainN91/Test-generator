@@ -19,8 +19,8 @@ from django.test import SimpleTestCase, TestCase
 from diagnostics.constants import CLIP_TASK_TYPES, SPEAKING_TASK_ORDER, TaskType
 from diagnostics.export import student_docx
 from diagnostics.models import (
-    AudioClip, ListeningQuestion, Paper, PaperWritingQuestion, ReadingPassage,
-    ReadingQuestion, ReadingSubtype, SpeakingRubric,
+    AudioClip, ListeningQuestion, ListeningQuestionSet, Paper, PaperWritingQuestion,
+    ReadingPassage, ReadingQuestion, ReadingSubtype, SpeakingRubric,
 )
 from diagnostics.rendering import (
     INLINE_BLANK, READING_GROUP_INSTRUCTIONS, answer_key, needs_inline_blank,
@@ -37,10 +37,11 @@ def seed_questions_and_rubrics():
     them, so this adds that layer rather than forking a second seeder.
     """
     for clip in AudioClip.objects.all():
+        question_set, _ = ListeningQuestionSet.objects.get_or_create(clip=clip, number=1)
         for position in range(1, 6):
             mcq = CLIP_TASK_TYPES[clip.number] in {TaskType.MCQ3, TaskType.TRUE_FALSE}
             ListeningQuestion.objects.create(
-                clip=clip,
+                question_set=question_set,
                 position=position,
                 stem=f"Clip {clip.number}, question {position}",
                 options=["one", "two", "three"] if mcq else [],
@@ -178,8 +179,8 @@ class AnswerKeyTests(RenderingTestCase):
         listening_answers = [answer for _label, answer in key["Section 1: Listening"]]
         real = [
             question.answer
-            for clip in (self.paper.listening_clip_1, self.paper.listening_clip_2)
-            for question in clip.questions.order_by("position")
+            for question_set in (self.paper.listening_set_1, self.paper.listening_set_2)
+            for question in question_set.questions.order_by("position")
         ]
         for answer, expected in zip(listening_answers, real):
             self.assertIn(expected, answer)
@@ -312,7 +313,7 @@ class StudentDocxLayoutTests(RenderingTestCase):
 
     def test_gap_fill_stem_is_not_given_a_second_blank(self):
         question = ListeningQuestion.objects.filter(
-            clip=self.paper.listening_clip_2
+            question_set=self.paper.listening_set_2
         ).first()
         question.stem = "Caspar's mother dances across a ______ in the circus."
         question.options = []
@@ -401,3 +402,37 @@ class ReadingGroupTests(SimpleTestCase):
         from diagnostics.models import ReadingSubtype
         for subtype in ReadingSubtype.values:
             self.assertIn(subtype, READING_GROUP_INSTRUCTIONS)
+
+
+class ClipSectionFromSetTests(RenderingTestCase):
+    """paper_sections must keep its exact output shape - export.py, the
+    download view and both templates read these dicts by key and none of
+    them know sets exist."""
+
+    def test_clip_section_keeps_its_keys(self):
+        from diagnostics.rendering import paper_sections
+        listening = paper_sections(self.paper)[0]
+        self.assertEqual(len(listening["clips"]), 2)
+        for clip in listening["clips"]:
+            self.assertEqual(
+                sorted(clip), ["audio", "intro", "number", "questions"]
+            )
+
+    def test_questions_come_from_the_papers_set_not_set_one(self):
+        from diagnostics.models import ListeningQuestion, ListeningQuestionSet
+        from diagnostics.rendering import paper_sections
+        clip = self.paper.listening_set_2.clip
+        set_two = ListeningQuestionSet.objects.create(clip=clip, number=2)
+        for position in range(1, 6):
+            ListeningQuestion.objects.create(
+                question_set=set_two, position=position,
+                stem=f"second-set stem {position}", answer="A",
+            )
+        self.paper.listening_set_2 = set_two
+        self.paper.save(update_fields=["listening_set_2"])
+
+        second = paper_sections(self.paper)[0]["clips"][1]
+        self.assertEqual(
+            [q.stem for q in second["questions"]],
+            [f"second-set stem {p}" for p in range(1, 6)],
+        )

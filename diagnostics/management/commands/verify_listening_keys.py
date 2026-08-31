@@ -16,16 +16,18 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        questions = ListeningQuestion.objects.select_related("clip").order_by(
-            "clip__number", "position"
+        questions = ListeningQuestion.objects.select_related(
+            "question_set__clip"
+        ).order_by(
+            "question_set__clip__number", "question_set__number", "position"
         )
         if not questions:
             raise CommandError("No listening questions imported yet.")
 
         current_clip = None
         for question in questions:
-            if question.clip_id != current_clip:
-                current_clip = question.clip_id
+            if question.question_set.clip_id != current_clip:
+                current_clip = question.question_set.clip_id
                 label = TaskType(question.clip.task_type).label
                 self.stdout.write("")
                 self.stdout.write(self.style.MIGRATE_HEADING(

@@ -4,15 +4,18 @@ from django.core.management import call_command
 from django.test import TestCase
 
 from diagnostics.constants import TaskType
-from diagnostics.models import AudioClip, KeyVerification, ListeningQuestion
+from diagnostics.models import (
+    AudioClip, KeyVerification, ListeningQuestion, ListeningQuestionSet,
+)
 
 
 class VerifyListeningKeysTests(TestCase):
     def setUp(self):
         clip = AudioClip.objects.create(number=1, task_type=TaskType.PICTURE)
+        question_set = ListeningQuestionSet.objects.create(clip=clip, number=1)
         for position in range(1, 6):
             ListeningQuestion.objects.create(
-                clip=clip, position=position, stem="s", answer="A"
+                question_set=question_set, position=position, stem="s", answer="A"
             )
 
     def test_report_lists_every_question(self):

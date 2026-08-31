@@ -26,7 +26,7 @@ def find_reuse_violations():
     """
     problems = []
     papers = Paper.objects.select_related(
-        "listening_clip_1", "listening_clip_2", "reading_passage"
+        "listening_set_1__clip", "listening_set_2__clip", "reading_passage"
     ).prefetch_related("writing_questions", "speaking_prompts")
 
     by_grade = defaultdict(list)
