@@ -380,12 +380,12 @@
         },
         {
           "position": 4,
-          "stem": "The band performed with all its original members that night.",
+          "stem": "Lucas was worried about the concert before he went.",
           "options": [
             "YES",
             "NO"
           ],
-          "answer": "B",
+          "answer": "A",
           "acceptable_answers": []
         },
         {
