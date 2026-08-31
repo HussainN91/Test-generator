@@ -116,12 +116,12 @@ class BuildPapersTests(TestCase):
         different content under the same paper name."""
         call_command("build_papers", stdout=StringIO())
         before = {
-            str(p): (p.listening_clip_1_id, p.listening_clip_2_id, p.reading_passage_id)
+            str(p): (p.listening_set_1_id, p.listening_set_2_id, p.reading_passage_id)
             for p in Paper.objects.all()
         }
         call_command("build_papers", stdout=StringIO())
         after = {
-            str(p): (p.listening_clip_1_id, p.listening_clip_2_id, p.reading_passage_id)
+            str(p): (p.listening_set_1_id, p.listening_set_2_id, p.reading_passage_id)
             for p in Paper.objects.all()
         }
         self.assertEqual(before, after)

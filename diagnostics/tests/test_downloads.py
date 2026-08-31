@@ -14,7 +14,8 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from diagnostics.models import (
-    AudioClip, GenerationEvent, GenerationWindow, Paper, ReadingPassage,
+    AudioClip, GenerationEvent, GenerationWindow, ListeningQuestionSet, Paper,
+    ReadingPassage,
 )
 
 DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -50,11 +51,13 @@ class DownloadTests(TestCase):
         clip1.audio_file.save("clip1.mp3", ContentFile(b"fake mp3 data one"))
         clip2 = AudioClip.objects.create(number=2, task_type="mcq3")
         clip2.audio_file.save("clip2.mp3", ContentFile(b"fake mp3 data two"))
+        set1 = ListeningQuestionSet.objects.create(clip=clip1, number=1)
+        set2 = ListeningQuestionSet.objects.create(clip=clip2, number=1)
         passage = ReadingPassage.objects.create(
             label="R01", title="T", body="word " * 200
         )
         self.paper = Paper.objects.create(
-            grade=9, variant="A", listening_clip_1=clip1, listening_clip_2=clip2,
+            grade=9, variant="A", listening_set_1=set1, listening_set_2=set2,
             reading_passage=passage, is_published=True,
         )
         GenerationWindow.load()  # ensure a row exists; is_open defaults True

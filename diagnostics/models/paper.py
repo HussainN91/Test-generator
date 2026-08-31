@@ -30,7 +30,7 @@ from django.db import models
 
 from diagnostics.constants import GRADES, PICTURE_CLIPS, REUSE_CAPS, VARIANTS
 from diagnostics.models.content import (
-    AudioClip, ReadingPassage, SpeakingPrompt, WritingQuestion,
+    ListeningQuestionSet, ReadingPassage, SpeakingPrompt, WritingQuestion,
 )
 
 
@@ -38,11 +38,11 @@ class Paper(models.Model):
     grade = models.PositiveSmallIntegerField(choices=[(g, f"Grade {g}") for g in GRADES])
     variant = models.CharField(max_length=1, choices=[(v, v) for v in VARIANTS])
 
-    listening_clip_1 = models.ForeignKey(
-        AudioClip, on_delete=models.PROTECT, related_name="papers_as_first"
+    listening_set_1 = models.ForeignKey(
+        ListeningQuestionSet, on_delete=models.PROTECT, related_name="papers_as_first"
     )
-    listening_clip_2 = models.ForeignKey(
-        AudioClip, on_delete=models.PROTECT, related_name="papers_as_second"
+    listening_set_2 = models.ForeignKey(
+        ListeningQuestionSet, on_delete=models.PROTECT, related_name="papers_as_second"
     )
     reading_passage = models.ForeignKey(
         ReadingPassage, on_delete=models.PROTECT, related_name="papers"
@@ -64,6 +64,18 @@ class Paper(models.Model):
 
     def __str__(self):
         return f"G{self.grade}-{self.variant}"
+
+    @property
+    def listening_clip_1(self):
+        """The first recording. Read-only: a paper chooses a question set,
+        and the recording follows from it. Kept under the old name so the
+        audio download view, the admin columns and the reuse-cap accounting
+        do not all have to learn about sets to ask "which recording?"."""
+        return self.listening_set_1.clip
+
+    @property
+    def listening_clip_2(self):
+        return self.listening_set_2.clip
 
     def shared_components(self):
         """Every capped component this paper occupies, as (cap key, pk).
@@ -97,10 +109,12 @@ class Paper(models.Model):
         return pairs
 
     def clean(self):
-        if self.listening_clip_1_id and self.listening_clip_1_id == self.listening_clip_2_id:
-            raise ValidationError(
-                {"listening_clip_2": "A paper cannot use the same clip twice."}
-            )
+        if self.listening_set_1_id and self.listening_set_2_id:
+            if self.listening_set_1.clip_id == self.listening_set_2.clip_id:
+                raise ValidationError(
+                    {"listening_set_2": "A paper cannot use the same recording twice, "
+                                        "even under a different question set."}
+                )
 
         siblings = Paper.objects.filter(grade=self.grade).exclude(pk=self.pk)
         used = Counter()

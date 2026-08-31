@@ -4,8 +4,8 @@ from django.test import TestCase
 
 from diagnostics.constants import REUSE_CAPS, TaskType, VARIANTS
 from diagnostics.models import (
-    AudioClip, Paper, PaperSpeakingPrompt, PaperWritingQuestion, ReadingPassage,
-    SpeakingPrompt, SpeakingTask, WritingQuestion, WritingSubtype,
+    AudioClip, ListeningQuestionSet, Paper, PaperSpeakingPrompt, PaperWritingQuestion,
+    ReadingPassage, SpeakingPrompt, SpeakingTask, WritingQuestion, WritingSubtype,
 )
 from diagnostics.sampling import (
     SamplingError, sample_speaking_prompts, sample_writing_questions,
@@ -32,9 +32,11 @@ def make_bare_paper(grade, variant, suffix):
     base = _clip_counter[0] * 2
     clip1 = AudioClip.objects.create(number=base, task_type=TaskType.MCQ3)
     clip2 = AudioClip.objects.create(number=base + 1, task_type=TaskType.MCQ3)
+    set1 = ListeningQuestionSet.objects.create(clip=clip1, number=1)
+    set2 = ListeningQuestionSet.objects.create(clip=clip2, number=1)
     return Paper.objects.create(
         grade=grade, variant=variant,
-        listening_clip_1=clip1, listening_clip_2=clip2,
+        listening_set_1=set1, listening_set_2=set2,
         reading_passage=ReadingPassage.objects.create(
             label=f"R{suffix}", title="T", body=" ".join(["word"] * 220)
         ),
@@ -153,6 +155,8 @@ class ReuseCapTests(TestCase):
     def setUp(self):
         self.picture_clip = AudioClip.objects.create(number=1, task_type=TaskType.PICTURE)
         self.rotating_clip = AudioClip.objects.create(number=2, task_type=TaskType.MCQ3)
+        self.picture_set = ListeningQuestionSet.objects.create(clip=self.picture_clip, number=1)
+        self.rotating_set = ListeningQuestionSet.objects.create(clip=self.rotating_clip, number=1)
         self.passage = ReadingPassage.objects.create(
             label="R01", title="T", body=" ".join(["word"] * 220)
         )
@@ -178,8 +182,8 @@ class ReuseCapTests(TestCase):
         for variant in VARIANTS:
             paper = Paper.objects.create(
                 grade=9, variant=variant,
-                listening_clip_1=self.picture_clip,
-                listening_clip_2=self.rotating_clip,
+                listening_set_1=self.picture_set,
+                listening_set_2=self.rotating_set,
                 reading_passage=self.passage,
             )
             sample_speaking_prompts(paper)
@@ -197,8 +201,8 @@ class ReuseCapTests(TestCase):
         for variant in VARIANTS:
             paper = Paper.objects.create(
                 grade=9, variant=variant,
-                listening_clip_1=self.picture_clip,
-                listening_clip_2=self.rotating_clip,
+                listening_set_1=self.picture_set,
+                listening_set_2=self.rotating_set,
                 reading_passage=self.passage,
             )
             sample_writing_questions(paper)
@@ -213,8 +217,8 @@ class ReuseCapTests(TestCase):
         SpeakingPrompt.objects.filter(task="introduction").delete()
         paper = Paper.objects.create(
             grade=9, variant="A",
-            listening_clip_1=self.picture_clip,
-            listening_clip_2=self.rotating_clip,
+            listening_set_1=self.picture_set,
+            listening_set_2=self.rotating_set,
             reading_passage=self.passage,
         )
         with self.assertRaises(SamplingError):

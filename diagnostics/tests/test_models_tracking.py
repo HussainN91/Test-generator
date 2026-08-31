@@ -4,8 +4,8 @@ from django.test import TestCase
 
 from diagnostics.constants import TaskType
 from diagnostics.models import (
-    AudioClip, GenerationEvent, GenerationWindow, Paper, ReadingPassage,
-    TeacherGradeAssignment,
+    AudioClip, GenerationEvent, GenerationWindow, ListeningQuestionSet, Paper,
+    ReadingPassage, TeacherGradeAssignment,
 )
 
 
@@ -33,11 +33,13 @@ class TeacherGradeAssignmentTests(TestCase):
 class GenerationEventExportFormatTests(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user("teacher", password="x")
+        clip1 = AudioClip.objects.create(number=1, task_type=TaskType.PICTURE)
+        clip2 = AudioClip.objects.create(number=2, task_type=TaskType.MCQ3)
         self.paper = Paper.objects.create(
             grade=9,
             variant="A",
-            listening_clip_1=AudioClip.objects.create(number=1, task_type=TaskType.PICTURE),
-            listening_clip_2=AudioClip.objects.create(number=2, task_type=TaskType.MCQ3),
+            listening_set_1=ListeningQuestionSet.objects.create(clip=clip1, number=1),
+            listening_set_2=ListeningQuestionSet.objects.create(clip=clip2, number=1),
             reading_passage=ReadingPassage.objects.create(
                 label="R01", title="T", body=" ".join(["word"] * 220)
             ),
