@@ -10,19 +10,28 @@ from diagnostics.constants import (
     VARIANTS,
 )
 from diagnostics.models import (
-    AudioClip, ListeningQuestionSet, Paper, PaperSpeakingPrompt, PaperWritingQuestion,
-    ReadingPassage, SpeakingPrompt, WritingQuestion, WritingSubtype,
+    AudioClip, ListeningQuestion, ListeningQuestionSet, Paper, PaperSpeakingPrompt,
+    PaperWritingQuestion, ReadingPassage, SpeakingPrompt, WritingQuestion, WritingSubtype,
 )
+from diagnostics.navigation import GROUP_NUMBERS, variants_for_group
 
 
 def seed_content():
     """Real bank-size content: enough to build all 48 papers under the reuse
-    caps - 20 clips (real task types) each with their set 1, 15 passages,
+    caps - 20 clips (real task types) each with both question sets (every
+    clip now needs two, since the two variants in a group share one
+    recording and answer different question papers), 15 passages,
     200 writing questions (50 per subtype) and 50 speaking prompts (10 per
     task)."""
     for number in range(1, 21):
         clip = AudioClip.objects.create(number=number, task_type=CLIP_TASK_TYPES[number])
-        ListeningQuestionSet.objects.create(clip=clip, number=1)
+        for set_number in (1, 2):
+            question_set = ListeningQuestionSet.objects.create(clip=clip, number=set_number)
+            for position in range(1, 6):
+                ListeningQuestion.objects.create(
+                    question_set=question_set, position=position,
+                    stem=f"q{position}", answer="A",
+                )
     for n in range(1, 16):
         ReadingPassage.objects.create(
             label=f"R{n:02d}", title=f"Passage {n}", body=" ".join(["word"] * 220)
@@ -198,3 +207,39 @@ class CheckPapersTests(TestCase):
         Paper.objects.filter(grade=11).delete()
         with self.assertRaises(CommandError):
             call_command("check_papers", stdout=StringIO())
+
+
+class GroupBuildTests(TestCase):
+    def setUp(self):
+        seed_content()
+
+    def test_built_papers_share_audio_within_every_group(self):
+        call_command("build_papers", stdout=StringIO())
+        for grade in GRADES:
+            for group in GROUP_NUMBERS:
+                first, second = variants_for_group(group)
+                a = Paper.objects.get(grade=grade, variant=first)
+                b = Paper.objects.get(grade=grade, variant=second)
+                self.assertEqual(
+                    (a.listening_set_1.clip_id, a.listening_set_2.clip_id),
+                    (b.listening_set_1.clip_id, b.listening_set_2.clip_id),
+                    f"G{grade} group {group}",
+                )
+
+    def test_built_papers_use_different_question_sets_within_every_group(self):
+        call_command("build_papers", stdout=StringIO())
+        for grade in GRADES:
+            for group in GROUP_NUMBERS:
+                first, second = variants_for_group(group)
+                a = Paper.objects.get(grade=grade, variant=first)
+                b = Paper.objects.get(grade=grade, variant=second)
+                self.assertNotEqual(
+                    (a.listening_set_1_id, a.listening_set_2_id),
+                    (b.listening_set_1_id, b.listening_set_2_id),
+                    f"G{grade} group {group} would sit identical papers",
+                )
+
+    def test_build_refuses_when_a_clip_has_no_second_set(self):
+        ListeningQuestionSet.objects.filter(number=2, clip__number=3).delete()
+        with self.assertRaisesMessage(CommandError, "second question set"):
+            call_command("build_papers")

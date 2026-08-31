@@ -50,11 +50,19 @@ class Command(BaseCommand):
             for question_set in ListeningQuestionSet.objects.select_related("clip")
         }
         needed_clips = set(CLIP_TASK_TYPES)
-        missing = sorted(number for number in needed_clips if (number, 1) not in sets)
-        if missing:
+        missing_first = sorted(n for n in needed_clips if (n, 1) not in sets)
+        if missing_first:
             raise CommandError(
-                f"Missing listening set 1 for clips {missing}. "
+                f"Missing listening set 1 for clips {missing_first}. "
                 f"Run import_listening first."
+            )
+        missing_second = sorted(n for n in needed_clips if (n, 2) not in sets)
+        if missing_second:
+            raise CommandError(
+                f"Clips {missing_second} have no second question set. The two "
+                f"variants in a group share one recording, so without a second "
+                f"set they would sit identical listening papers. Run "
+                f"load_listening_set_2 first."
             )
 
         passages = {p.label: p for p in ReadingPassage.objects.all()}
@@ -65,20 +73,20 @@ class Command(BaseCommand):
             with transaction.atomic():
                 for grade in GRADES:
                     for variant in VARIANTS:
-                        picture, rotating, passage_label = allocate(grade, variant)
-                        if passage_label not in passages:
+                        plan = allocate(grade, variant)
+                        if plan.passage not in passages:
                             raise CommandError(
                                 f"G{grade}-{variant} needs reading passage "
-                                f"{passage_label}, which is not imported. "
+                                f"{plan.passage}, which is not imported. "
                                 f"Run import_reading_bank first."
                             )
                         paper, _ = Paper.objects.update_or_create(
                             grade=grade,
                             variant=variant,
                             defaults={
-                                "listening_set_1": sets[(picture, 1)],
-                                "listening_set_2": sets[(rotating, 1)],
-                                "reading_passage": passages[passage_label],
+                                "listening_set_1": sets[(plan.picture_clip, plan.set_number)],
+                                "listening_set_2": sets[(plan.rotating_clip, plan.set_number)],
+                                "reading_passage": passages[plan.passage],
                                 "is_published": True,
                             },
                         )
