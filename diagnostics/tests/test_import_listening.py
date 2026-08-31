@@ -7,6 +7,7 @@ from django.core.management import call_command
 from django.test import TestCase, override_settings
 
 from diagnostics.constants import CLIP_TASK_TYPES
+from diagnostics.extraction.listening_content import STEM_CORRECTIONS
 from diagnostics.models import AudioClip, ListeningQuestion
 
 SOURCE = settings.DIAGNOSTICS_SOURCE_DIR
@@ -62,7 +63,10 @@ class ImportListeningTests(TestCase):
         self.assertEqual(ListeningQuestion.objects.count(), 100)
 
     def test_known_source_typos_are_corrected_on_import(self):
-        from diagnostics.constants import STEM_CORRECTIONS
+        """Proves the corrections survive the full import pipeline into the
+        DB - extract_question_content already applies STEM_CORRECTIONS
+        before _import_clip ever sees the items; see test_listening_content
+        for extraction-level coverage of the correction mechanism itself."""
         call_command("import_listening", stdout=StringIO())
         for (number, position), (wrong, right) in STEM_CORRECTIONS.items():
             question = ListeningQuestion.objects.get(

@@ -237,12 +237,25 @@ class FormStyleGapFillTests(RealClipsMixin, TestCase):
 
 
 class SourceTypoCorrectionTests(RealClipsMixin, TestCase):
-    """Clip 4 question 3 says "the name opinion" in the client's own file.
-
-    A single-word slip in their document, not a parsing bug (verified
-    against the raw line), but it would be printed to students as-is, so
-    it is corrected on the way in and listed in STEM_CORRECTIONS.
+    """The client's own file has five verbatim slips that would otherwise
+    be printed to students as-is - four single-word spelling/agreement
+    typos plus one verified content error (clip 1 Q4: the transcript has
+    the *boy* packing, not the girl printed in the stem). Each is
+    corrected on the way in and listed in STEM_CORRECTIONS.
     """
+
+    def test_the_boy_packing_typo_is_corrected(self):
+        result = extract_question_content(1, TaskType.PICTURE, self.bodies[1])
+        self.assertEqual(
+            result[3]["stem"], "What will the boy take with him on holiday?",
+        )
+
+    def test_the_raw_source_really_does_contain_the_girl_packing_typo(self):
+        """Guards the correction itself: if the client fixes their file,
+        this fails and the STEM_CORRECTIONS entry can be retired."""
+        self.assertIn(
+            "What will the girl take with her on holiday?", self.bodies[1]
+        )
 
     def test_the_name_same_typo_is_corrected(self):
         result = extract_question_content(4, TaskType.TRUE_FALSE, self.bodies[4])
@@ -255,6 +268,42 @@ class SourceTypoCorrectionTests(RealClipsMixin, TestCase):
         """Guards the correction itself: if the client fixes their file,
         this fails and the STEM_CORRECTIONS entry can be retired."""
         self.assertIn("have the name opinion", self.bodies[4])
+
+    def test_the_pictures_shows_typo_is_corrected(self):
+        result = extract_question_content(5, TaskType.PICTURE, self.bodies[5])
+        self.assertEqual(
+            result[3]["stem"], "Which picture shows what happened?",
+        )
+
+    def test_the_raw_source_really_does_contain_the_pictures_shows_typo(self):
+        """Guards the correction itself: if the client fixes their file,
+        this fails and the STEM_CORRECTIONS entry can be retired."""
+        self.assertIn("Which pictures shows what happened?", self.bodies[5])
+
+    def test_the_lckworth_typo_is_corrected(self):
+        result = extract_question_content(6, TaskType.MCQ3, self.bodies[6])
+        self.assertEqual(
+            result[4]["stem"],
+            "What does the festival programme offer at Ickworth?",
+        )
+
+    def test_the_raw_source_really_does_contain_the_lckworth_typo(self):
+        """Guards the correction itself: if the client fixes their file,
+        this fails and the STEM_CORRECTIONS entry can be retired."""
+        self.assertIn(
+            "What does the festival programme offer at lckworth?", self.bodies[6]
+        )
+
+    def test_the_drives_drivers_typo_is_corrected(self):
+        result = extract_question_content(13, TaskType.PICTURE, self.bodies[13])
+        self.assertEqual(
+            result[2]["stem"], "Why will drivers have problems this morning?",
+        )
+
+    def test_the_raw_source_really_does_contain_the_drives_typo(self):
+        """Guards the correction itself: if the client fixes their file,
+        this fails and the STEM_CORRECTIONS entry can be retired."""
+        self.assertIn("Why will drives have problems this morning?", self.bodies[13])
 
     def test_a_correction_that_no_longer_matches_is_left_alone(self):
         """Applied only on an exact match, so an upstream fix is a no-op

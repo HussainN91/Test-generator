@@ -16,7 +16,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from diagnostics.constants import (
-    CLIP_TASK_TYPES, IMAGE_SLOTS, LETTER_ANSWER_TYPES, STEM_CORRECTIONS, TaskType,
+    CLIP_TASK_TYPES, IMAGE_SLOTS, LETTER_ANSWER_TYPES, TaskType,
 )
 from diagnostics.extraction.audio import map_audio_files
 from diagnostics.extraction.docx_images import extract_images_in_document_order
@@ -30,19 +30,6 @@ from diagnostics.models import AudioClip, ListeningQuestion
 MD_NAME = "Listening Question Bank -2026 EC.md"
 DOCX_NAME = "Listening Question Bank -2026 EC.docx"
 AUDIO_DIR_NAME = "Listening Diagnostic Audio files"
-
-
-def correct_stem(clip_number, position, stem):
-    """Replace a known source typo, but only if the typo is still there.
-
-    Asserting the wrong text before replacing means a fixed source .md stops
-    triggering the correction rather than overwriting whatever replaced it.
-    """
-    correction = STEM_CORRECTIONS.get((clip_number, position))
-    if correction is None:
-        return stem
-    wrong, right = correction
-    return right if stem.strip() == wrong else stem
 
 
 class Command(BaseCommand):
@@ -128,7 +115,7 @@ class Command(BaseCommand):
             question = ListeningQuestion.objects.create(
                 clip=clip,
                 position=position,
-                stem=correct_stem(number, position, item["stem"]),
+                stem=item["stem"],
                 options=item["options"],
                 answer=answer,
                 acceptable_answers=alts,

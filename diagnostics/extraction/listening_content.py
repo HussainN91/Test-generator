@@ -66,16 +66,36 @@ SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s*(?=[A-Z])")
 #: character - so the client fixing their file upstream quietly turns the
 #: entry into a no-op instead of crashing the import or double-correcting.
 #:
-#: Deliberately narrow. Only unambiguous single-word typos belong here.
-#: Anything that changes what a question asks, and any answer-key
-#: disagreement, goes back to the client instead - clip 19 Q5's answer
-#: "CITYENTS" (for "tickets online at www.____.org") is the standing
-#: example: plainly garbled, but the real value is unknowable without
-#: listening to the audio, so it stays as the source has it.
+#: Deliberately narrow. Almost every entry here is an unambiguous
+#: spelling/agreement slip (a wrong or missing letter, a singular/plural
+#: mismatch) verified against the raw line. The one exception is clip 1
+#: Q4, a verified content error rather than a typo: the source transcript
+#: has the *boy* packing for the holiday, not the girl printed in this
+#: stem. Anything else that changes what a question asks, and any
+#: answer-key disagreement, goes back to the client instead - clip 19
+#: Q5's answer "CITYENTS" (for "tickets online at www.____.org") is the
+#: standing example: plainly garbled, but the real value is unknowable
+#: without listening to the audio, so it stays as the source has it.
 STEM_CORRECTIONS = {
+    (1, 4): (
+        "What will the girl take with her on holiday?",
+        "What will the boy take with him on holiday?",
+    ),
     (4, 3): (
         "Lucas and Claire have the name opinion about the band’s costumes.",
         "Lucas and Claire have the same opinion about the band’s costumes.",
+    ),
+    (5, 4): (
+        "Which pictures shows what happened?",
+        "Which picture shows what happened?",
+    ),
+    (6, 5): (
+        "What does the festival programme offer at lckworth?",
+        "What does the festival programme offer at Ickworth?",
+    ),
+    (13, 3): (
+        "Why will drives have problems this morning?",
+        "Why will drivers have problems this morning?",
     ),
 }
 

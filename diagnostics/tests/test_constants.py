@@ -2,7 +2,7 @@
 
 from collections import Counter
 
-from django.test import SimpleTestCase, TestCase
+from django.test import TestCase
 
 from diagnostics.constants import (
     CLIP_TASK_TYPES,
@@ -85,28 +85,3 @@ class ReuseCapTests(TestCase):
                 f"{component}: {pool} items x cap {REUSE_CAPS[component]} "
                 f"= {slots} slots, need {len(VARIANTS)}",
             )
-
-
-class StemCorrectionTests(SimpleTestCase):
-    """The client's source .md has four typos we correct on import. Keyed by
-    (clip number, position) so a correction can never be applied to the wrong
-    question if the source is re-split."""
-
-    def test_all_four_corrections_are_present(self):
-        from diagnostics.constants import STEM_CORRECTIONS
-        self.assertEqual(
-            sorted(STEM_CORRECTIONS), [(1, 4), (5, 4), (6, 5), (13, 3)]
-        )
-
-    def test_each_correction_names_the_wrong_text_and_the_right_text(self):
-        from diagnostics.constants import STEM_CORRECTIONS
-        for slot, (wrong, right) in STEM_CORRECTIONS.items():
-            self.assertNotEqual(wrong, right, slot)
-            self.assertTrue(wrong.strip(), slot)
-            self.assertTrue(right.strip(), slot)
-
-    def test_the_boy_packing_typo_is_corrected(self):
-        from diagnostics.constants import STEM_CORRECTIONS
-        wrong, right = STEM_CORRECTIONS[(1, 4)]
-        self.assertEqual(wrong, "What will the girl take with her on holiday?")
-        self.assertEqual(right, "What will the boy take with him on holiday?")
