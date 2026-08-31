@@ -97,3 +97,30 @@ MAX_PASSAGE_WORDS = 300
 READING_SUBTYPE_COUNTS = {"true_false_ng": 5, "mcq": 3, "completion": 2}
 WRITING_SUBTYPE_COUNTS = {"grammar": 3, "vocabulary": 2, "jumbled": 3, "fill_blank": 2}
 SPEAKING_TASK_ORDER = ["introduction", "experience", "description", "role_play", "opinion"]
+
+#: Four typos in the client's source .md, found while reading the full
+#: transcripts on 2026-08-31. Keyed by (clip number, question position) so a
+#: correction cannot land on the wrong question if the source is re-split;
+#: the "wrong" half is asserted before replacement so a corrected source file
+#: silently stops applying the fix instead of clobbering new text.
+#:
+#: Clip 1 Q4 is a content error, not a typo: the transcript has the *boy*
+#: packing for the holiday. The other three are spelling/agreement slips.
+STEM_CORRECTIONS = {
+    (1, 4): (
+        "What will the girl take with her on holiday?",
+        "What will the boy take with him on holiday?",
+    ),
+    (5, 4): (
+        "Which pictures shows what happened?",
+        "Which picture shows what happened?",
+    ),
+    (6, 5): (
+        "What does the festival programme offer at lckworth?",
+        "What does the festival programme offer at Ickworth?",
+    ),
+    (13, 3): (
+        "Why will drives have problems this morning?",
+        "Why will drivers have problems this morning?",
+    ),
+}
