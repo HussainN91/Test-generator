@@ -13,9 +13,39 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
 
+from diagnostics.constants import CLIP_TASK_TYPES, TaskType
 from diagnostics.listening_bank import set_usage, usage_title
-from diagnostics.models import ListeningQuestionSet, Paper
+from diagnostics.models import AudioClip, ListeningQuestion, ListeningQuestionSet, Paper
 from diagnostics.tests.test_build_papers import seed_content
+
+
+def seed_listening_questions():
+    """Real question content on top of every set seed_content creates.
+
+    seed_content deliberately leaves all 40 ListeningQuestionSets (both
+    numbers, for each of the 20 clips) empty of questions - see its own
+    docstring. ListeningBankViewTests needs real content to exercise (200
+    questions total), so this gives every set 5 questions, positions 1-5.
+
+    Mirrors how test_rendering.py's seed_questions_and_rubrics distinguishes
+    MCQ-shaped task types from free-text ones via CLIP_TASK_TYPES, but
+    covers set 2 as well as set 1 since the bank page renders both.
+    """
+    for clip in AudioClip.objects.all():
+        task = CLIP_TASK_TYPES[clip.number]
+        if task == TaskType.MCQ3:
+            options, answer = ["one", "two", "three"], "A"
+        elif task == TaskType.TRUE_FALSE:
+            options, answer = ["true", "false"], "A"
+        else:  # PICTURE, GAP_FILL: free-text answers, no fixed options
+            options, answer = [], "word"
+        for question_set in clip.question_sets.all():
+            for position in range(1, 6):
+                ListeningQuestion.objects.create(
+                    question_set=question_set, position=position,
+                    stem=f"Clip {clip.number} set {question_set.number}, question {position}",
+                    options=options, answer=answer,
+                )
 
 
 class UsageOnABuiltBankTests(TestCase):
@@ -106,6 +136,7 @@ class KeyBalanceTests(TestCase):
 class ListeningBankViewTests(TestCase):
     def setUp(self):
         seed_content()
+        seed_listening_questions()
         call_command("build_papers", "--resample", stdout=StringIO())
         User = get_user_model()
         self.staff = User.objects.create_user(
