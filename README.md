@@ -255,13 +255,19 @@ sit at different times — the same exposure the bank already tolerates across
 classes. Fixing either would require commissioning new picture audio; both are
 accepted by design.
 
-**Rebuild still pending as of 2026-09-01.** The code and the second question
-sets are deployed, but the 48 stored papers were built by the old allocator and
-still carry the defect — `check_papers` reports 24 recording mismatches against
-live data until `build_papers --resample` is run. Rebuilding rewrites every
-paper's listening section and redraws its speaking prompts, so **any paper
-printed or downloaded before that rebuild is superseded** and must be
-re-downloaded before it is administered.
+**Re-issue, 2026-09-01.** All 48 papers were rebuilt with `build_papers
+--resample` when groups landed. Every paper's listening section changed and its
+speaking prompts were redrawn, so **any paper printed or downloaded before this
+date is superseded** — re-download it before administering. The audit that
+motivated the change went from 24 of 24 sittings needing two different
+recordings, and 10 of 24 sharing a speaking prompt, to 0 and 0; `check_papers`
+passes on all 48 papers and all 24 sittings.
+
+**Do not re-run `build_papers --resample` casually.** Listening and reading
+allocation are deterministic, but `sampling.py` draws writing and speaking with
+unseeded `random`, so a second run silently reissues different writing and
+speaking content under the same paper names — superseding papers again. Rebuild
+only when you intend a re-issue.
 
 ## Known limits
 
