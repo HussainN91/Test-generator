@@ -1,5 +1,10 @@
 # Deployment
 
+> **Deploying to the live server?** Read [GO-LIVE.md](GO-LIVE.md) first. It covers
+> the current server (`fteacherssupport.uz` / `46.8.195.140`), everything already
+> set up on it, and the first go-live sequence. This file covers the stack itself
+> and the routine update loop.
+
 The Test Generator runs as a **self-contained two-container stack**: the Django
 app under gunicorn, and Caddy in front of it terminating TLS.
 
