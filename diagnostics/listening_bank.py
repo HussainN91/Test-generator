@@ -55,3 +55,21 @@ def usage_title(pairs):
         label = "group" if len(groups) == 1 else "groups"
         parts.append(f"Grade {grade} {label} {', '.join(str(g) for g in groups)}")
     return " · ".join(parts)
+
+
+def key_balance(questions):
+    """Count answer letters per task type across `questions`.
+
+    A guessable key is a real defect: set 2's mcq3 answers were once
+    A=6 B=14 C=5, so answering B every time scored 56% against 33% by
+    chance. Showing the distribution makes that visible at a glance
+    instead of needing someone to tally 200 answers by hand.
+
+    Task types are kept apart because they are not comparable - true_false
+    has two options and the rest have three.
+    """
+    counts = defaultdict(lambda: defaultdict(int))
+    rows = questions.values_list("question_set__clip__task_type", "answer")
+    for task_type, answer in rows:
+        counts[task_type][answer] += 1
+    return {task: dict(sorted(letters.items())) for task, letters in counts.items()}

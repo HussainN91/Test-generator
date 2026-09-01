@@ -72,3 +72,30 @@ class UsageTitleTests(TestCase):
     def test_an_unused_set_says_so_rather_than_returning_blank(self):
         """A set with no home is exactly what a reviewer needs to see."""
         self.assertEqual(usage_title([]), "Not currently allocated to any paper")
+
+
+class KeyBalanceTests(TestCase):
+    def setUp(self):
+        seed_content()
+
+    def test_counts_answers_per_task_type(self):
+        from diagnostics.listening_bank import key_balance
+        from diagnostics.models import AudioClip, ListeningQuestion
+
+        clip = AudioClip.objects.get(number=2)   # mcq3
+        question_set = clip.question_sets.get(number=1)
+        for position, answer in enumerate("ABBBC", start=1):
+            ListeningQuestion.objects.create(
+                question_set=question_set, position=position,
+                stem=f"q{position}", options=["x", "y", "z"], answer=answer,
+            )
+        balance = key_balance(ListeningQuestion.objects.filter(
+            question_set=question_set
+        ))
+        self.assertEqual(balance["mcq3"], {"A": 1, "B": 3, "C": 1})
+
+    def test_a_task_type_with_no_questions_is_absent_not_zeroed(self):
+        from diagnostics.listening_bank import key_balance
+        from diagnostics.models import ListeningQuestion
+
+        self.assertEqual(key_balance(ListeningQuestion.objects.none()), {})
