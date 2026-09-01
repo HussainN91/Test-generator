@@ -29,7 +29,15 @@ from diagnostics.constants import GRADES
 from diagnostics.export import (
     answer_key_docx, docx_available, examiner_docx, student_docx,
 )
-from diagnostics.models import GenerationEvent, GenerationWindow, Paper, TeacherGradeAssignment
+from diagnostics.listening_bank import key_balance, set_usage, usage_title
+from diagnostics.models import (
+    GenerationEvent,
+    GenerationWindow,
+    ListeningQuestion,
+    ListeningQuestionSet,
+    Paper,
+    TeacherGradeAssignment,
+)
 from diagnostics.navigation import (
     CLASSES_PER_GRADE,
     CLASS_NUMBERS,
@@ -299,3 +307,71 @@ def paper_file(request, grade: int, variant: str, kind: str):
     response = HttpResponse(payload, content_type=content_type)
     response["Content-Disposition"] = f'attachment; filename="{filename}"'
     return response
+
+
+@login_required
+def listening_bank(request):
+    """Every listening question on one page, for checking against the
+    transcripts.
+
+    Staff only: it shows all 200 answer keys. Grade tabs filter the same
+    canonical list rather than repeating it per grade - a question set is
+    typically sat by several grades, so repeating would mean proofreading
+    the same question three times and would still not make the tabs a real
+    boundary.
+    """
+    if not request.user.is_staff:
+        raise Http404("No page here.")
+
+    usage = set_usage()
+
+    raw_grade = request.GET.get("grade")
+    try:
+        selected_grade = int(raw_grade) if raw_grade else None
+    except (TypeError, ValueError):
+        selected_grade = None
+    if selected_grade not in GRADES:
+        selected_grade = None
+
+    question_sets = ListeningQuestionSet.objects.select_related("clip").order_by(
+        "clip__number", "number"
+    )
+
+    entries = []
+    for question_set in question_sets:
+        pairs = usage.get(question_set.pk, [])
+        if selected_grade is not None and not any(
+            grade == selected_grade for grade, _ in pairs
+        ):
+            continue
+
+        questions = list(question_set.questions.order_by("position"))
+        for question in questions:
+            question.option_rows = option_rows(question.options or [])
+            question.inline_blank = needs_inline_blank(
+                question.stem, question.options
+            )
+        entries.append({
+            "question_set": question_set,
+            "clip": question_set.clip,
+            "pairs": pairs,
+            "title": usage_title(pairs),
+            "questions": questions,
+        })
+
+    visible_ids = [entry["question_set"].pk for entry in entries]
+    return render(
+        request,
+        "diagnostics/listening_bank.html",
+        {
+            "entries": entries,
+            "selected_grade": selected_grade,
+            "grades": list(GRADES),
+            "set_count": len(entries),
+            "question_count": sum(len(e["questions"]) for e in entries),
+            "clip_count": len({e["clip"].pk for e in entries}),
+            "balance": key_balance(
+                ListeningQuestion.objects.filter(question_set_id__in=visible_ids)
+            ),
+        },
+    )

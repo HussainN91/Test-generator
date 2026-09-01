@@ -8,8 +8,10 @@ have made it.
 
 from io import StringIO
 
+from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
+from django.urls import reverse
 
 from diagnostics.listening_bank import set_usage, usage_title
 from diagnostics.models import ListeningQuestionSet, Paper
@@ -99,3 +101,63 @@ class KeyBalanceTests(TestCase):
         from diagnostics.models import ListeningQuestion
 
         self.assertEqual(key_balance(ListeningQuestion.objects.none()), {})
+
+
+class ListeningBankViewTests(TestCase):
+    def setUp(self):
+        seed_content()
+        call_command("build_papers", "--resample", stdout=StringIO())
+        User = get_user_model()
+        self.staff = User.objects.create_user(
+            "boss", password="pw", is_staff=True
+        )
+        self.teacher = User.objects.create_user("teacher", password="pw")
+        self.url = reverse("diagnostics:listening_bank")
+
+    def test_staff_can_open_it(self):
+        self.client.force_login(self.staff)
+        self.assertEqual(self.client.get(self.url).status_code, 200)
+
+    def test_a_non_staff_user_gets_404_not_403(self):
+        """404 rather than 403, matching _get_visible_paper: the page does
+        not advertise its own existence to someone who may not have it."""
+        self.client.force_login(self.teacher)
+        self.assertEqual(self.client.get(self.url).status_code, 404)
+
+    def test_signed_out_users_are_sent_to_login(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response["Location"])
+
+    def test_unfiltered_shows_every_set(self):
+        self.client.force_login(self.staff)
+        response = self.client.get(self.url)
+        self.assertEqual(len(response.context["entries"]), 40)
+
+    def test_filtering_by_grade_narrows_the_list(self):
+        self.client.force_login(self.staff)
+        response = self.client.get(self.url, {"grade": 9})
+        entries = response.context["entries"]
+        self.assertLess(len(entries), 40)
+        for entry in entries:
+            self.assertTrue(
+                any(grade == 9 for grade, _ in entry["pairs"]),
+                entry["title"],
+            )
+
+    def test_an_unknown_grade_falls_back_to_all(self):
+        self.client.force_login(self.staff)
+        response = self.client.get(self.url, {"grade": "banana"})
+        self.assertEqual(len(response.context["entries"]), 40)
+        self.assertIsNone(response.context["selected_grade"])
+
+    def test_entries_are_ordered_by_clip_then_set(self):
+        self.client.force_login(self.staff)
+        entries = self.client.get(self.url).context["entries"]
+        keys = [(e["clip"].number, e["question_set"].number) for e in entries]
+        self.assertEqual(keys, sorted(keys))
+
+    def test_every_question_is_present(self):
+        self.client.force_login(self.staff)
+        entries = self.client.get(self.url).context["entries"]
+        self.assertEqual(sum(len(e["questions"]) for e in entries), 200)
