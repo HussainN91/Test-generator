@@ -9,6 +9,7 @@ never touches questions, sets or papers.
 """
 
 import re
+from collections import Counter
 from pathlib import Path
 
 from django.conf import settings
@@ -21,11 +22,20 @@ DEFAULT_SOURCE = (
     Path(settings.MEDIA_ROOT) / "diagnostics" / "audio" / "transcripts-full.md"
 )
 
-#: A clip's body runs from its own "## Clip N" heading to the next "## " at
-#: the start of a line, or the end of the file. Non-greedy so clip 1 cannot
-#: swallow clip 2, which would silently show a reviewer the wrong recording.
+#: The literal heading a clip section starts with, e.g. "## Clip 7". Used on
+#: both sides of CLIP_RE below - the opening match and the lookahead that
+#: ends the previous clip's body - so they stay in agreement about what
+#: counts as a heading. A heading typo'd as "##Clip 2" (no space after the
+#: hashes) must still be recognised as a boundary by *both* sides: if only
+#: one side recognised it, the other clip's non-greedy body would swallow it
+#: whole and the typo'd clip would silently vanish from the parsed bodies.
+_HEADING = r"##\s*Clip\s+\d+\b"
+
+#: A clip's body runs from its own heading to the next one, or the end of
+#: the file. Non-greedy so clip 1 cannot swallow clip 2, which would
+#: silently show a reviewer the wrong recording.
 CLIP_RE = re.compile(
-    r"^##\s*Clip\s+(\d+)\b.*?$(.*?)(?=^##\s|\Z)",
+    rf"^##\s*Clip\s+(\d+)\b.*?$(.*?)(?=^{_HEADING}|\Z)",
     re.MULTILINE | re.DOTALL,
 )
 
@@ -45,15 +55,23 @@ class Command(BaseCommand):
             raise CommandError(f"Missing transcript file: {source}")
 
         text = source.read_text(encoding="utf-8")
-        bodies = {
-            int(number): body.strip()
-            for number, body in CLIP_RE.findall(text)
-        }
-        if not bodies:
+        matches = CLIP_RE.findall(text)
+        if not matches:
             raise CommandError(
                 f"No '## Clip N' headings found in {source}; the file is not "
                 f"in the expected format."
             )
+
+        counts = Counter(int(number) for number, _ in matches)
+        duplicates = sorted(number for number, count in counts.items() if count > 1)
+        if duplicates:
+            raise CommandError(
+                f"Duplicate clip heading(s) {duplicates} in {source}; fix the "
+                f"source file before importing, rather than silently keeping "
+                f"only the last copy of each."
+            )
+
+        bodies = {int(number): body.strip() for number, body in matches}
 
         clips = {clip.number: clip for clip in AudioClip.objects.all()}
 
