@@ -26,6 +26,7 @@
       <a href="{% url 'builder' %}"{% block nav_builder %}{% endblock %}>Test builder</a>
       <a href="{% url 'coverage' %}"{% block nav_coverage %}{% endblock %}>Bank coverage</a>
       <a href="{% url 'diagnostics:paper_index' %}"{% block nav_diagnostics %}{% endblock %}>Diagnostics</a>
+      {% if user.is_staff %}<a href="{% url 'diagnostics:listening_bank' %}"{% block nav_listening %}{% endblock %}>Listening bank</a>{% endif %}
       {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
       {% if user.is_authenticated %}
         <span class="who">{{ user.username|upper }}</span>

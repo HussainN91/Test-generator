@@ -192,3 +192,11 @@ class ListeningBankViewTests(TestCase):
         self.client.force_login(self.staff)
         entries = self.client.get(self.url).context["entries"]
         self.assertEqual(sum(len(e["questions"]) for e in entries), 200)
+
+    def test_the_nav_link_shows_for_staff_only(self):
+        self.client.force_login(self.staff)
+        self.assertContains(self.client.get(self.url), "Listening bank")
+
+        self.client.force_login(self.teacher)
+        index = self.client.get(reverse("diagnostics:paper_index"))
+        self.assertNotContains(index, "Listening bank")
