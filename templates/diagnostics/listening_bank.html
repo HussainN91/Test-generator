@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Listening bank{% endblock %}
+{% block nav_listening %} class="on"{% endblock %}
+
+{% block content %}
+<div class="head">
+  <h1>Listening bank</h1>
+  <div class="meta">
+    <span>{{ clip_count }} RECORDINGS</span>
+    <span>{{ set_count }} QUESTION SETS</span>
+    <span>{{ question_count }} QUESTIONS</span>
+  </div>
+</div>
+
+<div class="actions">
+  <a class="btn {% if not selected_grade %}{% else %}ghost{% endif %}"
+     href="{% url 'diagnostics:listening_bank' %}">All grades</a>
+  {% for grade in grades %}
+    <a class="btn {% if selected_grade == grade %}{% else %}ghost{% endif %}"
+       href="{% url 'diagnostics:listening_bank' %}?grade={{ grade }}">Grade {{ grade }}</a>
+  {% endfor %}
+</div>
+
+{% if balance %}
+  <div class="cont" style="border-top:1px solid var(--ink)">Answer key balance</div>
+  <ul class="tally">
+    {% for task, letters in balance.items %}
+      <li>
+        <span class="k">{{ task }}</span><span class="dots"></span>
+        <span class="n">{% for letter, count in letters.items %}{{ letter }}&nbsp;{{ count }}{% if not forloop.last %} &middot; {% endif %}{% endfor %}</span>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% for entry in entries %}
+  <section class="blk">
+    <div class="cont" style="border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)">
+      {{ entry.title }}
+    </div>
+    <p class="qinstr">
+      Clip {{ entry.clip.number }} &middot; {{ entry.clip.get_task_type_display }}
+      &middot; set {{ entry.question_set.number }}
+    </p>
+
+    {% if entry.clip.audio_file %}
+      <audio class="clipaudio" controls preload="none" src="{{ entry.clip.audio_file.url }}">
+        Your browser cannot play audio.
+      </audio>
+    {% endif %}
+    {% if entry.clip.intro_text %}<p class="qinstr">{{ entry.clip.intro_text }}</p>{% endif %}
+
+    <div class="bank-split">
+      <div class="bank-questions">
+        {% for question in entry.questions %}
+          <div class="q">
+            <span class="qn">{{ question.position }}</span>
+            <div>
+              <p class="qprompt"><strong>{{ question.stem }}</strong>{% if question.inline_blank %}<span class="blank"></span>{% endif %}</p>
+              {% if question.image %}
+                <img class="bank-image" src="{{ question.image.url }}" alt="Options for question {{ question.position }}">
+              {% endif %}
+              {% for row in question.option_rows %}
+                <p class="qopts">
+                  {% for letter, option in row %}
+                    <span class="{% if letter == question.answer %}bank-correct{% endif %}">{{ letter }}. {{ option }}</span>
+                  {% endfor %}
+                </p>
+              {% endfor %}
+              <p class="bank-answer"><b>Answer:</b> {{ question.answer }}{% if question.acceptable_answers %} <span class="bank-alt">(also accept: {{ question.acceptable_answers|join:", " }})</span>{% endif %}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <aside class="bank-transcript">
+        <h3>Transcript</h3>
+        {% if entry.clip.transcript %}
+          <pre>{{ entry.clip.transcript }}</pre>
+        {% else %}
+          <p class="qinstr">No transcript imported. Run <code>manage.py import_transcripts</code>.</p>
+        {% endif %}
+      </aside>
+    </div>
+  </section>
+{% empty %}
+  <p class="qinstr">No question sets match this filter.</p>
+{% endfor %}
+{% endblock %}

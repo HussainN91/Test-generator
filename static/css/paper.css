@@ -242,3 +242,16 @@ details.mix summary .note{margin-left:auto;font:400 11px/1.5 var(--mono);
   .ref{margin-left:0;text-align:left}
   h1.doc{font-size:28px}
 }
+
+/* Listening bank only. `bank-` prefixed because paper.css is shared with the
+   printed paper and the assembly preview - .qans in particular is already
+   defined at line 166 for the paper's right-aligned answer stamp, so the
+   bank's answer line must not reuse that name. */
+.bank-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.bank-transcript pre { white-space: pre-wrap; font-size: .82rem; line-height: 1.5;
+  max-height: 32rem; overflow-y: auto; border: 1px solid var(--rule); padding: .75rem; }
+.bank-correct { font-weight: 700; text-decoration: underline; }
+.bank-answer { font-size: .85rem; margin-top: .3rem; }
+.bank-alt { color: var(--stamp); }
+.bank-image { max-width: 100%; height: auto; }
+@media (max-width: 900px) { .bank-split { grid-template-columns: 1fr; } }
