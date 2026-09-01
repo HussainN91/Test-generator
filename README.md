@@ -232,6 +232,37 @@ proxy. See [deploy/README.md](deploy/README.md) for the update procedure.
 
 ---
 
+## Exam groups and listening question sets
+
+Each grade runs 4 classes; each class splits into 2 **groups**; each group sits
+the diagnostic in one room at one time. That is 8 groups per grade, 24 in all.
+
+One room plays **one recording**, so both papers in a group share the same two
+audio clips and differ in which of the recording's two **question sets** they
+answer. Groups are derived from `VARIANTS` in `diagnostics/navigation.py`, not
+stored — variant A and B are group 1, C and D are group 2, and so on.
+
+`check_papers` proves four things about every sitting: same recordings,
+different question sets, no shared speaking prompt, no shared reading passage.
+
+**Known limitation — picture clips.** Each of the five picture recordings
+contains seven items, so its two question sets of five overlap by three
+(`5 + 5 − 7 = 3`). The two students in a room therefore share 3 of their 5
+picture questions; their rotating clip's five questions are fully distinct, so
+the two papers always differ on at least 5 of their 10 listening questions.
+Additionally, 3 of the 5 picture clips serve two groups each per grade, which
+sit at different times — the same exposure the bank already tolerates across
+classes. Fixing either would require commissioning new picture audio; both are
+accepted by design.
+
+**Rebuild still pending as of 2026-09-01.** The code and the second question
+sets are deployed, but the 48 stored papers were built by the old allocator and
+still carry the defect — `check_papers` reports 24 recording mismatches against
+live data until `build_papers --resample` is run. Rebuilding rewrites every
+paper's listening section and redraws its speaking prompts, so **any paper
+printed or downloaded before that rebuild is superseded** and must be
+re-downloaded before it is administered.
+
 ## Known limits
 
 - **Grade 9 has only 46 items**, against ~420 for grade 10 and ~270 for grade 11.
