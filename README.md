@@ -230,6 +230,22 @@ reports zero issues.
 The server runs this as a Docker stack — app plus its own Caddy, no shared
 proxy. See [deploy/README.md](deploy/README.md) for the update procedure.
 
+**Rebuild the image before running any loader command.** The Dockerfile does
+`COPY . .`, so authored payloads like `diagnostics/authored/listening_set_2.json`
+are baked into the image. Only `db.sqlite3` and `media/` are bind-mounted, so
+only those cross into a running container without a rebuild. A `git pull` on the
+host updates the checkout but **not** what the container reads — so
+`load_listening_set_2` would import the old payload and still print its success
+line, which is the failure mode to watch for: it looks exactly like it worked.
+Pull, then `docker compose up -d --build`, then run the loader. Confirm with:
+
+```bash
+md5sum diagnostics/authored/listening_set_2.json
+docker compose exec testgen md5sum /app/diagnostics/authored/listening_set_2.json
+```
+
+The two hashes must match before the loader is worth running.
+
 ---
 
 ## Exam groups and listening question sets
