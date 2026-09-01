@@ -247,6 +247,10 @@ details.mix summary .note{margin-left:auto;font:400 11px/1.5 var(--mono);
    printed paper and the assembly preview - .qans in particular is already
    defined at line 166 for the paper's right-aligned answer stamp, so the
    bank's answer line must not reuse that name. */
+.bank-head { padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
+.bank-head h1 { font: 400 30px/1.1 var(--serif); margin: 0; letter-spacing: -.006em; color: var(--ink); }
+.bank-meta { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 11px; }
+.bank-meta span { font: 600 10px/1 var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--stamp); }
 .bank-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 .bank-transcript pre { white-space: pre-wrap; font-size: .82rem; line-height: 1.5;
   max-height: 32rem; overflow-y: auto; border: 1px solid var(--rule); padding: .75rem; }
