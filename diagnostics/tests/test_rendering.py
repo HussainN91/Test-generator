@@ -422,7 +422,10 @@ class ClipSectionFromSetTests(RenderingTestCase):
         from diagnostics.models import ListeningQuestion, ListeningQuestionSet
         from diagnostics.rendering import paper_sections
         clip = self.paper.listening_set_2.clip
-        set_two = ListeningQuestionSet.objects.create(clip=clip, number=2)
+        # seed_content() already creates an empty set 2 for every clip, so
+        # fetch it rather than create a duplicate that would violate
+        # unique(clip, number).
+        set_two = ListeningQuestionSet.objects.get(clip=clip, number=2)
         for position in range(1, 6):
             ListeningQuestion.objects.create(
                 question_set=set_two, position=position,

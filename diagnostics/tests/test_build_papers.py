@@ -10,7 +10,7 @@ from diagnostics.constants import (
     VARIANTS,
 )
 from diagnostics.models import (
-    AudioClip, ListeningQuestion, ListeningQuestionSet, Paper, PaperSpeakingPrompt,
+    AudioClip, ListeningQuestionSet, Paper, PaperSpeakingPrompt,
     PaperWritingQuestion, ReadingPassage, SpeakingPrompt, WritingQuestion, WritingSubtype,
 )
 from diagnostics.navigation import GROUP_NUMBERS, variants_for_group
@@ -22,16 +22,18 @@ def seed_content():
     clip now needs two, since the two variants in a group share one
     recording and answer different question papers), 15 passages,
     200 writing questions (50 per subtype) and 50 speaking prompts (10 per
-    task)."""
+    task).
+
+    The sets are left empty of questions deliberately: build_papers only
+    checks that a ListeningQuestionSet exists for each (clip, number), never
+    what's inside it. Tests that render or read actual question content
+    (test_rendering.py's seed_questions_and_rubrics, for one) add their own
+    questions on top of these sets - populating them here would collide
+    with that on the unique (question_set, position) constraint."""
     for number in range(1, 21):
         clip = AudioClip.objects.create(number=number, task_type=CLIP_TASK_TYPES[number])
         for set_number in (1, 2):
-            question_set = ListeningQuestionSet.objects.create(clip=clip, number=set_number)
-            for position in range(1, 6):
-                ListeningQuestion.objects.create(
-                    question_set=question_set, position=position,
-                    stem=f"q{position}", answer="A",
-                )
+            ListeningQuestionSet.objects.create(clip=clip, number=set_number)
     for n in range(1, 16):
         ReadingPassage.objects.create(
             label=f"R{n:02d}", title=f"Passage {n}", body=" ".join(["word"] * 220)
