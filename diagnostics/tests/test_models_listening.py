@@ -127,3 +127,23 @@ class ListeningQuestionParentTests(TestCase):
         )
         self.set_two.delete()
         self.assertEqual(ListeningQuestion.objects.count(), 0)
+
+
+class AudioClipTranscriptTests(TestCase):
+    """The transcript lives on the clip because it describes the recording,
+    not any one question set - both sets of questions are about the same
+    audio and are checked against the same words."""
+
+    def test_a_clip_can_carry_a_transcript(self):
+        clip = AudioClip.objects.create(
+            number=1, task_type="picture", transcript="Interviewer: Hello."
+        )
+        clip.refresh_from_db()
+        self.assertEqual(clip.transcript, "Interviewer: Hello.")
+
+    def test_transcript_defaults_to_empty_not_null(self):
+        """Empty string rather than NULL, so templates and str operations
+        never have to special-case None."""
+        clip = AudioClip.objects.create(number=2, task_type="mcq3")
+        clip.refresh_from_db()
+        self.assertEqual(clip.transcript, "")

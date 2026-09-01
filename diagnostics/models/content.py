@@ -27,6 +27,15 @@ class AudioClip(models.Model):
         blank=True, help_text='The "You will hear..." framing read before the clip.'
     )
     audio_file = models.FileField(upload_to="diagnostics/audio/", blank=True)
+    transcript = models.TextField(
+        blank=True,
+        help_text=(
+            "The full spoken text of the recording, imported from "
+            "media/diagnostics/audio/transcripts-full.md. Kept on the clip "
+            "rather than the question set because both sets ask about the "
+            "same audio and are checked against the same words."
+        ),
+    )
 
     class Meta:
         ordering = ["number"]
