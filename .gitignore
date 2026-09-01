@@ -25,3 +25,10 @@ id_ed25519.pub
 
 # Server credentials and connection notes - plaintext password, never commit.
 server push info.txt
+
+# Local snapshot archives of the project folder. Hundreds of megabytes, and
+# GitHub rejects any blob over 100 MB - a stray `git add -A` would stage one
+# and fail the push after uploading it.
+*.rar
+*.zip
+*.7z
