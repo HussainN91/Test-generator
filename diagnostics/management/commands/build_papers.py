@@ -26,7 +26,7 @@ from diagnostics.allocation import allocate
 from diagnostics.constants import CLIP_TASK_TYPES, GRADES, VARIANTS
 from diagnostics.models import ListeningQuestionSet, Paper, ReadingPassage
 from diagnostics.sampling import SamplingError, sample_speaking_prompts, sample_writing_questions
-from diagnostics.verification import find_reuse_violations
+from diagnostics.verification import find_group_violations, find_reuse_violations
 
 
 class Command(BaseCommand):
@@ -101,10 +101,10 @@ class Command(BaseCommand):
                         sample_speaking_prompts(paper)
                         sampled += 1
 
-                problems = find_reuse_violations()
+                problems = find_reuse_violations() + find_group_violations()
                 if problems:
                     raise CommandError(
-                        "Build produced a reuse-cap violation, rolling back:\n  "
+                        "Build produced an invalid bank, rolling back:\n  "
                         + "\n  ".join(problems)
                     )
         except SamplingError as error:
