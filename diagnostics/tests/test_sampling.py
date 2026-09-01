@@ -169,7 +169,7 @@ class ReuseCapTests(TestCase):
         for subtype in WritingSubtype.values:
             for i in range(50):
                 WritingQuestion.objects.create(
-                    subtype=subtype, stem=f"{subtype}-{i}",
+                    subtype=subtype, stem=f"{subtype}-{i:02d}",
                     options=["a", "b", "c", "d"], answer="A",
                 )
 

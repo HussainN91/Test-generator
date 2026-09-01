@@ -44,12 +44,31 @@ def seed_content():
     ]:
         for i in range(count):
             WritingQuestion.objects.create(
-                subtype=subtype, stem=f"{subtype}-{i}",
+                subtype=subtype, stem=f"{subtype}-{i:02d}",
                 options=["a", "b", "c", "d"], answer="A",
             )
     for task in SPEAKING_TASK_ORDER:
         for i in range(10):
             SpeakingPrompt.objects.create(task=task, prompt=f"{task}-{i}")
+
+
+class SeedContentStemUniquenessTests(TestCase):
+    def test_no_writing_stem_is_a_substring_of_a_different_stem(self):
+        """text.index(stem) in rendering tests (test_rendering.py's
+        test_student_copy_numbers_writing_questions_in_slot_order) finds
+        the FIRST occurrence of a stem in the whole document. If one
+        question's stem is a substring of a different question's stem
+        (e.g. unpadded "GRAMMAR-1" inside "GRAMMAR-10"), that lookup can
+        silently match the wrong question, producing a flaky false
+        failure. This pins the invariant that made that test flaky."""
+        seed_content()
+        stems = list(WritingQuestion.objects.values_list("stem", flat=True))
+        for stem in stems:
+            others = [s for s in stems if s != stem]
+            self.assertFalse(
+                any(stem in other for other in others),
+                f"{stem!r} is a substring of another stem - text.index() lookups would collide",
+            )
 
 
 class BuildPapersTests(TestCase):
