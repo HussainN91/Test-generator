@@ -12,6 +12,10 @@ the paper's grade, rather than excluding every id a sibling has ever used.
 Writing's cap of 1 still yields genuine zero reuse, because its pool is large
 enough to support it; speaking's cap of 2 makes reuse mandatory once every
 prompt has been used once. Cross-grade reuse remains unrestricted either way.
+
+Speaking carries one extra rule the cap cannot express: the other paper in
+the same room is excluded outright, at any usage count. Ten of the
+twenty-four groups were sharing a prompt under the cap alone.
 """
 
 import random
@@ -21,8 +25,9 @@ from django.db import transaction
 
 from diagnostics.constants import REUSE_CAPS, SPEAKING_TASK_ORDER, WRITING_SUBTYPE_COUNTS
 from diagnostics.models import (
-    PaperSpeakingPrompt, PaperWritingQuestion, SpeakingPrompt, WritingQuestion,
+    Paper, PaperSpeakingPrompt, PaperWritingQuestion, SpeakingPrompt, WritingQuestion,
 )
+from diagnostics.navigation import partner_variant
 
 
 class SamplingError(Exception):
@@ -43,6 +48,30 @@ def _at_cap_in_grade(model, paper, field_name, cap):
         .values_list(f"{field_name}_id", flat=True)
     )
     return {item_id for item_id, used in counts.items() if used >= cap}
+
+
+def used_by_group_partner(paper):
+    """Speaking prompt ids already taken by the other paper in this room.
+
+    A hard exclusion, not a cap: two students sitting side by side must never
+    get the same speaking prompt, whatever the grade-wide budget allows. The
+    cap alone was not enough - REUSE_CAPS is scoped per grade, so a prompt
+    used once elsewhere in the grade was still under its cap of 2 and landed
+    on both papers in a room in 10 of the 24 groups.
+
+    Returns an empty set when the partner paper does not exist yet (the first
+    paper in a room to be sampled has nothing to avoid) - so build order does
+    not change the rule, only which of the pair moves.
+    """
+    partner = Paper.objects.filter(
+        grade=paper.grade, variant=partner_variant(paper.variant)
+    ).first()
+    if partner is None:
+        return set()
+    return set(
+        PaperSpeakingPrompt.objects.filter(paper=partner)
+        .values_list("prompt_id", flat=True)
+    )
 
 
 @transaction.atomic
@@ -78,10 +107,11 @@ def sample_writing_questions(paper):
 @transaction.atomic
 def sample_speaking_prompts(paper):
     """Assign 5 speaking prompts to `paper`, one per fixed task, in task
-    order, none at or above the reuse cap within the same grade."""
+    order: none at or above the reuse cap within the same grade, and none
+    already sitting on the other paper in the same room."""
     used_ids = _at_cap_in_grade(
         PaperSpeakingPrompt, paper, "prompt", REUSE_CAPS["speaking_prompt"]
-    )
+    ) | used_by_group_partner(paper)
 
     PaperSpeakingPrompt.objects.filter(paper=paper).delete()
     for position, task in enumerate(SPEAKING_TASK_ORDER, start=1):
@@ -92,8 +122,10 @@ def sample_speaking_prompts(paper):
         )
         if not pool:
             raise SamplingError(
-                f"Grade {paper.grade}: no '{task}' speaking prompts available "
-                f"below the reuse cap of {REUSE_CAPS['speaking_prompt']}."
+                f"Grade {paper.grade} variant {paper.variant}: no '{task}' "
+                f"speaking prompts available below the reuse cap of "
+                f"{REUSE_CAPS['speaking_prompt']} that are not already on the "
+                f"group partner's paper."
             )
         PaperSpeakingPrompt.objects.create(
             paper=paper, prompt_id=random.choice(pool), position=position,

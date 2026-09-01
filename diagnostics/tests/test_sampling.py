@@ -2,13 +2,15 @@ from collections import Counter
 
 from django.test import TestCase
 
-from diagnostics.constants import REUSE_CAPS, TaskType, VARIANTS
+from diagnostics.constants import REUSE_CAPS, SPEAKING_TASK_ORDER, TaskType, VARIANTS
 from diagnostics.models import (
     AudioClip, ListeningQuestionSet, Paper, PaperSpeakingPrompt, PaperWritingQuestion,
     ReadingPassage, SpeakingPrompt, SpeakingTask, WritingQuestion, WritingSubtype,
 )
+from diagnostics.navigation import partner_variant
 from diagnostics.sampling import (
     SamplingError, sample_speaking_prompts, sample_writing_questions,
+    used_by_group_partner,
 )
 
 
@@ -107,7 +109,6 @@ class SampleSpeakingPromptsTests(TestCase):
                 SpeakingPrompt.objects.create(task=task, prompt=f"{task}-{i}")
 
     def test_samples_one_prompt_per_task_in_order(self):
-        from diagnostics.constants import SPEAKING_TASK_ORDER
         from diagnostics.models import PaperSpeakingPrompt
         from diagnostics.sampling import sample_speaking_prompts
 
@@ -223,3 +224,69 @@ class ReuseCapTests(TestCase):
         )
         with self.assertRaises(SamplingError):
             sample_speaking_prompts(paper)
+
+
+class GroupPartnerExclusionTests(TestCase):
+    """Two students sitting side by side must never get the same speaking
+    prompt. The grade-wide reuse cap does not achieve that on its own: a
+    prompt used once elsewhere in the grade is still under the cap of 2 and
+    was landing on both papers in a room 10 times out of 24."""
+
+    def setUp(self):
+        self.passage = ReadingPassage.objects.create(
+            label="R01", title="t", body=" ".join(["word"] * 200)
+        )
+        for task in SPEAKING_TASK_ORDER:
+            for index in range(10):
+                SpeakingPrompt.objects.create(task=task, prompt=f"{task} {index}")
+
+    def _paper(self, variant):
+        clip_a = AudioClip.objects.create(number=ord(variant), task_type="picture")
+        clip_b = AudioClip.objects.create(number=ord(variant) + 100, task_type="mcq3")
+        return Paper.objects.create(
+            grade=9, variant=variant,
+            listening_set_1=ListeningQuestionSet.objects.create(clip=clip_a, number=1),
+            listening_set_2=ListeningQuestionSet.objects.create(clip=clip_b, number=1),
+            reading_passage=self.passage,
+        )
+
+    def test_partner_prompts_are_reported_as_used(self):
+        paper_a, paper_b = self._paper("A"), self._paper("B")
+        sample_speaking_prompts(paper_a)
+        taken = set(paper_a.speaking_prompts.values_list("pk", flat=True))
+        self.assertEqual(used_by_group_partner(paper_b), taken)
+
+    def test_the_room_partner_never_draws_the_same_prompt(self):
+        paper_a, paper_b = self._paper("A"), self._paper("B")
+        sample_speaking_prompts(paper_a)
+        sample_speaking_prompts(paper_b)
+        a = set(paper_a.speaking_prompts.values_list("pk", flat=True))
+        b = set(paper_b.speaking_prompts.values_list("pk", flat=True))
+        self.assertEqual(a & b, set())
+
+    def test_exclusion_holds_even_when_the_prompt_is_under_the_grade_cap(self):
+        """The prompt is used once in the grade, so the cap of 2 still allows
+        it. The group rule must reject it anyway."""
+        paper_a, paper_b = self._paper("A"), self._paper("B")
+        sample_speaking_prompts(paper_a)
+        for _ in range(20):
+            sample_speaking_prompts(paper_b)
+            a = set(paper_a.speaking_prompts.values_list("pk", flat=True))
+            b = set(paper_b.speaking_prompts.values_list("pk", flat=True))
+            self.assertEqual(a & b, set())
+
+    def test_a_paper_with_no_partner_yet_excludes_nothing(self):
+        paper_a = self._paper("A")
+        self.assertEqual(used_by_group_partner(paper_a), set())
+
+    def test_exhausting_a_task_pool_raises_rather_than_repeating(self):
+        SpeakingPrompt.objects.filter(task="introduction").delete()
+        SpeakingPrompt.objects.create(task="introduction", prompt="the only one")
+        paper_a, paper_b = self._paper("A"), self._paper("B")
+        sample_speaking_prompts(paper_a)
+        with self.assertRaisesMessage(SamplingError, "introduction"):
+            sample_speaking_prompts(paper_b)
+
+    def test_partner_lookup_uses_the_navigation_group(self):
+        paper_a = self._paper("A")
+        self.assertEqual(partner_variant(paper_a.variant), "B")
