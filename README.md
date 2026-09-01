@@ -105,6 +105,16 @@ python manage.py import_guide --grade 9 --dry-run  # parse and report, write not
 Idempotent — fix a `.txt` and re-import. The parser handles all three guide
 formats (they differ substantially); see `content/parsing/guide_parser.py`.
 
+Import the clip transcripts into the database, so the listening bank page can
+show each recording's words beside its questions:
+
+```bash
+python manage.py import_transcripts
+```
+
+Idempotent — re-running overwrites every clip's transcript from
+`media/diagnostics/audio/transcripts-full.md`. It never touches questions.
+
 ### Filling the bank — without an API key
 
 ```bash
