@@ -6,22 +6,6 @@
       "questions": [
         {
           "position": 1,
-          "stem": "Where will the friends meet?",
-          "options": [],
-          "image": "clip-01-q6.jpg",
-          "answer": "B",
-          "acceptable_answers": []
-        },
-        {
-          "position": 2,
-          "stem": "Which sport will the boy do soon at the centre?",
-          "options": [],
-          "image": "clip-01-q7.jpg",
-          "answer": "C",
-          "acceptable_answers": []
-        },
-        {
-          "position": 3,
           "stem": "Who lives with Josh in his house?",
           "options": [],
           "image": "clip-01-q3.jpg",
@@ -29,7 +13,7 @@
           "acceptable_answers": []
         },
         {
-          "position": 4,
+          "position": 2,
           "stem": "What will the boy take with him on holiday?",
           "options": [],
           "image": "clip-01-q4.jpg",
@@ -37,10 +21,26 @@
           "acceptable_answers": []
         },
         {
-          "position": 5,
+          "position": 3,
           "stem": "What time will the train to Manchester leave?",
           "options": [],
           "image": "clip-01-q5.jpg",
+          "answer": "C",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "Where will the friends meet?",
+          "options": [],
+          "image": "clip-01-q6.jpg",
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "Which sport will the boy do soon at the centre?",
+          "options": [],
+          "image": "clip-01-q7.jpg",
           "answer": "C",
           "acceptable_answers": []
         }
@@ -52,22 +52,6 @@
       "questions": [
         {
           "position": 1,
-          "stem": "What luggage is the man taking on holiday?",
-          "options": [],
-          "image": "clip-05-q6.jpg",
-          "answer": "B",
-          "acceptable_answers": []
-        },
-        {
-          "position": 2,
-          "stem": "Which photograph does the man like?",
-          "options": [],
-          "image": "clip-05-q7.jpg",
-          "answer": "C",
-          "acceptable_answers": []
-        },
-        {
-          "position": 3,
           "stem": "Which picture shows what the girls need?",
           "options": [],
           "image": "clip-05-q3.jpg",
@@ -75,7 +59,7 @@
           "acceptable_answers": []
         },
         {
-          "position": 4,
+          "position": 2,
           "stem": "Which picture shows what happened?",
           "options": [],
           "image": "clip-05-q4.jpg",
@@ -83,10 +67,26 @@
           "acceptable_answers": []
         },
         {
-          "position": 5,
+          "position": 3,
           "stem": "What is Sarah’s mother doing?",
           "options": [],
           "image": "clip-05-q5.jpg",
+          "answer": "C",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "What luggage is the man taking on holiday?",
+          "options": [],
+          "image": "clip-05-q6.jpg",
+          "answer": "B",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "Which photograph does the man like?",
+          "options": [],
+          "image": "clip-05-q7.jpg",
           "answer": "C",
           "acceptable_answers": []
         }
@@ -98,22 +98,6 @@
       "questions": [
         {
           "position": 1,
-          "stem": "Which tie does the man choose?",
-          "options": [],
-          "image": "clip-09-q6.jpg",
-          "answer": "A",
-          "acceptable_answers": []
-        },
-        {
-          "position": 2,
-          "stem": "What time is the appointment?",
-          "options": [],
-          "image": "clip-09-q7.jpg",
-          "answer": "C",
-          "acceptable_answers": []
-        },
-        {
-          "position": 3,
           "stem": "What should the woman do first?",
           "options": [],
           "image": "clip-09-q3.jpg",
@@ -121,7 +105,7 @@
           "acceptable_answers": []
         },
         {
-          "position": 4,
+          "position": 2,
           "stem": "What is David going to do this weekend?",
           "options": [],
           "image": "clip-09-q4.jpg",
@@ -129,11 +113,27 @@
           "acceptable_answers": []
         },
         {
-          "position": 5,
+          "position": 3,
           "stem": "How did the man get to work today?",
           "options": [],
           "image": "clip-09-q5.jpg",
           "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "Which tie does the man choose?",
+          "options": [],
+          "image": "clip-09-q6.jpg",
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "What time is the appointment?",
+          "options": [],
+          "image": "clip-09-q7.jpg",
+          "answer": "C",
           "acceptable_answers": []
         }
       ]
@@ -144,22 +144,6 @@
       "questions": [
         {
           "position": 1,
-          "stem": "What hasn't the girl packed yet?",
-          "options": [],
-          "image": "clip-13-q6.jpg",
-          "answer": "A",
-          "acceptable_answers": []
-        },
-        {
-          "position": 2,
-          "stem": "What has the woman just bought?",
-          "options": [],
-          "image": "clip-13-q7.jpg",
-          "answer": "A",
-          "acceptable_answers": []
-        },
-        {
-          "position": 3,
           "stem": "Why will drivers have problems this morning?",
           "options": [],
           "image": "clip-13-q3.jpg",
@@ -167,7 +151,7 @@
           "acceptable_answers": []
         },
         {
-          "position": 4,
+          "position": 2,
           "stem": "What time will Robin leave the house?",
           "options": [],
           "image": "clip-13-q4.jpg",
@@ -175,11 +159,27 @@
           "acceptable_answers": []
         },
         {
-          "position": 5,
+          "position": 3,
           "stem": "What did Simon do this morning?",
           "options": [],
           "image": "clip-13-q5.jpg",
           "answer": "C",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "What hasn't the girl packed yet?",
+          "options": [],
+          "image": "clip-13-q6.jpg",
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "What has the woman just bought?",
+          "options": [],
+          "image": "clip-13-q7.jpg",
+          "answer": "A",
           "acceptable_answers": []
         }
       ]
@@ -190,22 +190,6 @@
       "questions": [
         {
           "position": 1,
-          "stem": "What is the man selling?",
-          "options": [],
-          "image": "clip-15-q6.jpg",
-          "answer": "A",
-          "acceptable_answers": []
-        },
-        {
-          "position": 2,
-          "stem": "What is the weather forecast for tomorrow?",
-          "options": [],
-          "image": "clip-15-q7.jpg",
-          "answer": "A",
-          "acceptable_answers": []
-        },
-        {
-          "position": 3,
           "stem": "When will Jane meet them?",
           "options": [],
           "image": "clip-15-q3.jpg",
@@ -213,7 +197,7 @@
           "acceptable_answers": []
         },
         {
-          "position": 4,
+          "position": 2,
           "stem": "Which morning activity is for beginners?",
           "options": [],
           "image": "clip-15-q4.jpg",
@@ -221,10 +205,26 @@
           "acceptable_answers": []
         },
         {
-          "position": 5,
+          "position": 3,
           "stem": "Which painting does the woman decide to buy?",
           "options": [],
           "image": "clip-15-q5.jpg",
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 4,
+          "stem": "What is the man selling?",
+          "options": [],
+          "image": "clip-15-q6.jpg",
+          "answer": "A",
+          "acceptable_answers": []
+        },
+        {
+          "position": 5,
+          "stem": "What is the weather forecast for tomorrow?",
+          "options": [],
+          "image": "clip-15-q7.jpg",
           "answer": "A",
           "acceptable_answers": []
         }
@@ -408,11 +408,11 @@
           "position": 1,
           "stem": "Who performs at the Theatre Royal on 12 May?",
           "options": [
-            "George Melly",
             "Elaine Delmar",
+            "George Melly",
             "The Brodsky String Quartet"
           ],
-          "answer": "B",
+          "answer": "A",
           "acceptable_answers": []
         },
         {
@@ -442,10 +442,10 @@
           "stem": "If you want to book festival tickets by post, how must you pay?",
           "options": [
             "By cash only",
-            "By cheque only",
-            "By credit card only"
+            "By credit card only",
+            "By cheque only"
           ],
-          "answer": "B",
+          "answer": "C",
           "acceptable_answers": []
         },
         {
@@ -599,11 +599,11 @@
           "position": 3,
           "stem": "On a normal weekday, what time do the shops open?",
           "options": [
+            "8:00 a.m.",
             "9:00 a.m.",
-            "10:00 a.m.",
-            "8:00 a.m."
+            "10:00 a.m."
           ],
-          "answer": "B",
+          "answer": "C",
           "acceptable_answers": []
         },
         {
@@ -748,11 +748,11 @@
           "position": 1,
           "stem": "What is Sarah's job apart from painting?",
           "options": [
-            "She teaches art.",
             "She works with computers.",
+            "She teaches art.",
             "She sells paintings full-time."
           ],
-          "answer": "B",
+          "answer": "A",
           "acceptable_answers": []
         },
         {
@@ -793,10 +793,10 @@
           "stem": "In which country did Sarah paint desert scenes?",
           "options": [
             "Greece",
-            "Morocco",
-            "Spain"
+            "Spain",
+            "Morocco"
           ],
-          "answer": "B",
+          "answer": "C",
           "acceptable_answers": []
         }
       ]
@@ -831,11 +831,11 @@
           "position": 3,
           "stem": "How does John describe his health?",
           "options": [
-            "Poor",
             "Excellent",
+            "Poor",
             "Uncertain"
           ],
-          "answer": "B",
+          "answer": "A",
           "acceptable_answers": []
         },
         {
