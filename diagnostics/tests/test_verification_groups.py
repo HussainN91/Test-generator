@@ -62,6 +62,17 @@ class GroupVerificationTests(TestCase):
         problems = find_group_violations()
         self.assertTrue(any("question set" in p for p in problems), problems)
 
+    def test_partial_question_set_overlap_is_reported(self):
+        """Same two recordings (so G1 stays silent), but B's first set is
+        literally A's row - only the second set correctly differs. A tuple
+        comparison of the whole pair would miss this; the check must catch
+        any overlap, not just a fully identical pair."""
+        self._paper("A", self.sets[(1, 1)], self.sets[(2, 1)], self.p1)
+        self._paper("B", self.sets[(1, 1)], self.sets[(2, 2)], self.p2)
+        problems = find_group_violations()
+        self.assertFalse(any("recording" in p for p in problems), problems)
+        self.assertTrue(any("question set" in p for p in problems), problems)
+
     def test_a_shared_speaking_prompt_is_reported(self):
         a, b = self._good_pair()
         prompt = SpeakingPrompt.objects.create(task="opinion", prompt="shared")

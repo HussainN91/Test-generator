@@ -6,8 +6,8 @@ Run this after build_papers, and any time the content banks are re-imported.
 
 from django.core.management.base import BaseCommand, CommandError
 
-from diagnostics.navigation import GROUPS_PER_GRADE
 from diagnostics.constants import GRADES
+from diagnostics.navigation import GROUPS_PER_GRADE
 from diagnostics.verification import (
     EXPECTED_PAPER_COUNT, find_completeness_problems, find_group_violations,
     find_reuse_violations,

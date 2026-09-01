@@ -112,7 +112,12 @@ def find_group_violations():
             label = f"Grade {grade} group {group} ({'/'.join(variants)})"
 
             if not present:
-                # Sitting not built yet at all - nothing to verify.
+                # No papers at all for this sitting: not a partial build to
+                # flag, just a grade/group this bank hasn't touched yet (e.g.
+                # a test that only builds grade 9 leaves every other grade's
+                # groups at zero). find_completeness_problems() owns "is
+                # every paper present" in aggregate; this stays silent so it
+                # doesn't duplicate that check or spam unbuilt combinations.
                 continue
 
             if len(present) != len(variants):
@@ -137,13 +142,14 @@ def find_group_violations():
                     f"two audio files at once."
                 )
 
-            sets_first = {first.listening_set_1_id, first.listening_set_2_id}
-            sets_second = {second.listening_set_1_id, second.listening_set_2_id}
-            if sets_first & sets_second:
+            first_sets = {first.listening_set_1_id, first.listening_set_2_id}
+            second_sets = {second.listening_set_1_id, second.listening_set_2_id}
+            overlap = first_sets & second_sets
+            if overlap:
                 problems.append(
-                    f"{label}: the two papers share a listening question set, "
-                    f"so at least part of the listening paper is identical for "
-                    f"the two students in the room."
+                    f"{label}: the two papers share {len(overlap)} listening "
+                    f"question set(s), so at least part of the listening paper "
+                    f"is identical for the two students in the room."
                 )
 
             shared_prompts = (
