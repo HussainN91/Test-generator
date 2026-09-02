@@ -636,15 +636,6 @@
       "questions": [
         {
           "position": 1,
-          "stem": "The Bristol Hotel is closed during the month of ______.",
-          "options": [],
-          "answer": "January",
-          "acceptable_answers": [
-            "January"
-          ]
-        },
-        {
-          "position": 2,
           "stem": "The Bristol Hotel has just ______ rooms.",
           "options": [],
           "answer": "7/seven",
@@ -654,22 +645,31 @@
           ]
         },
         {
-          "position": 3,
-          "stem": "A double room at the Ferndale Hotel includes free use of the ______.",
+          "position": 2,
+          "stem": "The Bristol Hotel is closed during the month of ______.",
           "options": [],
-          "answer": "tennis courts",
+          "answer": "January",
           "acceptable_answers": [
-            "tennis courts"
+            "January"
           ]
         },
         {
-          "position": 4,
+          "position": 3,
           "stem": "The Ferndale Hotel is a ______-star hotel.",
           "options": [],
           "answer": "2/two",
           "acceptable_answers": [
             "2",
             "two"
+          ]
+        },
+        {
+          "position": 4,
+          "stem": "A double room at the Ferndale Hotel includes free use of the ______.",
+          "options": [],
+          "answer": "tennis courts",
+          "acceptable_answers": [
+            "tennis courts"
           ]
         },
         {
