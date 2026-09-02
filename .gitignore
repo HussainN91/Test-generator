@@ -36,3 +36,13 @@ server push info.txt
 # Scratch renders of a page, dropped in static/ only so a local dev server
 # can display them. Never part of the app.
 static/_preview*.html
+
+# Claude Code worktrees. Each holds a full checkout plus its own .venv -
+# hundreds of megabytes. This was only in .git/info/exclude, which is local
+# to this clone and never travels with a push, so a fresh clone would see
+# them as untracked and a stray `git add -A` would stage the lot.
+.claude/worktrees/
+
+# Generated exam documents. *.docx catches what the exporter writes today;
+# this covers any other format it grows later.
+exports/
