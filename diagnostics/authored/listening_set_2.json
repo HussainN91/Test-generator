@@ -297,7 +297,7 @@
       "questions": [
         {
           "position": 1,
-          "stem": "Casper's mother sometimes plays the ______ while she dances above the ring.",
+          "stem": "Caspar's mother sometimes plays the ______ while she dances above the ring.",
           "options": [],
           "answer": "violin",
           "acceptable_answers": [
@@ -306,7 +306,7 @@
         },
         {
           "position": 2,
-          "stem": "Casper's sister is ______ years old.",
+          "stem": "Caspar's sister is ______ years old.",
           "options": [],
           "answer": "16/sixteen",
           "acceptable_answers": [
@@ -316,7 +316,7 @@
         },
         {
           "position": 3,
-          "stem": "In the motorbike act, Casper's sister stands at the ______ of the group.",
+          "stem": "In the motorbike act, Caspar's sister stands at the ______ of the group.",
           "options": [],
           "answer": "top",
           "acceptable_answers": [
@@ -325,7 +325,7 @@
         },
         {
           "position": 4,
-          "stem": "Casper is not allowed to perform in the circus until he is ______ years old.",
+          "stem": "Caspar is not allowed to perform in the circus until he is ______ years old.",
           "options": [],
           "answer": "15/fifteen",
           "acceptable_answers": [
@@ -335,7 +335,7 @@
         },
         {
           "position": 5,
-          "stem": "The only animal in Casper's circus is a ______.",
+          "stem": "The only animal in Caspar's circus is a ______.",
           "options": [],
           "answer": "rabbit",
           "acceptable_answers": [
