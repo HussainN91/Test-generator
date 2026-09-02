@@ -32,3 +32,7 @@ server push info.txt
 *.rar
 *.zip
 *.7z
+
+# Scratch renders of a page, dropped in static/ only so a local dev server
+# can display them. Never part of the app.
+static/_preview*.html
