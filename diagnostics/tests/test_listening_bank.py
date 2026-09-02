@@ -314,3 +314,15 @@ class ListeningBankViewTests(TestCase):
             response.context["balance"]["gap_fill"], {"free_text": 50}
         )
         self.assertContains(response, "50 free-text answers")
+
+    def test_no_template_source_leaks_into_the_page(self):
+        """Django's {# #} is single-line only.
+
+        A multi-line one is not a comment at all - it renders verbatim, which
+        is how three explanatory notes reached the live page as body text.
+        Anything that wraps has to be {% comment %}.
+        """
+        self.client.force_login(self.staff)
+        body = self.client.get(self.url).content.decode()
+        self.assertNotIn("{#", body)
+        self.assertNotIn("{%", body)

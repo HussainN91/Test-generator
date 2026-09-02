@@ -13,8 +13,10 @@
   </div>
 </div>
 
-{# Everything that describes the bank as a whole sits inside one block that
-   visibly closes, so the first clip below cannot read as another row of it. #}
+{% comment %}
+  Everything that describes the bank as a whole sits inside one block that
+  visibly closes, so the first clip below cannot read as another row of it.
+{% endcomment %}
 <div class="bank-summary">
   <div class="actions">
     <a class="btn {% if not selected_grade %}{% else %}ghost{% endif %}"
@@ -53,8 +55,10 @@
 
 {% for entry in entries %}
   <section class="blk bank-set"{% if entry.anchor %} id="{{ entry.anchor }}"{% endif %}>
-    {# The clip and set name the block; which groups sit it is context, and
-       changes every time the papers are rebuilt. Ranked accordingly. #}
+    {% comment %}
+      The clip and set name the block; which groups sit it is context, and
+      changes every time the papers are rebuilt. Ranked accordingly.
+    {% endcomment %}
     <h2 class="bank-set-title">
       Clip {{ entry.clip.number }} &middot; {{ entry.clip.get_task_type_display }} &middot; Set {{ entry.question_set.number }}
     </h2>
@@ -90,8 +94,10 @@
         {% endfor %}
       </div>
 
-      {# Sticky: the transcript is read against every question in turn, so it
-         should not scroll away after the first one. #}
+      {% comment %}
+        Sticky: the transcript is read against every question in turn, so it
+        should not scroll away after the first one.
+      {% endcomment %}
       <aside class="bank-transcript">
         <h3>Transcript</h3>
         {% if entry.clip.transcript %}
