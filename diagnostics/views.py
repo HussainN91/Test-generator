@@ -338,6 +338,7 @@ def listening_bank(request):
     )
 
     entries = []
+    seen_clips = set()
     for question_set in question_sets:
         pairs = usage.get(question_set.pk, [])
         if selected_grade is not None and not any(
@@ -351,12 +352,20 @@ def listening_bank(request):
             question.inline_blank = needs_inline_blank(
                 question.stem, question.options
             )
+        # Only the first set of each clip carries the anchor: the index
+        # above lists clips, not sets, and two sets of the same clip would
+        # otherwise claim the same id.
+        clip = question_set.clip
+        anchor = "" if clip.number in seen_clips else f"clip-{clip.number}"
+        seen_clips.add(clip.number)
+
         entries.append({
             "question_set": question_set,
-            "clip": question_set.clip,
+            "clip": clip,
             "pairs": pairs,
             "title": usage_title(pairs),
             "questions": questions,
+            "anchor": anchor,
         })
 
     visible_ids = [entry["question_set"].pk for entry in entries]
@@ -370,6 +379,7 @@ def listening_bank(request):
             "set_count": len(entries),
             "question_count": sum(len(e["questions"]) for e in entries),
             "clip_count": len({e["clip"].pk for e in entries}),
+            "clip_numbers": sorted(seen_clips),
             "balance": key_balance(
                 ListeningQuestion.objects.filter(question_set_id__in=visible_ids)
             ),

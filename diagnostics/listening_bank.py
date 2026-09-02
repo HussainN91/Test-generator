@@ -11,8 +11,15 @@ say the same thing twice.
 
 from collections import defaultdict
 
+from diagnostics.constants import TaskType
 from diagnostics.models import Paper
 from diagnostics.navigation import group_for_variant
+
+#: Task types answered in free text rather than by picking a letter.
+#: The answer-key balance panel exists to expose a letter that is
+#: over-represented; these have no letters, so they are counted
+#: instead of tallied. See key_balance.
+FREE_TEXT_TASKS = frozenset({TaskType.GAP_FILL.value})
 
 
 def set_usage():
@@ -58,7 +65,7 @@ def usage_title(pairs):
 
 
 def key_balance(questions):
-    """Count answer letters per task type across `questions`.
+    """Summarise the answer key per task type across `questions`.
 
     A guessable key is a real defect: set 2's mcq3 answers were once
     A=6 B=14 C=5, so answering B every time scored 56% against 33% by
@@ -67,9 +74,32 @@ def key_balance(questions):
 
     Task types are kept apart because they are not comparable - true_false
     has two options and the rest have three.
+
+    Gap-fill is counted rather than tallied. Its answers are free text, so
+    there is no letter to over-pick and a distribution of forty distinct
+    answers occurring once each says nothing about guessability - it just
+    reprints the key, which buried the three rows that do carry signal.
+
+    Returns task type -> {"letters": {...}} or {"free_text": count}, in the
+    order the task types are declared rather than the order the rows happen
+    to arrive in.
     """
     counts = defaultdict(lambda: defaultdict(int))
+    free_text = defaultdict(int)
+
     rows = questions.values_list("question_set__clip__task_type", "answer")
     for task_type, answer in rows:
-        counts[task_type][answer] += 1
-    return {task: dict(sorted(letters.items())) for task, letters in counts.items()}
+        if task_type in FREE_TEXT_TASKS:
+            free_text[task_type] += 1
+        else:
+            counts[task_type][answer] += 1
+
+    balance = {}
+    for task in TaskType:
+        if task.value in counts:
+            balance[task.value] = {
+                "letters": dict(sorted(counts[task.value].items()))
+            }
+        elif task.value in free_text:
+            balance[task.value] = {"free_text": free_text[task.value]}
+    return balance

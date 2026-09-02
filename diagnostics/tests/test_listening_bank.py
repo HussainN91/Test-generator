@@ -124,13 +124,98 @@ class KeyBalanceTests(TestCase):
         balance = key_balance(ListeningQuestion.objects.filter(
             question_set=question_set
         ))
-        self.assertEqual(balance["mcq3"], {"A": 1, "B": 3, "C": 1})
+        self.assertEqual(balance["mcq3"], {"letters": {"A": 1, "B": 3, "C": 1}})
 
     def test_a_task_type_with_no_questions_is_absent_not_zeroed(self):
         from diagnostics.listening_bank import key_balance
         from diagnostics.models import ListeningQuestion
 
         self.assertEqual(key_balance(ListeningQuestion.objects.none()), {})
+
+    def test_gap_fill_is_counted_not_tallied(self):
+        """Free-text answers have no letter to over-pick.
+
+        Tallying them printed one row per distinct answer - forty entries
+        each reading "1" - which said nothing about guessability and buried
+        the three rows that do.
+        """
+        from diagnostics.listening_bank import key_balance
+        from diagnostics.models import AudioClip, ListeningQuestion
+
+        clip = AudioClip.objects.get(number=3)   # gap_fill
+        question_set = clip.question_sets.get(number=1)
+        for position, answer in enumerate(
+            ["bakery", "family", "the lake", "£185", "sunset"], start=1
+        ):
+            ListeningQuestion.objects.create(
+                question_set=question_set, position=position,
+                stem=f"q{position}", options=[], answer=answer,
+            )
+        balance = key_balance(ListeningQuestion.objects.filter(
+            question_set=question_set
+        ))
+        self.assertEqual(balance["gap_fill"], {"free_text": 5})
+
+    def test_rows_follow_task_type_declaration_order(self):
+        """picture, mcq3, gap_fill, true_false - not query arrival order.
+
+        The panel is read top to bottom every time; a stable order means a
+        reviewer learns where to look instead of hunting for the row.
+        """
+        from diagnostics.constants import TaskType
+        from diagnostics.listening_bank import key_balance
+        from diagnostics.models import AudioClip, ListeningQuestion
+
+        # Created deliberately in reverse, so arrival order cannot be what
+        # the assertion below is passing on.
+        for number in (20, 3, 2, 1):   # true_false, gap_fill, mcq3, picture
+            question_set = AudioClip.objects.get(
+                number=number
+            ).question_sets.get(number=1)
+            ListeningQuestion.objects.create(
+                question_set=question_set, position=1, stem="q",
+                options=[], answer="A",
+            )
+        balance = key_balance(ListeningQuestion.objects.all())
+        self.assertEqual(
+            list(balance), [task.value for task in TaskType]
+        )
+
+
+class TranscriptBoldTests(TestCase):
+    """The transcripts are imported as markdown; the page must not show it raw."""
+
+    def test_bold_markers_become_real_bold(self):
+        from diagnostics.templatetags.listening_extras import transcript_bold
+
+        self.assertEqual(
+            transcript_bold("**1. Which dish?**\nInterviewer: So you won."),
+            "<strong>1. Which dish?</strong>\nInterviewer: So you won.",
+        )
+
+    def test_transcript_markup_is_escaped_before_substitution(self):
+        """A transcript is content, not markup - it must not inject tags."""
+        from diagnostics.templatetags.listening_extras import transcript_bold
+
+        rendered = transcript_bold("<script>alert(1)</script> **bold**")
+        self.assertNotIn("<script>", rendered)
+        self.assertIn("&lt;script&gt;", rendered)
+        self.assertIn("<strong>bold</strong>", rendered)
+
+    def test_an_unmatched_marker_stays_literal(self):
+        """Non-greedy and single-line, so a stray ** cannot swallow the rest."""
+        from diagnostics.templatetags.listening_extras import transcript_bold
+
+        self.assertEqual(
+            transcript_bold("**heading**\nstray ** here\nplain"),
+            "<strong>heading</strong>\nstray ** here\nplain",
+        )
+
+    def test_empty_transcript_renders_nothing(self):
+        from diagnostics.templatetags.listening_extras import transcript_bold
+
+        self.assertEqual(transcript_bold(""), "")
+        self.assertEqual(transcript_bold(None), "")
 
 
 class ListeningBankViewTests(TestCase):
@@ -200,3 +285,32 @@ class ListeningBankViewTests(TestCase):
         self.client.force_login(self.teacher)
         index = self.client.get(reverse("diagnostics:paper_index"))
         self.assertNotContains(index, "Listening bank")
+
+    def test_each_clip_is_anchored_once_for_the_index(self):
+        """Both sets of a clip would otherwise claim the same id.
+
+        The index lists clips, so the anchor belongs on a clip's first set
+        only - a duplicate id makes the second one unreachable and is
+        invalid HTML besides.
+        """
+        self.client.force_login(self.staff)
+        response = self.client.get(self.url)
+        anchors = [e["anchor"] for e in response.context["entries"] if e["anchor"]]
+        self.assertEqual(anchors, [f"clip-{n}" for n in range(1, 21)])
+        self.assertEqual(len(anchors), len(set(anchors)))
+        self.assertEqual(response.context["clip_numbers"], list(range(1, 21)))
+
+    def test_the_index_only_lists_clips_the_filter_left(self):
+        """A jump link to a clip that is not on the page goes nowhere."""
+        self.client.force_login(self.staff)
+        response = self.client.get(self.url, {"grade": 9})
+        shown = {e["clip"].number for e in response.context["entries"]}
+        self.assertEqual(response.context["clip_numbers"], sorted(shown))
+
+    def test_gap_fill_shows_a_count_rather_than_every_answer(self):
+        self.client.force_login(self.staff)
+        response = self.client.get(self.url)
+        self.assertEqual(
+            response.context["balance"]["gap_fill"], {"free_text": 50}
+        )
+        self.assertContains(response, "50 free-text answers")

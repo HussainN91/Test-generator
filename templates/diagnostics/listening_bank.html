@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load listening_extras %}
 {% block title %}Listening bank{% endblock %}
 {% block nav_listening %} class="on"{% endblock %}
 
@@ -12,36 +13,52 @@
   </div>
 </div>
 
-<div class="actions">
-  <a class="btn {% if not selected_grade %}{% else %}ghost{% endif %}"
-     href="{% url 'diagnostics:listening_bank' %}">All grades</a>
-  {% for grade in grades %}
-    <a class="btn {% if selected_grade == grade %}{% else %}ghost{% endif %}"
-       href="{% url 'diagnostics:listening_bank' %}?grade={{ grade }}">Grade {{ grade }}</a>
-  {% endfor %}
+{# Everything that describes the bank as a whole sits inside one block that
+   visibly closes, so the first clip below cannot read as another row of it. #}
+<div class="bank-summary">
+  <div class="actions">
+    <a class="btn {% if not selected_grade %}{% else %}ghost{% endif %}"
+       href="{% url 'diagnostics:listening_bank' %}">All grades</a>
+    {% for grade in grades %}
+      <a class="btn {% if selected_grade == grade %}{% else %}ghost{% endif %}"
+         href="{% url 'diagnostics:listening_bank' %}?grade={{ grade }}">Grade {{ grade }}</a>
+    {% endfor %}
+  </div>
+
+  {% if balance %}
+    <div class="cont bank-panel-head">Answer key balance</div>
+    <ul class="tally">
+      {% for task, row in balance.items %}
+        <li>
+          <span class="k">{{ task }}</span><span class="dots"></span>
+          <span class="n">
+            {% if row.letters %}
+              {% for letter, count in row.letters.items %}{{ letter }}&nbsp;{{ count }}{% if not forloop.last %} &middot; {% endif %}{% endfor %}
+            {% else %}
+              <span class="bank-freetext">{{ row.free_text }} free-text answers</span>
+            {% endif %}
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if clip_numbers %}
+    <div class="cont bank-panel-head">Jump to clip</div>
+    <p class="bank-index">
+      {% for number in clip_numbers %}<a href="#clip-{{ number }}">{{ number }}</a>{% endfor %}
+    </p>
+  {% endif %}
 </div>
 
-{% if balance %}
-  <div class="cont" style="border-top:1px solid var(--ink)">Answer key balance</div>
-  <ul class="tally">
-    {% for task, letters in balance.items %}
-      <li>
-        <span class="k">{{ task }}</span><span class="dots"></span>
-        <span class="n">{% for letter, count in letters.items %}{{ letter }}&nbsp;{{ count }}{% if not forloop.last %} &middot; {% endif %}{% endfor %}</span>
-      </li>
-    {% endfor %}
-  </ul>
-{% endif %}
-
 {% for entry in entries %}
-  <section class="blk">
-    <div class="cont" style="border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)">
-      {{ entry.title }}
-    </div>
-    <p class="qinstr">
-      Clip {{ entry.clip.number }} &middot; {{ entry.clip.get_task_type_display }}
-      &middot; set {{ entry.question_set.number }}
-    </p>
+  <section class="blk bank-set"{% if entry.anchor %} id="{{ entry.anchor }}"{% endif %}>
+    {# The clip and set name the block; which groups sit it is context, and
+       changes every time the papers are rebuilt. Ranked accordingly. #}
+    <h2 class="bank-set-title">
+      Clip {{ entry.clip.number }} &middot; {{ entry.clip.get_task_type_display }} &middot; Set {{ entry.question_set.number }}
+    </h2>
+    <p class="bank-set-usage">{{ entry.title }}</p>
 
     {% if entry.clip.audio_file %}
       <audio class="clipaudio" controls preload="none" src="{{ entry.clip.audio_file.url }}">
@@ -73,10 +90,12 @@
         {% endfor %}
       </div>
 
+      {# Sticky: the transcript is read against every question in turn, so it
+         should not scroll away after the first one. #}
       <aside class="bank-transcript">
         <h3>Transcript</h3>
         {% if entry.clip.transcript %}
-          <pre>{{ entry.clip.transcript }}</pre>
+          <pre>{{ entry.clip.transcript|transcript_bold }}</pre>
         {% else %}
           <p class="qinstr">No transcript imported. Run <code>manage.py import_transcripts</code>.</p>
         {% endif %}
